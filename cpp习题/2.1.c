@@ -6,5 +6,6 @@ int main(void)
     printf("Ye\n");
     printf("Yuan ");
     printf("Ye\n");
+    
     return 0;
 }
