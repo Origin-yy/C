@@ -1,25 +1,16 @@
-#include<stdio.h>
-int main(void)
-{
-    int num = 0;
-    int a[100000] = {0};
-    int sum = 0;
+bool checkPerfectNumber(int num){
+    if (num == 1) {
+        return false;
+    }
 
-    scanf("%d",&num);
-
-    for(int i = 1;i < num;i++)
-    {
-        if(num/i*i == num)
-        {
-            sum += i;
+    int sum = 1;
+    for (int d = 2; d * d <= num; ++d) {
+        if (num % d == 0) {
+            sum += d;
+            if (d * d < num) {
+                sum += num / d;
+            }
         }
     }
-    if(num == sum)
-    {
-        printf("true");
-    }
-    else
-        printf("false");
-    
-    return 0;
+    return sum == num;
 }
