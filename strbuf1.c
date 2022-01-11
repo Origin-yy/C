@@ -25,15 +25,42 @@ strbuf_reset(struct strbuf *sb);
 
 int main(void)
 {
+    struct strbuf sb;
+    strbuf_init(&sb, 10);
+    strbuf_attach(&sb, "xiyou", 5, 10);
+    assert(strcmp(sb.buf, "xiyou") == 0);
+    strbuf_addstr(&sb, "linux");
+    assert(strcmp(sb.buf, "xiyoulinux") == 0);
+    strbuf_release(&sb);
     return 0;
 }
 
 void strbuf_init(struct strbuf *sb, size_t alloc)
 {
-    char *buf ;
-    if((buf = (char *)realloc(5,sizeof(char)))==NULL)
+    sb->len=0;
+    sb->alloc=alloc;
+    if((sb = (char *)malloc(alloc*sizeof(char)))==NULL)
 	{
 		printf("malloc memory unsuccessful");
 		exit(1);
 	}//（申请空间，若申请失败则异常退出）
+}
+
+void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
+{
+    int a = sb->alloc;
+    while(sb->alloc < len)
+    {
+        if(sb->buf=(char *)realloc(sb->buf,(alloc+a)*sizeof(char)))
+        {
+            printf("realloc memory unsuccessful");
+        }
+        sb->alloc += a;
+    }
+    strcpy(sb->buf,str);
+}
+
+void strbuf_release(struct strbuf *sb)
+{
+    
 }
