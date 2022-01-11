@@ -62,5 +62,27 @@ void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
 
 void strbuf_release(struct strbuf *sb)
 {
+    free(sb->buf);
+}
+
+void strbuf_swap(struct strbuf *a, struct strbuf *b)
+{
+    struct strbuf temp;
+
+    temp.alloc = a->alloc;
+    temp.len = a->len;
+    temp.buf = a->buf;
+
+    a->alloc = b->alloc;
+    a->len = b->len;
+    a->buf = b->len;
+
+    b->alloc = temp.alloc;
+    b->len = temp.len;
+    b->buf = temp.len;
+}
+
+char *strbuf_detach(struct strbuf *sb, size_t *sz)
+{
     
 }
