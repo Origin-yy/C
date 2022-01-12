@@ -82,7 +82,8 @@ void strbuf_swap(struct strbuf *a, struct strbuf *b)
     b->buf = temp.len;
 }
 
-char *strbuf_detach(struct strbuf *sb, size_t *sz)
+char *strbuf_detach(struct strbuf *sb, size_t *sz) 
 {
-    
+    *sz = sb->len;
+    return &sb->buf;
 }
