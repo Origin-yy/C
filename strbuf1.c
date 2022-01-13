@@ -7,7 +7,6 @@ struct strbuf{
     int alloc;   //当前缓冲区（字符串）容量
     char *buf;   //缓冲区（字符串）
 };
-
 void strbuf_init(struct strbuf *sb, size_t alloc);
 //初始化 sb 结构体，容量为 alloc。
 void strbuf_attach(struct strbuf *sb, void *str, size_t len, size_t alloc);
@@ -23,17 +22,6 @@ int strbuf_cmp(const struct strbuf *first, const struct strbuf *second);
 void strbuf_reset(struct strbuf *sb);
 //清空 sb。
 
-int main(void)
-{
-    struct strbuf sb;
-    strbuf_init(&sb, 10);
-    strbuf_attach(&sb, "xiyou", 5, 10);
-    assert(strcmp(sb.buf, "xiyou") == 0);
-    strbuf_addstr(&sb, "linux");
-    assert(strcmp(sb.buf, "xiyoulinux") == 0);
-    strbuf_release(&sb);
-    return 0;
-}
 
 void strbuf_init(struct strbuf *sb, size_t alloc)
 {
