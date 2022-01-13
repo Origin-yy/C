@@ -41,22 +41,23 @@ void strbuf_init(struct strbuf *sb, size_t alloc)
     sb->alloc=alloc;
     if((sb = (char *)malloc(alloc*sizeof(char)))==NULL)
 	{
-		printf("malloc memory unsuccessful");
+		printf("malloc memory unsuccessful.");
 		exit(1);
 	}//（申请空间，若申请失败则异常退出）
 }
 
 void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
 {
-    int a = sb->alloc;
     while(sb->alloc < len)
     {
-        if(sb->buf=(char *)realloc(sb->buf,(alloc+a)*sizeof(char)))
+        sb->alloc *=2;
+        if(sb->buf = (char *)realloc(sb->buf,2*sb->alloc) == NULL)
         {
-            printf("realloc memory unsuccessful");
+            printf("realloc is unsuccessful.");
+            exit(1);
         }
-        sb->alloc += a;
     }
+    sb->len = len;
     strcpy(sb->buf,str);
 }
 
