@@ -254,3 +254,76 @@ TEST(strbufA, reset2) {
     ASSERT_EQ(t.alloc, 0x10);
     AssertBufSize(t.buf, 0x10);
 }
+// 2B测试代码
+
+// strbuf_grow，将sb的长度扩大到extra
+TEST(StrBufTest2B, grow) {
+    strbuf sb;
+    strbuf_init(&sb, 0);// init的第二个参数可以是0
+    ASSERT_EQ(sb.alloc, 0);
+    AssertBufSize(sb.buf, 0);
+    strbuf_grow(&sb, 10);
+    AssertBufSize(sb.buf, 10);
+    ASSERT_EQ(sb.alloc, 10);
+    strbuf_grow(&sb, 20);
+    ASSERT_EQ(sb.alloc, 20);
+    AssertBufSize(sb.buf, 20);
+    strbuf_release(&sb);
+}
+
+// strbuf_add，向sb追加长度为len的数据data。
+TEST(StrBufTest2B, add) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+    strbuf_add(&sb, "hello", 5);
+    int res = 0;
+    res = memcmp((void *) "hello", (void *) sb.buf, 5);
+    ASSERT_EQ(res, 0);
+    ASSERT_EQ(sb.len, 5);
+    AssertBufSize(sb.buf, sb.alloc);
+    strbuf_add(&sb, "world", 5);
+    res = memcmp((void *) "helloworld", (void *) sb.buf, 10);
+    ASSERT_EQ(res, 0);
+    ASSERT_EQ(sb.len, 10);
+    AssertBufSize(sb.buf, sb.alloc);
+    strbuf_add(&sb, NULL, 0);
+    res = memcmp((void *) "helloworld", (void *) sb.buf, 10);
+    ASSERT_EQ(res, 0);
+    strbuf_release(&sb);
+}
+
+// strbuf_addch，向sb追加一个字符c。
+TEST(StrBufTest2B, addch) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+    strbuf_addch(&sb, 'h');
+    strbuf_addch(&sb, 'e');
+    strbuf_addch(&sb, 'l');
+    strbuf_addch(&sb, 'l');
+    strbuf_addch(&sb, 'o');
+    strbuf_addch(&sb, 'w');
+    strbuf_addch(&sb, 'o');
+    strbuf_addch(&sb, 'r');
+    strbuf_addch(&sb, 'l');
+    strbuf_addch(&sb, 'd');
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 10);
+    int res = memcmp((void *) "helloworld", (void *) sb.buf, 10);
+    ASSERT_EQ(res, 0);
+    strbuf_release(&sb);
+}
+
+// strbuf_addstr，向sb追加一个字符串s。
+TEST(StrBufTest2B, addstr) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+    strbuf_addstr(&sb, "hello");
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 5);
+    ASSERT_STREQ(sb.buf, "hello");
+    strbuf_addstr(&sb, "world");
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 10);
+    ASSERT_STREQ(sb.buf, "helloworld");
+    strbuf_release(&sb);
+}
