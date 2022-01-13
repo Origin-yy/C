@@ -3,6 +3,7 @@
 #include<string.h>
 #include "strbuf.h"
 
+//Part 2A
 void strbuf_init(struct strbuf *sb, size_t alloc);
 //初始化 sb 结构体，容量为 alloc。
 void strbuf_attach(struct strbuf *sb, void *str, size_t len, size_t alloc);
@@ -17,6 +18,24 @@ int strbuf_cmp(const struct strbuf *first, const struct strbuf *second);
 //比较两个 strbuf 的内存是否相同
 void strbuf_reset(struct strbuf *sb);
 //清空 sb。
+
+//Part 2B
+void strbuf_grow(struct strbuf *sb, size_t extra);
+//将 sb 的长度扩大 extra。
+void strbuf_add(struct strbuf *sb, const void *data, size_t len);
+//向 sb 追加长度为 len 的数据 data。
+void strbuf_addch(struct strbuf *sb, int c);
+//向 sb 追加一个字符 c。
+void strbuf_addstr(struct strbuf *sb, const char *s);
+//向 sb 追加一个字符串 s。
+void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2);
+//向一个 sb 追加另一个 strbuf的数据。
+void strbuf_setlen(struct strbuf *sb, size_t len);
+//设置 sb 的长度 len。
+size_t strbuf_avail(const struct strbuf *sb);
+//计算 sb 目前仍可以向后追加的字符串长度。
+void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len);
+//向 sb 内存坐标为 pos 位置插入长度为 len 的数据 data。
 
 
 void strbuf_init(struct strbuf *sb, size_t alloc)
@@ -96,4 +115,9 @@ void strbuf_reset(struct strbuf *sb)
         sb->buf[i] = '\0';
     }
     sb->buf = (char *)realloc(sb->buf,32);   
+}
+
+void strbuf_grow(struct strbuf *sb, size_t extra)
+{
+    
 }
