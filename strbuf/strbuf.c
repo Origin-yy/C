@@ -94,31 +94,56 @@ void strbuf_swap(struct strbuf *a, struct strbuf *b)
 
 char *strbuf_detach(struct strbuf *sb, size_t *sz) 
 {
-    *sz = sb->len;
-    strbuf_reset(sb);
-    return (char *)sb;
+    *sz = sb->alloc;
+    strbuf_init(sb,0);
+
+    return sb->buf;
 }
 
 int strbuf_cmp(const struct strbuf *first, const struct strbuf *second)
 {
-    return &first == &second;
-}
+    return &first == &second && &first->len == &second->len && &first->alloc == &second->alloc; 
+}//1是，相同；0，否，不相同
 
 void strbuf_reset(struct strbuf *sb)
 {
     if(sb == NULL)  
         return;
-    sb->len = 0;
-    sb->alloc = 32;
     int i = 0;
     for(i = 1;i <= sb->len;i++);
     {
         sb->buf[i] = '\0';
     }
-    sb->buf = (char *)realloc(sb->buf,32);   
+    sb->buf = (char *)realloc(sb->buf,32); 
+    sb->len = 0; 
+    sb->alloc = 32;
 }
 
 void strbuf_grow(struct strbuf *sb, size_t extra)
 {
+    if (sb == NULL || extra == 0) 
+        return;
+    sb->alloc += extra;
+    sb->buf =(char *)realloc(sb->buf,sizeof(char)*(sb->alloc));
+    int i = 0;
+    for(i = sb->len;i <= sb->len+extra;i++);
+    {
+        sb->buf[i] = '\0';
+    }
+}
 
+void strbuf_add(struct strbuf *sb, const void *data, size_t len)
+{
+    strbuf_grow(sb,len);
+    memcpy(sb->buf+sb->len,data,len);
+    sb->len += len; 
+}
+
+void strbuf_addch(struct strbuf *sb, int c)
+{
+    if (sb == NULL) return;
+    strbuf_grow(sb,1);
+    sb->buf[sb->len] = c;
+    sb->len++;
+    sb->buf[sb->len] = '\0';
 }
