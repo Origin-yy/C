@@ -60,7 +60,7 @@ void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
         }
     }
     sb->len = len;
-    strcpy(sb->buf,str);
+    sb->buf = str;
 }
 
 void strbuf_release(struct strbuf *sb)
