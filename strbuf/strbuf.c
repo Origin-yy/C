@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include "strbuf.h"
 
 struct strbuf{
     int len;     //当前缓冲区（字符串）长度
@@ -48,7 +49,7 @@ void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
         }
     }
     sb->len = len;
-    sb->buf = str;
+    sb->buf = (char *)str;
 }
 
 void strbuf_release(struct strbuf *sb)
@@ -80,7 +81,7 @@ char *strbuf_detach(struct strbuf *sb, size_t *sz)
 {
     *sz = sb->len;
     strbuf_reset(sb);
-    return sb;
+    return (char *)sb;
 }
 
 int strbuf_cmp(const struct strbuf *first, const struct strbuf *second)
