@@ -52,6 +52,7 @@ void strbuf_init(struct strbuf *sb, size_t alloc)
 
 void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
 {
+    strbuf_init(sb,alloc);
     while(sb->alloc < len)
     {
         sb->alloc *=2;
@@ -71,7 +72,7 @@ void strbuf_release(struct strbuf *sb)
     if(sb == NULL)
         return;
         free(sb->buf);
-    free(sb);
+    //free(sb);
 }
 
 void strbuf_swap(struct strbuf *a, struct strbuf *b)
@@ -119,5 +120,5 @@ void strbuf_reset(struct strbuf *sb)
 
 void strbuf_grow(struct strbuf *sb, size_t extra)
 {
-    
+
 }
