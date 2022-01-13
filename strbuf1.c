@@ -20,7 +20,7 @@ char *strbuf_detach(struct strbuf *sb, size_t *sz);
 //将 sb 中的原始内存取出，并获得其长度。
 int strbuf_cmp(const struct strbuf *first, const struct strbuf *second);
 //比较两个 strbuf 的内存是否相同
-strbuf_reset(struct strbuf *sb);
+void strbuf_reset(struct strbuf *sb);
 //清空 sb。
 
 int main(void)
@@ -39,11 +39,12 @@ void strbuf_init(struct strbuf *sb, size_t alloc)
 {
     sb->len=0;
     sb->alloc=alloc;
-    if((sb = (char *)malloc(alloc*sizeof(char)))==NULL)
-	{
+    sb->buf = (char *)malloc(alloc*sizeof(char));
+	if(sb->buf == NULL)
+    {
 		printf("malloc memory unsuccessful.");
 		exit(1);
-	}//（申请空间，若申请失败则异常退出）
+	}
 }
 
 void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
@@ -51,9 +52,10 @@ void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
     while(sb->alloc < len)
     {
         sb->alloc *=2;
-        if(sb->buf = (char *)realloc(sb->buf,2*sb->alloc) == NULL)
+        sb->buf = (char *)realloc(sb->buf,2*sb->alloc);
+        if(sb->buf == NULL)
         {
-            printf("realloc is unsuccessful.");
+            printf("realloc memory unsuccessful.");
             exit(1);
         }
     }
@@ -63,7 +65,10 @@ void strbuf_attach(struct strbuf*sb,void*str,size_t len,size_t alloc)
 
 void strbuf_release(struct strbuf *sb)
 {
-    free(sb->buf);
+    if(sb == NULL)
+        return;
+        free(sb->buf);
+    free(sb);
 }
 
 void strbuf_swap(struct strbuf *a, struct strbuf *b)
@@ -76,15 +81,35 @@ void strbuf_swap(struct strbuf *a, struct strbuf *b)
 
     a->alloc = b->alloc;
     a->len = b->len;
-    a->buf = b->len;
+    a->buf = b->buf;
 
     b->alloc = temp.alloc;
     b->len = temp.len;
-    b->buf = temp.len;
+    b->buf = temp.buf;
 }
 
 char *strbuf_detach(struct strbuf *sb, size_t *sz) 
 {
     *sz = sb->len;
-    return &sb->buf;
+    strbuf_reset(sb);
+    return sb;
+}
+
+int strbuf_cmp(const struct strbuf *first, const struct strbuf *second)
+{
+    return &first == &second;
+}
+
+void strbuf_reset(struct strbuf *sb)
+{
+    if(sb == NULL)  
+        return;
+    sb->len = 0;
+    sb->alloc = 32;
+    int i = 0;
+    for(i = 1;i <= sb->len;i++);
+    {
+        sb->buf[i] = '\0';
+    }
+    sb->buf = (char *)realloc(sb->buf,32);   
 }
