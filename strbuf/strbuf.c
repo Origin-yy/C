@@ -118,7 +118,7 @@ void strbuf_reset(struct strbuf *sb)
     sb->len = 0; 
     sb->alloc = 32;
 }
-
+/*
 void strbuf_grow(struct strbuf *sb, size_t extra)
 {
     if (sb == NULL || extra == 0) 
@@ -147,3 +147,4 @@ void strbuf_addch(struct strbuf *sb, int c)
     sb->len++;
     sb->buf[sb->len] = '\0';
 }
+*/
