@@ -299,7 +299,6 @@ TEST(StrBufTest2B, grow) {
     strbuf_grow(&sb, 0);
     ASSERT_GE((sb.alloc - sb.len), 0);
     ASSERT_EQ(sb.len, 0);
-    AssertStrbufAlloced(&sb);
 
     strbuf_grow(&sb, 10);
     ASSERT_GE((sb.alloc - sb.len), 10);
