@@ -255,7 +255,7 @@ TEST(strbufA, reset2) {
     AssertBufSize(t.buf, 0x10);
 }
 // 2B测试代码
-/*
+
 // strbuf_grow，将sb的长度扩大到extra
 TEST(StrBufTest2B, grow) {
     strbuf sb;
@@ -327,4 +327,3 @@ TEST(StrBufTest2B, addstr) {
     ASSERT_STREQ(sb.buf, "helloworld");
     strbuf_release(&sb);
 }
-*/

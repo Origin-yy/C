@@ -95,30 +95,20 @@ void strbuf_swap(struct strbuf *a, struct strbuf *b)
 char *strbuf_detach(struct strbuf *sb, size_t *sz) 
 {
     *sz = sb->alloc;
-    strbuf_init(sb,0);
-
+    //strbuf_init(sb,0);
     return sb->buf;
 }
 
 int strbuf_cmp(const struct strbuf *first, const struct strbuf *second)
 {
-    return &first == &second && &first->len == &second->len && &first->alloc == &second->alloc; 
-}//1是，相同；0，否，不相同
+    return first != second && first->len != second->len;
+}
 
 void strbuf_reset(struct strbuf *sb)
 {
-    if(sb == NULL)  
-        return;
-    int i = 0;
-    for(i = 1;i <= sb->len;i++);
-    {
-        sb->buf[i] = '\0';
-    }
-    sb->buf = (char *)realloc(sb->buf,32); 
-    sb->len = 0; 
-    sb->alloc = 32;
+    strbuf_init(sb,sb->alloc);
 }
-/*
+
 void strbuf_grow(struct strbuf *sb, size_t extra)
 {
     if (sb == NULL || extra == 0) 
@@ -147,4 +137,3 @@ void strbuf_addch(struct strbuf *sb, int c)
     sb->len++;
     sb->buf[sb->len] = '\0';
 }
-*/
