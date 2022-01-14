@@ -117,7 +117,7 @@ void strbuf_grow(struct strbuf *sb, size_t extra)
     {
         while(sb->len+extra + 1 > sb->alloc)
         {
-            sb->buf = realloc(sb,sizeof(char)*2*sb->alloc);
+            sb->buf = (char *)realloc(sb,sizeof(char)*2*sb->alloc);
             sb->alloc += extra + 1;
             if(sb->buf == NULL)
             {
