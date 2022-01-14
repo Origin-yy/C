@@ -545,3 +545,45 @@ TEST(StrBufTest2B, insert) {
 
     strbuf_release(&sb);
 }
+
+// 2C 测试代码
+
+// strbuf_ltrim, 去除 sb 缓冲区左端的所有 空格，tab, '\t'。
+TEST(StrBufTest2C, ltrim) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+    strbuf_addstr(&sb, "\t  he llo ");
+    int res;
+    res = memcmp(sb.buf, "\t  he llo ", 10);
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 10);
+    ASSERT_EQ(res, 0);
+
+    strbuf_ltrim(&sb);
+    res = memcmp(sb.buf, "he llo ", 7);
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 7);
+    ASSERT_EQ(res, 0);
+
+    strbuf_release(&sb);
+}
+
+// strbuf_rtrim, 去除 sb 缓冲区右端的所有 空格，tab, '\t'。
+TEST(StrBufTest2C, rtrim) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+    strbuf_addstr(&sb, " he llo\t  ");
+    int res;
+    res = memcmp(sb.buf, " he llo\t  ", 10);
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 10);
+    ASSERT_EQ(res, 0);
+
+    strbuf_rtrim(&sb);
+    res = memcmp(sb.buf, " he llo", 7);
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 7);
+    ASSERT_EQ(res, 0);
+
+    strbuf_release(&sb);
+}
