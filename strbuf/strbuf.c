@@ -20,6 +20,7 @@ void strbuf_reset(struct strbuf *sb);
 //清空 sb。
 
 //Part 2B
+
 void strbuf_grow(struct strbuf *sb, size_t extra);
 //将 sb 的长度扩大 extra。
 void strbuf_add(struct strbuf *sb, const void *data, size_t len);
@@ -37,6 +38,14 @@ size_t strbuf_avail(const struct strbuf *sb);
 void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len);
 //向 sb 内存坐标为 pos 位置插入长度为 len 的数据 data。
 
+//Part 2C
+
+void strbuf_ltrim(struct strbuf *sb);
+//去除 sb 缓冲区左端的所有 空格，tab, '\t'。
+void strbuf_rtrim(struct strbuf *sb);
+//去除 sb 缓冲区右端的所有 空格，tab, '\t'。
+void strbuf_remove(struct strbuf *sb, size_t pos, size_t len);
+//删除 sb 缓冲区从 pos 坐标长度为 len 的内容。
 
 void strbuf_init(struct strbuf *sb, size_t alloc)
 {
@@ -109,6 +118,8 @@ void strbuf_reset(struct strbuf *sb)
     strbuf_init(sb,sb->alloc);
 }
 
+//Part 2B
+
 void strbuf_grow(struct strbuf *sb, size_t extra)
 {
     if(extra == 0) return;
@@ -164,22 +175,33 @@ size_t strbuf_avail(const struct strbuf *sb)
 void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len)
 {
     sb->len += len;
-    //int last_len = sb->len - pos - 1;
-    //char *temp = (char *)memcpy(temp,sb->buf + pos,last_len);
-    if(sb->len < sb->alloc)
-    {
-        int last_len = sb->len - pos -len- 1;
-        char *temp = (char *)malloc(sizeof(char)*last_len);
-        memmove(temp,sb->buf + pos,last_len);
-        memmove(sb->buf + pos,data,len);
-        memmove(sb->buf + pos + len,temp,last_len);
-    }/*
-    else
-    {
-        strbuf_grow(sb,len);
-        int last_len = sb->len - pos - 1;
-        char *temp = (char *)memcpy(temp,sb->buf + pos,last_len);
-        memmove(sb->buf + pos,data,len);
-        memmove(sb->buf + pos+ len,temp,last_len);
-    }*/
+    int last_len = sb->len - pos -len;
+    char *temp = (char *)malloc(sizeof(char)*last_len);
+    memmove(temp,sb->buf + pos,last_len);
+    memmove(sb->buf + pos,data,len);
+    memmove(sb->buf + pos + len,temp,last_len);
+}
+
+//Part 2C
+
+void strbuf_ltrim(struct strbuf *sb)
+{
+    int i = 0; 
+    while(sb->buf[i] == ' ' || sb->buf[i] == '\t')
+        ++i;
+    strncpy(sb->buf, sb->buf + i , strlen(sb->buf) - i);
+    sb->buf[strlen(sb->buf) - i + 1] = '\0';
+    sb->len -=i;
+}
+
+void strbuf_rtrim(struct strbuf *sb)
+{
+    int i;
+        i = strlen(sb->buf) - 1;
+ 
+        while(sb->buf[i] == ' ' || sb->buf[i] == '\t')
+            --i;
+        strncpy(sb->buf, sb->buf, i + 1);
+        sb->buf[i + 1] = '\0';
+        sb->len = i +1;
 }
