@@ -163,18 +163,23 @@ size_t strbuf_avail(const struct strbuf *sb)
 
 void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len)
 {
-    int last_len = sb->len + len - pos + 1;
-    char *temp = (char *)memcpy(temp,sb->buf + pos,last_len);
-    if(sb->len + len < sb->alloc)
+    sb->len +=len;
+    //int last_len = sb->len - pos - 1;
+    //char *temp = (char *)memcpy(temp,sb->buf + pos,last_len);
+    if(sb->len < sb->alloc)
     {
+        int last_len = sb->len - pos -len- 1;
+        char *temp = (char *)calloc(sizeof(char),last_len);
+        memmove(temp,sb->buf + pos,last_len);
         memmove(sb->buf + pos,data,len);
-        sb->len += pos + 1 + len;
-        memmove(sb->buf + len,temp,last_len);
-    }
+        memmove(sb->buf + pos + len,temp,last_len);
+    }/*
     else
     {
-        strbuf_grow(sb,pos + 1 + len-sb->alloc);
+        strbuf_grow(sb,len);
+        int last_len = sb->len - pos - 1;
+        char *temp = (char *)memcpy(temp,sb->buf + pos,last_len);
         memmove(sb->buf + pos,data,len);
-        sb->len += pos + 1 + len;
-    }
+        memmove(sb->buf + pos+ len,temp,last_len);
+    }*/
 }
