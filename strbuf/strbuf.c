@@ -186,10 +186,10 @@ void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len)
 {
     sb->len += len;
     int last_len = sb->len - pos - len;
-    char *temp = (char *)malloc(sizeof(char)*last_len);
-    memmove(temp,sb->buf + pos,last_len);
-    memmove(sb->buf + pos,data,len);
-    memmove(sb->buf + pos + len,temp,last_len);
+    char *temp = (char *)malloc(sizeof(char)*last_len + 1);
+    memmove(temp,sb->buf + pos,last_len + 1);
+    memmove(sb->buf + pos,data,len + 1);
+    memmove(sb->buf + pos + len,temp,last_len + 1);
 }
 
 //Part 2C
@@ -199,8 +199,10 @@ void strbuf_ltrim(struct strbuf *sb)
     int i = 0; 
     while(sb->buf[i] == ' ' || sb->buf[i] == '\t')
         ++i;
-    strncpy(sb->buf, sb->buf + i , strlen(sb->buf) - i);
-    sb->buf[strlen(sb->buf) - i + 1] = '\0';
+    char *temp = (char *)malloc(strlen(sb->buf) + 1 - i);
+    memmove(temp,sb->buf + i,strlen(temp) + 1);
+    memmove(sb->buf,temp,strlen(sb->buf) + 1 - i);
+    sb->buf[strlen(sb->buf)] = '\0';
     sb->len -=i;
 }
 
