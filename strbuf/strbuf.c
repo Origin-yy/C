@@ -47,6 +47,15 @@ void strbuf_rtrim(struct strbuf *sb);
 void strbuf_remove(struct strbuf *sb, size_t pos, size_t len);
 //删除 sb 缓冲区从 pos 坐标长度为 len 的内容。
 
+//Part 2D
+
+ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint);
+//sb 增长 hint ? hint : 8192 大小， 然后将文件描述符为 fd 的所有文件内容追加到 sb 中。
+int strbuf_getline(struct strbuf *sb, FILE *fp);
+//将 将文件句柄为 fp 的一行内容读取到 sb 。
+
+//Paret 2A
+
 void strbuf_init(struct strbuf *sb, size_t alloc)
 {
     sb->len=0;
@@ -129,7 +138,7 @@ void strbuf_grow(struct strbuf *sb, size_t extra)
 
 void strbuf_add(struct strbuf *sb, const void *data, size_t len)
 {
-    if(sb->len + len>sb->alloc)
+    if(sb->len + len > sb->alloc)
         strbuf_grow(sb,len);
     memmove(sb->buf + sb->len,data,len);
     sb->len += len;
@@ -148,16 +157,17 @@ void strbuf_addch(struct strbuf *sb, int c)
 
 void strbuf_addstr(struct strbuf *sb, const char *s)
 {
-    if(sb->len + strlen(s)> sb->alloc)
-        strbuf_grow(sb,strlen(s));
-    memmove(sb->buf + sb->len,s,strlen(s) + 1);
-    sb->len += strlen(s);
+    int len = strlen(s);
+    if(sb->len + len +1 > sb->alloc)
+        strbuf_grow(sb,len + 1);
+    memmove(sb->buf + sb->len,s,len);
+    sb->len += len;
+    sb->buf[sb->len] = '\0';
 }
 
 void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2)
 {
-    strbuf_grow(sb,sb2->len);
-    strbuf_add(sb,sb2->buf,sb2->len);
+    strbuf_addstr(sb,sb2->buf);
 }
 
 void strbuf_setlen(struct strbuf *sb, size_t len)
@@ -214,4 +224,30 @@ void strbuf_remove(struct strbuf *sb, size_t pos, size_t len)
     memmove(temp,sb->buf + pos + len,last_len);
     memmove(sb->buf + pos,temp,last_len);
     sb->buf[sb->len + 1] = '\0';
+}
+
+//Part 2D
+ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint)
+{
+    return 1;
+}
+int strbuf_getline(struct strbuf *sb, FILE *fp)
+{
+    return 1;
+}
+
+//CHALLENGE
+
+struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
+{
+    return NULL;
+}
+
+bool strbuf_begin_judge(char* target_str, const char* str, int strlen)
+{
+    return 0;
+}
+char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len)
+{
+    return NULL;
 }
