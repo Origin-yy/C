@@ -175,7 +175,7 @@ size_t strbuf_avail(const struct strbuf *sb)
 void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len)
 {
     sb->len += len;
-    int last_len = sb->len - pos -len;
+    int last_len = sb->len - pos - len;
     char *temp = (char *)malloc(sizeof(char)*last_len);
     memmove(temp,sb->buf + pos,last_len);
     memmove(sb->buf + pos,data,len);
@@ -204,4 +204,14 @@ void strbuf_rtrim(struct strbuf *sb)
         strncpy(sb->buf, sb->buf, i + 1);
         sb->buf[i + 1] = '\0';
         sb->len = i +1;
+}
+
+void strbuf_remove(struct strbuf *sb, size_t pos, size_t len)
+{
+    sb->len -= len;
+    int last_len = sb->len - pos;
+    char *temp = (char *)malloc(sizeof(char)*last_len);
+    memmove(temp,sb->buf + pos + len,last_len);
+    memmove(sb->buf + pos,temp,last_len);
+    sb->buf[sb->len + 1] = '\0';
 }
