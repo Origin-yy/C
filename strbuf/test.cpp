@@ -1,8 +1,12 @@
 #include "strbuf.h"
+#include <cstddef>
+#include <cstdlib>
 #include <cstring>
 #include <gtest/gtest.h>
 
 
+// #define __SA_TEST__
+#ifndef __SA_TEST__
 // 获取由 malloc 类函数分配的 buf 的大小
 // 本函数依赖 ptmalloc 实现
 size_t getChunkSize(const void *pr) {
@@ -34,40 +38,51 @@ size_t getChunkFd(const void *pr) { return *(const size_t *) pr; }
 // AssertBufSize(pr , 0x30) 返回 false
 // 本函数依赖 ptmalloc 实现
 #define AssertBufSize(pr, size) ASSERT_EQ(getChunkSize(pr), request2size(size))
+#else
+
+#define AssertBufSize(pr, size)
+
+#endif
+#define AssertStrbufAlloced(x) AssertBufSize((x)->buf, (x)->alloc)
+#define AssertStrbufLen(x) ASSERT_GT((x)->alloc, (x)->len)
 
 // 2A
-TEST(strbufA, init1) {
+TEST(strBufTest2A, init1) {
     strbuf t;
     strbuf_init(&t, 0x10);
     ASSERT_EQ(t.alloc, 0x10);
     ASSERT_EQ(t.len, 0);
     AssertBufSize(t.buf, 0x10);
+    strbuf_release(&t);
 }
 
-TEST(strbufA, init2) {
+TEST(strBufTest2A, init2) {
     strbuf t;
     strbuf_init(&t, 0x20);
     ASSERT_EQ(t.alloc, 0x20);
     ASSERT_EQ(t.len, 0);
     AssertBufSize(t.buf, 0x20);
+    strbuf_release(&t);
 }
 
-TEST(strbufA, init3) {
+TEST(strBufTest2A, init3) {
     strbuf t;
     strbuf_init(&t, 0x5);
     ASSERT_EQ(t.alloc, 0x5);
     ASSERT_EQ(t.len, 0);
     AssertBufSize(t.buf, 0x5);
+    strbuf_release(&t);
 }
 
-TEST(strbufA, init4) {
+TEST(strBufTest2A, init4) {
     strbuf t;
     strbuf_init(&t, 0x0);
     ASSERT_EQ(t.alloc, 0x0);
     ASSERT_EQ(t.len, 0);
     AssertBufSize(t.buf, 0x0);
+    strbuf_release(&t);
 }
-TEST(strbufA, attach1) {
+TEST(strBufTest2A, attach1) {
 
     strbuf t;
     char *a = (char *) malloc(0x10);
@@ -77,9 +92,10 @@ TEST(strbufA, attach1) {
     ASSERT_EQ(t.alloc, 0x10);
     ASSERT_EQ(t.buf, a);
     ASSERT_STREQ(t.buf, "1234");
+    strbuf_release(&t);
 }
 
-TEST(strbufA, attach2) {
+TEST(strBufTest2A, attach2) {
     strbuf t;
     char *a = (char *) malloc(0x18);
     strcpy(a, "123456789abcdef12234567");
@@ -88,9 +104,10 @@ TEST(strbufA, attach2) {
     ASSERT_EQ(t.buf, a);
     ASSERT_EQ(t.len, 0x17);
     ASSERT_STREQ(t.buf, "123456789abcdef12234567");
+    strbuf_release(&t);
 }
 
-TEST(strbufA, attach3) {
+TEST(strBufTest2A, attach3) {
     strbuf t;
     char *a = (char *) malloc(0x18);
     char str[] = "123456789abcdef12234567";
@@ -102,25 +119,31 @@ TEST(strbufA, attach3) {
     ASSERT_EQ(t.len, 0x17);
     int ret = memcmp(t.buf, str, 0x17);
     ASSERT_EQ(ret, 0);
+    strbuf_release(&t);
 }
-TEST(strbufA, release1) {
+TEST(strBufTest2A, release1) {
     strbuf t;
     char *a = (char *) malloc(0x18);
     strcpy(a, "123456789abcdef12234567");
     strbuf_attach(&t, a, 0x17, 0x20);
     //测试内存是否被释放
+#ifndef __SA_TEST__
     size_t backUp = getChunkFd(t.buf);
+#endif
     strbuf_release(&t);
+#ifndef __SA_TEST__
     if (t.buf != nullptr) {
         size_t fd = getChunkFd(t.buf);
         ASSERT_NE(backUp, fd);
     }
+#endif
     strbuf_init(&t, 0x20);
     ASSERT_EQ(t.alloc, 0x20);
     ASSERT_EQ(t.len, 0);
+    strbuf_release(&t);
 }
 
-TEST(strbufA, swap1) {
+TEST(strBufTest2A, swap1) {
     char *buf[2];
     buf[0] = (char *) malloc(0x20);
     buf[1] = (char *) malloc(0x30);
@@ -143,9 +166,11 @@ TEST(strbufA, swap1) {
     ASSERT_EQ(t[1].buf, buf[0]);
     ASSERT_STREQ(t[1].buf, "123456");
     AssertBufSize(t[1].buf, 0x20);
+    strbuf_release(&t[0]);
+    strbuf_release(&t[1]);
 }
 
-TEST(strbufA, detach1) {
+TEST(strBufTest2A, detach1) {
     strbuf t;
     char *a = (char *) malloc(0x10);
     strcpy(a, "1234");
@@ -155,9 +180,10 @@ TEST(strbufA, detach1) {
     ASSERT_EQ(0x10, size);
     ASSERT_EQ(ret, a);
     ASSERT_STREQ(ret, "1234");
+    free(a);
 }
 
-TEST(strbufA, cmp1) {
+TEST(strBufTest2A, cmp1) {
     char *buf[2];
     buf[0] = (char *) malloc(0x20);
     buf[1] = (char *) malloc(0x30);
@@ -180,9 +206,11 @@ TEST(strbufA, cmp1) {
     ASSERT_EQ(t[1].buf, buf[1]);
     ASSERT_STREQ(t[1].buf, "abcdefg");
     AssertBufSize(t[1].buf, 0x30);
+    strbuf_release(&t[0]);
+    strbuf_release(&t[1]);
 }
 
-TEST(strbufA, cmp2) {
+TEST(strBufTest2A, cmp2) {
 
     char *buf[2];
     buf[0] = (char *) malloc(0x20);
@@ -206,9 +234,11 @@ TEST(strbufA, cmp2) {
     ASSERT_EQ(t[1].buf, buf[1]);
     ASSERT_STREQ(t[1].buf, "123456");
     AssertBufSize(t[1].buf, 0x30);
+    strbuf_release(&t[0]);
+    strbuf_release(&t[1]);
 }
 
-TEST(strbufA, cmp3) {
+TEST(strBufTest2A, cmp3) {
 
     char *buf[2];
     buf[0] = (char *) malloc(0x20);
@@ -232,8 +262,10 @@ TEST(strbufA, cmp3) {
     ASSERT_EQ(t[1].buf, buf[1]);
     ASSERT_STREQ(t[1].buf, "123");
     AssertBufSize(t[1].buf, 0x20);
+    strbuf_release(&t[0]);
+    strbuf_release(&t[1]);
 }
-TEST(strbufA, reset1) {
+TEST(strBufTest2A, reset1) {
     strbuf t;
     char *a = (char *) malloc(0x10);
     strcpy(a, "1234");
@@ -242,9 +274,10 @@ TEST(strbufA, reset1) {
     ASSERT_EQ(t.len, 0);
     ASSERT_EQ(t.alloc, 0x10);
     AssertBufSize(t.buf, 0x10);
+    strbuf_release(&t);
 }
 
-TEST(strbufA, reset2) {
+TEST(strBufTest2A, reset2) {
     strbuf t;
     char *a = (char *) malloc(0x10);
     strcpy(a, "1234");
@@ -253,21 +286,36 @@ TEST(strbufA, reset2) {
     ASSERT_EQ(t.len, 0);
     ASSERT_EQ(t.alloc, 0x10);
     AssertBufSize(t.buf, 0x10);
+    strbuf_release(&t);
 }
+
 // 2B测试代码
 
-// strbuf_grow，将sb的长度扩大到extra
+// 确保在len之后strbuf中至少有extra个字节的空闲空间可用。
 TEST(StrBufTest2B, grow) {
     strbuf sb;
-    strbuf_init(&sb, 0);// init的第二个参数可以是0
-    ASSERT_EQ(sb.alloc, 0);
-    AssertBufSize(sb.buf, 0);
+    strbuf_init(&sb, 0);
+
+    strbuf_grow(&sb, 0);
+    ASSERT_GE((sb.alloc - sb.len), 0);
+    ASSERT_EQ(sb.len, 0);
+    AssertStrbufAlloced(&sb);
+
     strbuf_grow(&sb, 10);
-    AssertBufSize(sb.buf, 10);
-    ASSERT_EQ(sb.alloc, 10);
+    ASSERT_GE((sb.alloc - sb.len), 10);
+    ASSERT_EQ(sb.len, 0);
+    AssertStrbufAlloced(&sb);
+
+    strbuf_grow(&sb, 5);
+    ASSERT_GE((sb.alloc - sb.len), 5);
+    ASSERT_EQ(sb.len, 0);
+    AssertStrbufAlloced(&sb);
+
     strbuf_grow(&sb, 20);
-    ASSERT_EQ(sb.alloc, 20);
-    AssertBufSize(sb.buf, 20);
+    ASSERT_GE((sb.alloc - sb.len), 20);
+    ASSERT_EQ(sb.len, 0);
+    AssertStrbufAlloced(&sb);
+
     strbuf_release(&sb);
 }
 
@@ -275,27 +323,33 @@ TEST(StrBufTest2B, grow) {
 TEST(StrBufTest2B, add) {
     strbuf sb;
     strbuf_init(&sb, 20);
+
     strbuf_add(&sb, "hello", 5);
-    int res = 0;
-    res = memcmp((void *) "hello", (void *) sb.buf, 5);
-    ASSERT_EQ(res, 0);
     ASSERT_EQ(sb.len, 5);
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_STREQ("hello", sb.buf);
     AssertBufSize(sb.buf, sb.alloc);
+
     strbuf_add(&sb, "world", 5);
-    res = memcmp((void *) "helloworld", (void *) sb.buf, 10);
-    ASSERT_EQ(res, 0);
     ASSERT_EQ(sb.len, 10);
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_STREQ("helloworld", sb.buf);
     AssertBufSize(sb.buf, sb.alloc);
-    strbuf_add(&sb, NULL, 0);
-    res = memcmp((void *) "helloworld", (void *) sb.buf, 10);
-    ASSERT_EQ(res, 0);
+
+    strbuf_add(&sb, nullptr, 0);
+    ASSERT_EQ(sb.len, 10);
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_STREQ("helloworld", sb.buf);
+    AssertBufSize(sb.buf, sb.alloc);
+
     strbuf_release(&sb);
 }
 
 // strbuf_addch，向sb追加一个字符c。
-TEST(StrBufTest2B, addch) {
+TEST(StrBufTest2B, addch1) {
     strbuf sb;
     strbuf_init(&sb, 20);
+
     strbuf_addch(&sb, 'h');
     strbuf_addch(&sb, 'e');
     strbuf_addch(&sb, 'l');
@@ -308,22 +362,186 @@ TEST(StrBufTest2B, addch) {
     strbuf_addch(&sb, 'd');
     ASSERT_EQ(sb.alloc, 20);
     ASSERT_EQ(sb.len, 10);
-    int res = memcmp((void *) "helloworld", (void *) sb.buf, 10);
-    ASSERT_EQ(res, 0);
+    ASSERT_STREQ("helloworld", sb.buf);
+    AssertBufSize(sb.buf, sb.alloc);
+
+    strbuf_release(&sb);
+}
+
+TEST(StrBufTest2B, addch2) {
+    strbuf sb;
+    strbuf_init(&sb, 10);
+
+    for (int i = 0; i < 4; i++) {
+        strbuf_addch(&sb, 'h');
+        strbuf_addch(&sb, 'e');
+        strbuf_addch(&sb, 'l');
+        strbuf_addch(&sb, 'l');
+        strbuf_addch(&sb, 'o');
+        strbuf_addch(&sb, 'w');
+        strbuf_addch(&sb, 'o');
+        strbuf_addch(&sb, 'r');
+        strbuf_addch(&sb, 'l');
+        strbuf_addch(&sb, 'd');
+
+        AssertBufSize(sb.buf, sb.alloc);
+        ASSERT_EQ(sb.len, 10 * (i + 1));
+    }
+    ASSERT_STREQ(sb.buf, "helloworldhelloworldhelloworldhelloworld");
     strbuf_release(&sb);
 }
 
 // strbuf_addstr，向sb追加一个字符串s。
-TEST(StrBufTest2B, addstr) {
+TEST(StrBufTest2B, addstr1) {
     strbuf sb;
     strbuf_init(&sb, 20);
+
     strbuf_addstr(&sb, "hello");
     ASSERT_EQ(sb.alloc, 20);
     ASSERT_EQ(sb.len, 5);
     ASSERT_STREQ(sb.buf, "hello");
+
     strbuf_addstr(&sb, "world");
     ASSERT_EQ(sb.alloc, 20);
     ASSERT_EQ(sb.len, 10);
     ASSERT_STREQ(sb.buf, "helloworld");
+
+    strbuf_release(&sb);
+}
+
+TEST(StrBufTest2B, addstr2) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+
+    strbuf_addstr(&sb, "helloworld");
+    ASSERT_EQ(sb.alloc, 20);
+    ASSERT_EQ(sb.len, 10);
+    ASSERT_STREQ(sb.buf, "helloworld");
+
+    strbuf_addstr(&sb, "helloworld");
+    ASSERT_EQ(sb.len, 20);
+    ASSERT_STREQ(sb.buf, "helloworldhelloworld");
+    AssertBufSize(sb.buf, sb.alloc);
+
+    strbuf_addstr(&sb, "helloworld");
+    ASSERT_EQ(sb.len, 30);
+    ASSERT_STREQ(sb.buf, "helloworldhelloworldhelloworld");
+    AssertBufSize(sb.buf, sb.alloc);
+
+    strbuf_addstr(&sb, "helloworld");
+    ASSERT_EQ(sb.len, 40);
+    ASSERT_STREQ(sb.buf, "helloworldhelloworldhelloworldhelloworld");
+    AssertBufSize(sb.buf, sb.alloc);
+
+    strbuf_addstr(&sb, "helloworld");
+    ASSERT_EQ(sb.len, 50);
+    ASSERT_STREQ(sb.buf, "helloworldhelloworldhelloworldhelloworldhelloworld");
+    AssertBufSize(sb.buf, sb.alloc);
+
+    strbuf_addstr(&sb, "1234");
+    ASSERT_EQ(sb.len, 54);
+    ASSERT_STREQ(sb.buf, "helloworldhelloworldhelloworldhelloworldhelloworld1234");
+    AssertBufSize(sb.buf, sb.alloc);
+
+    strbuf_release(&sb);
+}
+
+// strbuf_addbuf，向一个sb追加另一个strbuf的数据。
+TEST(StrBufTest2B, addbuf1) {
+    strbuf sb1, sb2, sb3;
+    strbuf_init(&sb1, 20);
+    strbuf_init(&sb2, 20);
+    strbuf_init(&sb3, 20);
+    strbuf_addstr(&sb2, "hello");
+    strbuf_addstr(&sb3, "world");
+    ASSERT_EQ(sb1.len, 0);
+    ASSERT_EQ(sb1.alloc, 20);
+
+    strbuf_addbuf(&sb1, &sb2);
+    ASSERT_EQ(sb1.len, 5);
+    ASSERT_STREQ(sb1.buf, "hello");
+    AssertBufSize(sb1.buf, sb1.alloc);
+    strbuf_addbuf(&sb1, &sb3);
+    ASSERT_EQ(sb1.len, 10);
+    ASSERT_STREQ(sb1.buf, "helloworld");
+    AssertBufSize(sb1.buf, sb1.alloc);
+
+    strbuf_release(&sb1);
+    strbuf_release(&sb2);
+    strbuf_release(&sb3);
+}
+
+TEST(StrBufTest2B, addbuf2) {
+    strbuf sb1, sb2, sb3;
+    strbuf_init(&sb1, 0);
+    strbuf_init(&sb2, 0);
+    strbuf_init(&sb3, 0);
+    strbuf_addstr(&sb2, "helloworldhelloworldhelloworldhelloworld12");
+    strbuf_addstr(&sb3, "helloworldhelloworldhelloworldhelloworld34");
+
+    strbuf_addbuf(&sb1, &sb2);
+    ASSERT_EQ(sb1.len, 42);
+    ASSERT_STREQ(sb1.buf, "helloworldhelloworldhelloworldhelloworld12");
+    AssertBufSize(sb1.buf, sb1.alloc);
+    strbuf_addbuf(&sb1, &sb3);
+    ASSERT_EQ(sb1.len, 84);
+    ASSERT_STREQ(sb1.buf, "helloworldhelloworldhelloworldhelloworld12helloworldhelloworldhelloworldhelloworld34");
+    AssertBufSize(sb1.buf, sb1.alloc);
+    strbuf_release(&sb1);
+    strbuf_release(&sb2);
+    strbuf_release(&sb3);
+}
+
+// strbuf_setlen，设置sb的长度len。
+TEST(StrBufTest2B, setlen) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+    strbuf_addstr(&sb, "123456789012345678");
+    ASSERT_EQ(sb.len, 18);
+    ASSERT_EQ(sb.buf[18], '\0');
+
+    strbuf_setlen(&sb, 10);
+    ASSERT_EQ(sb.len, 10);
+    ASSERT_EQ(sb.buf[10], '\0');
+
+    strbuf_setlen(&sb, 5);
+    ASSERT_EQ(sb.len, 5);
+    ASSERT_EQ(sb.buf[5], '\0');
+
+    strbuf_setlen(&sb, 0);
+    ASSERT_EQ(sb.len, 0);
+    ASSERT_EQ(sb.buf[0], '\0');
+
+    strbuf_release(&sb);
+}
+
+// strbuf_avail，计算 sb 目前仍可以向后追加的字符串长度。
+TEST(StrBufTest2B, avail) {
+    strbuf sb;
+    strbuf_init(&sb, 10);
+
+    int avail = strbuf_avail(&sb);
+    ASSERT_EQ(sb.alloc, 10);
+    ASSERT_EQ(sb.len, 0);
+    ASSERT_EQ(avail, (sb.alloc - sb.len - 1));
+
+    strbuf_addstr(&sb, "hello");
+    avail = strbuf_avail(&sb);
+    ASSERT_EQ(sb.alloc, 10);
+    ASSERT_EQ(sb.len, 5);
+    ASSERT_EQ(avail, (sb.alloc - sb.len - 1));
+
+    strbuf_release(&sb);
+}
+
+// strbuf_insert，向 sb 内存坐标为 pos 位置插入长度为 len 的数据 data。
+TEST(StrBufTest2B, insert) {
+    strbuf sb;
+    strbuf_init(&sb, 20);
+
+    strbuf_addstr(&sb, "abcdefghi");
+    strbuf_insert(&sb, 2, "hello", 5);
+    ASSERT_STREQ(sb.buf, "abhellocdefghi");
+
     strbuf_release(&sb);
 }
