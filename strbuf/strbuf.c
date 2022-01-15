@@ -198,24 +198,22 @@ void strbuf_ltrim(struct strbuf *sb)
 {
     int i = 0; 
     while(sb->buf[i] == ' ' || sb->buf[i] == '\t')
-        ++i;
-    char *temp = (char *)malloc(strlen(sb->buf) + 1 - i);
-    memmove(temp,sb->buf + i,strlen(temp) + 1);
-    memmove(sb->buf,temp,strlen(sb->buf) + 1 - i);
-    sb->buf[strlen(sb->buf)] = '\0';
+        i++;
+    char *temp = (char *)malloc(sb->len + 1 - i);
+    memmove(temp,sb->buf + i,sb->len + 1 - i);
+    memmove(sb->buf,temp,sb->len + 1 - i);
     sb->len -=i;
 }
 
 void strbuf_rtrim(struct strbuf *sb)
 {
-    int i;
-        i = strlen(sb->buf) - 1;
- 
-        while(sb->buf[i] == ' ' || sb->buf[i] == '\t')
-            --i;
-        strncpy(sb->buf, sb->buf, i + 1);
-        sb->buf[i + 1] = '\0';
-        sb->len = i +1;
+    int i = sb->len; 
+    while(sb->buf[i-1] == ' ' || sb->buf[i] == '\t')
+       i--;
+    char *temp = (char *)malloc(i + 1);
+    memmove(temp,sb->buf,i + 1);  
+    memmove(sb->buf,sb->buf, i + 1);
+    sb->len= i - 1;
 }
 
 void strbuf_remove(struct strbuf *sb, size_t pos, size_t len)
@@ -231,7 +229,9 @@ void strbuf_remove(struct strbuf *sb, size_t pos, size_t len)
 //Part 2D
 ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint)
 {
-    return 1;
+    strbuf_grow(sb,hint ? hint : 8192);
+    FILE * p = fdopen(fd,"r");
+    strbuf_addstr(sb,(char *)p);
 }
 int strbuf_getline(struct strbuf *sb, FILE *fp)
 {
