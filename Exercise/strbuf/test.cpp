@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <gtest/gtest.h>
+#include <stdlib.h>
 
 
 // #define __SA_TEST__
@@ -633,6 +634,8 @@ TEST(StrBufTest2D, read2) {
     strbuf_read(&sb, fd, 0x100);
     ASSERT_EQ(sb.alloc, oldAlloc);
     ASSERT_EQ(sb.len, 3);
+    strbuf_release(&sb);
+    close(fd);
 }
 
 // TEST(StrBufTest2D, readFile) {
@@ -667,24 +670,28 @@ TEST(StrBufTestCHALLENGE, splitBuf1) {
     AssertStrbufAlloced(result[0]);
     AssertStrbufLen(result[0]);
     strbuf_release(result[0]);
+    free(result[0]);
 
     ASSERT_EQ(result[1]->len, 2);
     ASSERT_STREQ(result[1]->buf, "11");
     AssertStrbufAlloced(result[1]);
     AssertStrbufLen(result[1]);
     strbuf_release(result[1]);
+    free(result[1]);
 
     ASSERT_EQ(result[2]->len, 2);
     ASSERT_STREQ(result[2]->buf, "12");
     AssertStrbufAlloced(result[2]);
     AssertStrbufLen(result[2]);
     strbuf_release(result[2]);
+    free(result[2]);
 
     ASSERT_EQ(result[3]->len, 3);
     ASSERT_STREQ(result[3]->buf, "123");
     AssertStrbufAlloced(result[3]);
     AssertStrbufLen(result[3]);
     strbuf_release(result[3]);
+    free(result[3]);
 
     free(result);
 }
@@ -702,24 +709,32 @@ TEST(StrBufTestCHALLENGE, splitBuf2) {
     AssertStrbufAlloced(result[0]);
     AssertStrbufLen(result[0]);
     strbuf_release(result[0]);
+    AssertBufSize(result[0], sizeof(struct strbuf));
+    free(result[0]);
 
     ASSERT_STREQ(result[1]->buf, "345");
     ASSERT_EQ(result[1]->len, 3);
     AssertStrbufAlloced(result[1]);
     AssertStrbufLen(result[1]);
     strbuf_release(result[1]);
+    AssertBufSize(result[1], sizeof(struct strbuf));
+    free(result[1]);
 
     ASSERT_STREQ(result[2]->buf, "3123");
     ASSERT_EQ(result[2]->len, 4);
     AssertStrbufAlloced(result[2]);
     AssertStrbufLen(result[2]);
     strbuf_release(result[2]);
+    AssertBufSize(result[1], sizeof(struct strbuf));
+    free(result[2]);
 
     ASSERT_STREQ(result[3]->buf, "3123");
     ASSERT_EQ(result[3]->len, 4);
     AssertStrbufAlloced(result[3]);
     AssertStrbufLen(result[3]);
     strbuf_release(result[3]);
+    AssertBufSize(result[3], sizeof(struct strbuf));
+    free(result[3]);
 
     free(result);
 }
@@ -737,12 +752,16 @@ TEST(StrBufTestCHALLENGE, splitBuf3) {
     AssertStrbufAlloced(result[0]);
     AssertStrbufLen(result[0]);
     strbuf_release(result[0]);
+    AssertBufSize(result[0], sizeof(struct strbuf));
+    free(result[0]);
 
     ASSERT_STREQ(result[1]->buf, "345");
     ASSERT_EQ(result[1]->len, 3);
     AssertStrbufAlloced(result[1]);
     AssertStrbufLen(result[1]);
     strbuf_release(result[1]);
+    AssertBufSize(result[1], sizeof(struct strbuf));
+    free(result[1]);
 
     free(result);
 }
@@ -759,12 +778,16 @@ TEST(StrBufTestCHALLENGE, splitBuf4) {
     AssertStrbufAlloced(result[0]);
     AssertStrbufLen(result[0]);
     strbuf_release(result[0]);
+    AssertBufSize(result[0], sizeof(struct strbuf));
+    free(result[0]);
 
     ASSERT_EQ(result[1]->len, 13);
     Assert_Bin_EQ(result[1]->buf, "\0\0  123 345  ", 14);
     AssertStrbufAlloced(result[1]);
     AssertStrbufLen(result[1]);
     strbuf_release(result[1]);
+    AssertBufSize(result[1], sizeof(struct strbuf));
+    free(result[1]);
 
     free(result);
 }
@@ -780,9 +803,14 @@ TEST(StrBufTestCHALLENGE, beginJudge) {
 
 TEST(StrBufTestCHALLENGE, getMidBuf) {
     char targetbuf[] = "123fan123";
-    ASSERT_EQ(strcmp(strbuf_get_mid_buf(targetbuf, 3, 6, 10), "fan"), 0);
+    char *ret = strbuf_get_mid_buf(targetbuf, 3, 6, 10);
+    ASSERT_STREQ(ret, "fan");
+    free(ret);
     char targetbuf_2[] = "\0\n\n\n123123\a\a\a";
-    ASSERT_STREQ(strbuf_get_mid_buf(targetbuf_2, 1, 1, 13), "");
+    ret = strbuf_get_mid_buf(targetbuf_2, 1, 1, 13);
+    ASSERT_STREQ(ret, "");
+    free(ret);
+
     char *tString = nullptr;
     ASSERT_EQ(strbuf_get_mid_buf(tString, 1, 2, 0), nullptr);
 }

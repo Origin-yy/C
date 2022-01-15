@@ -2,57 +2,8 @@
 #include<stdlib.h>
 #include<string.h>
 #include "strbuf.h"
+#include<ctype.h>
 
-//Part 2A
-void strbuf_init(struct strbuf *sb, size_t alloc);
-//初始化 sb 结构体，容量为 alloc。
-void strbuf_attach(struct strbuf *sb, void *str, size_t len, size_t alloc);
-//将字符串填充到 sb 中，长度为 len, 容量为 alloc。
-void strbuf_release(struct strbuf *sb);
-//释放 sb 结构体的内存。
-void strbuf_swap(struct strbuf *a, struct strbuf *b);
-//交换两个 strbuf。
-char *strbuf_detach(struct strbuf *sb, size_t *sz);
-//将 sb 中的原始内存取出，并获得其长度。
-int strbuf_cmp(const struct strbuf *first, const struct strbuf *second);
-//比较两个 strbuf 的内存是否相同
-void strbuf_reset(struct strbuf *sb);
-//清空 sb。
-
-//Part 2B
-
-void strbuf_grow(struct strbuf *sb, size_t extra);
-//将 sb 的长度扩大 extra。
-void strbuf_add(struct strbuf *sb, const void *data, size_t len);
-//向 sb 追加长度为 len 的数据 data。
-void strbuf_addch(struct strbuf *sb, int c);
-//向 sb 追加一个字符 c。
-void strbuf_addstr(struct strbuf *sb, const char *s);
-//向 sb 追加一个字符串 s。
-void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2);
-//向一个 sb 追加另一个 strbuf的数据。
-void strbuf_setlen(struct strbuf *sb, size_t len);
-//设置 sb 的长度 len。
-size_t strbuf_avail(const struct strbuf *sb);
-//计算 sb 目前仍可以向后追加的字符串长度。
-void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len);
-//向 sb 内存坐标为 pos 位置插入长度为 len 的数据 data。
-
-//Part 2C
-
-void strbuf_ltrim(struct strbuf *sb);
-//去除 sb 缓冲区左端的所有 空格，tab, '\t'。
-void strbuf_rtrim(struct strbuf *sb);
-//去除 sb 缓冲区右端的所有 空格，tab, '\t'。
-void strbuf_remove(struct strbuf *sb, size_t pos, size_t len);
-//删除 sb 缓冲区从 pos 坐标长度为 len 的内容。
-
-//Part 2D
-
-ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint);
-//sb 增长 hint ? hint : 8192 大小， 然后将文件描述符为 fd 的所有文件内容追加到 sb 中。
-int strbuf_getline(struct strbuf *sb, FILE *fp);
-//将 将文件句柄为 fp 的一行内容读取到 sb 。
 
 //Paret 2A
 
@@ -229,12 +180,30 @@ void strbuf_remove(struct strbuf *sb, size_t pos, size_t len)
 //Part 2D
 ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint)
 {
-    strbuf_grow(sb,hint ? hint : 8192);
-    FILE * p = fdopen(fd,"r");
-    strbuf_addstr(sb,(char *)p);
+    FILE *fp = fdopen(fd, "r");//文件标识符转为文件指针。
+    char ch;
+    while ((ch = fgetc(fp)) != EOF )//逐字符拷贝到结尾。
+    {
+        while(sb->alloc <= sb->len+1)//是否扩容。
+        {
+            sb->buf = (char *)realloc(sb->buf,sb->len+(hint ? hint : 8192) );
+            sb->alloc += (hint ? hint : 8192);
+        }
+        strbuf_addch(sb, ch);
+    }
+    
+    return 1;
 }
+
 int strbuf_getline(struct strbuf *sb, FILE *fp)
 {
+    char ch = '\0';
+    while ((ch = fgetc(fp)) != EOF)
+    {
+        if(ch == '\n')
+            break;
+        strbuf_addch(sb,ch);
+    }
     return 1;
 }
 
@@ -242,14 +211,60 @@ int strbuf_getline(struct strbuf *sb, FILE *fp)
 
 struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
 {
-    return NULL;
+    struct strbuf **ret = NULL;//得到存放struct strbuf类型的二维数组空间，下面分配。
+    struct strbuf *strbuf_temp;//得到临时存放切割得到的子字符串的strbuf，下面分配。
+
+    char *str1 = (char *)malloc(len+1);
+    memmove(str1,str,len+1);//得到一个可以切割的str（str1）。
+    
+    char *p = (char *)calloc(2,1);
+    p[0] = toascii(terminator);
+    p[1] = '\0';//得到strtok的第二个参数（char *类型字符串p）。
+
+    int cunt = 0;//记录切割得到的子字符串数。
+    int i = 0;
+
+    while(i < len)
+    {
+    char *temp = strtok(str1 + 1,p);//temp用来临时存放子字符串。
+    while(temp != NULL && cunt + 1 <= max){
+        size_t temp_len = strlen(temp);
+        strbuf_temp = (struct strbuf *)malloc(sizeof (struct strbuf));//每保存一次子字符串就重新分配一次空间。
+        strbuf_init(strbuf_temp,temp_len + 1);
+        strbuf_add(strbuf_temp,temp,temp_len);//子字符串已保存到strbuf中。
+
+        ret = (struct strbuf **)realloc(ret,sizeof (struct strbuf*) * (cunt + 2));//每保存一次strbuf的指针，就扩大一次容量。
+        ret[cunt++] = strbuf_temp;//保存每一次strbuf的指针。
+        i += temp_len+1;
+        temp = strtok(NULL,p);//继续切割。
+    }
+    }
+    ret = (struct strbuf **)realloc(ret, sizeof(void *) * (cunt+1));
+    ret[cunt] = NULL;
+    free(str1);free(p);
+    return ret;
 }
 
-bool strbuf_begin_judge(char* target_str, const char* str, int strlen)
+bool strbuf_begin_judge(char *target_str, const char *str, int len) 
 {
-    return 0;
+    if(str == NULL) 
+        return true;
+    if(target_str == NULL) 
+        return false;
+    return strncmp(target_str,str,strlen(str)) == 0;
 }
-char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len)
+
+char *strbuf_get_mid_buf(char *target_buf, int begin, int end, int len) 
 {
-    return NULL;
+    if(target_buf == NULL)
+        return NULL;
+    char *str = (char *) malloc(sizeof(char) * (end - begin + 2));
+    int n = 0;
+    for (int i = begin; i < end; i++)
+    {
+        str[n++] = target_buf[i];
+    }
+    str[n] = '\0';
+
+    return str;
 }
