@@ -216,17 +216,14 @@ struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, in
 
     char *str1 = (char *)malloc(len+1);
     memmove(str1,str,len+1);//得到一个可以切割的str（str1）。
-    
+
     char *p = (char *)calloc(2,1);
     p[0] = toascii(terminator);
     p[1] = '\0';//得到strtok的第二个参数（char *类型字符串p）。
 
     int cunt = 0;//记录切割得到的子字符串数。
-    int i = 0;
 
-    while(i < len)
-    {
-    char *temp = strtok(str1 + 1,p);//temp用来临时存放子字符串。
+    char *temp = strtok(str1,p);//temp用来临时存放子字符串。
     while(temp != NULL && cunt + 1 <= max){
         size_t temp_len = strlen(temp);
         strbuf_temp = (struct strbuf *)malloc(sizeof (struct strbuf));//每保存一次子字符串就重新分配一次空间。
@@ -235,10 +232,9 @@ struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, in
 
         ret = (struct strbuf **)realloc(ret,sizeof (struct strbuf*) * (cunt + 2));//每保存一次strbuf的指针，就扩大一次容量。
         ret[cunt++] = strbuf_temp;//保存每一次strbuf的指针。
-        i += temp_len+1;
         temp = strtok(NULL,p);//继续切割。
     }
-    }
+
     ret = (struct strbuf **)realloc(ret, sizeof(void *) * (cunt+1));
     ret[cunt] = NULL;
     free(str1);free(p);
