@@ -222,10 +222,20 @@ struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, in
     p[1] = '\0';//得到strtok的第二个参数（char *类型字符串p）。
 
     int cunt = 0;//记录切割得到的子字符串数。
+        for(int i=0;i<len;i++)
+        {
+        if(str1[i]=='\0')
+            str1[i]='!';
+    }
 
     char *temp = strtok(str1,p);//temp用来临时存放子字符串。
     while(temp != NULL && cunt + 1 <= max){
         size_t temp_len = strlen(temp);
+        for(int i=0;i<temp_len;i++){
+            if(temp[i]=='!')
+            {
+                temp[i]='\0';
+            }
         strbuf_temp = (struct strbuf *)malloc(sizeof (struct strbuf));//每保存一次子字符串就重新分配一次空间。
         strbuf_init(strbuf_temp,temp_len + 1);
         strbuf_add(strbuf_temp,temp,temp_len);//子字符串已保存到strbuf中。
