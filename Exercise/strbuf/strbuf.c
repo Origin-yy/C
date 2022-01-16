@@ -207,48 +207,56 @@ int strbuf_getline(struct strbuf *sb, FILE *fp)
     return 1;
 }
 
+
 //CHALLENGE
 
 struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
 {
-    struct strbuf **ret = NULL;//得到存放struct strbuf类型的二维数组空间，下面分配。
-    struct strbuf *strbuf_temp;//得到临时存放切割得到的子字符串的strbuf，下面分配。
+    int i,count=0;
 
-    char *str1 = (char *)malloc(len+1);
-    memmove(str1,str,len+1);//得到一个可以切割的str（str1）。
+    char q[2]; 
+    q[0]=(char)terminator;
+    q[1]='\0';
+    struct strbuf **ptr2=NULL;
+    struct strbuf *ptr;
+    char s[len+1];
+    memcpy(s,str,len+1);
 
-    char *p = (char *)calloc(2,1);
-    p[0] = toascii(terminator);
-    p[1] = '\0';//得到strtok的第二个参数（char *类型字符串p）。
-
-    int cunt = 0;//记录切割得到的子字符串数。
-        for(int i=0;i<len;i++)
-        {
-        if(str1[i]=='\0')
-            str1[i]='!';
+    for(i=0;i<len;i++){
+        if(s[i]=='\0'){
+            s[i]='#';
+        }
     }
+    char*r=strtok(s,q);
 
-    char *temp = strtok(str1,p);//temp用来临时存放子字符串。
-    while(temp != NULL && cunt + 1 <= max){
-        size_t temp_len = strlen(temp);
-        for(int i=0;i<temp_len;i++){
-            if(temp[i]=='!')
-            {
-                temp[i]='\0';
+
+    while(r!=NULL&&count<max)
+    {   
+        int rlen=strlen(r);
+        for(i=0;i<rlen;i++){
+            if(r[i]=='#'){
+                r[i]='\0';
             }
-        strbuf_temp = (struct strbuf *)malloc(sizeof (struct strbuf));//每保存一次子字符串就重新分配一次空间。
-        strbuf_init(strbuf_temp,temp_len + 1);
-        strbuf_add(strbuf_temp,temp,temp_len);//子字符串已保存到strbuf中。
+        }
+        ptr=(struct strbuf*)malloc(sizeof(struct strbuf));
+        {
+            strbuf_init(ptr,rlen+1); 
+            strbuf_add(ptr,r,rlen);
+        }
+        ptr2=(struct strbuf**)realloc(ptr2,sizeof(struct strbuf*)*(count+2));
+        ptr2[count]=ptr;
+        count++;
 
-        ret = (struct strbuf **)realloc(ret,sizeof (struct strbuf*) * (cunt + 2));//每保存一次strbuf的指针，就扩大一次容量。
-        ret[cunt++] = strbuf_temp;//保存每一次strbuf的指针。
-        temp = strtok(NULL,p);//继续切割。
+        r=strtok(NULL,q);
+
     }
 
-    ret = (struct strbuf **)realloc(ret, sizeof(void *) * (cunt+1));
-    ret[cunt] = NULL;
-    free(str1);free(p);
-    return ret;
+    ptr2=(struct strbuf**)realloc(ptr2,sizeof(struct strbuf*)*(count+1));
+
+
+    ptr2[count]= NULL;
+    return ptr2;
+
 }
 
 bool strbuf_begin_judge(char *target_str, const char *str, int len) 
