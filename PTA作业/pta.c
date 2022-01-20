@@ -1,9 +1,22 @@
-#include<stdio.h>
-int main(void)
+int main()
 {
-    int F = 0;
-    scanf("%d",&F);
-    printf("Celsius = %d\n",5*(F-32)/9);
-
-    return 0;
+	char ch = 0;
+	while ((ch = getchar()) != '#')
+	{
+		 if (ch >= 'A' && ch <= 'Z')
+		{
+			ch += 32;
+			printf("%c",ch);
+		}
+		else if (ch >= 'a' && ch <= 'z')
+		{
+			ch -= 32;
+			printf("%c",ch);
+		}
+        else
+        {
+            printf("%c",ch);
+        }
+	}
+	return 0;
 }
