@@ -1,15 +1,16 @@
 #include<stdio.h>
-#include<algorithm>
-#include<iostream>
+#include<stdlib.h>
 struct node
 {
     int n,v;
     double r;
 }a[100];
 
-int cmp( struct node a,struct node b)
+int cmp(const void *p1,const void *p2)
 {
-    return a.r >b.r;
+    struct node*pp1 = (struct node*)p1;
+    struct node*pp2 = (struct node*)p2;
+    return (pp1->r > pp2->r ? 1:-1);
 }
 
 int main(void)
@@ -25,7 +26,8 @@ int main(void)
             scanf("%d %d",&a[i].n,&a[i].v);
             a[i].r = (double)a[i].n/a[i].v;
         }
-        sort(a.a+s,cmp);
+        qsort(a+1,s,sizeof(struct node),cmp);
+
         double ans = 0;
         for(int i = 1;i<= s;i++)
         {
@@ -36,7 +38,7 @@ int main(void)
             }
             else
             {
-                ans += (a[i].v/a[i].n*w);
+                ans += ((double)a[i].v/a[i].n)*w;
                 break;
             }
         }
