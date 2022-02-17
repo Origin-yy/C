@@ -12,7 +12,7 @@ void bfs(int p)//从现在的队列头开始
     if(p >= cnt) //如果队列头的位置已经超过了队列中所有保存数据的位置，说明说所有的点都已经记录过了，直接返回
         return;
     int x = queue_map[p][0],y = queue_map[p][1];//读取队列头位置的点的数据：横纵坐标，下一行读取步数
-    int sum = queue_map[p][2];//sum表示从起点到达这个点所需的最短步数
+    int sum = queue_map[ p][2];//sum表示从起点到达这个点所需的最短步数
     if(map[x][y] == 'T')//是终点就保存最短步数并返回
     {
         q = p;
