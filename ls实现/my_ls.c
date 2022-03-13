@@ -23,12 +23,26 @@
 int flag = 0;     //记录所有参数
 char path[260];   //记录路径名
 
+//分析参数的函数
+void ana_param(int argc,char *argv[],char (path));
 //错误处理函数
 void my_err(const char *err_string, int line);
 
 
 
 int main (int argc,char* argv[])
+{
+    
+
+
+
+
+    return 0;
+}
+
+
+
+void anal_param(int argc,char *argv[],char (path))
 {
     char param[8] = {'0'};//记录有哪些参数
     int n = 0;            //记录参数个数
@@ -83,7 +97,7 @@ int main (int argc,char* argv[])
         }
         else
         {
-            printf("my_ls: error -%c\n",param[i]);
+            printf("my_ls: 无法实现参数： -%c\n",param[i]);
             exit(1);
         }
     }
@@ -93,9 +107,8 @@ int main (int argc,char* argv[])
         strcpy(path,".");
         display_dir(path);
     }
-    int i = 0;
     //查找并保存输入的文件（目录）路径，并显示该目录
-    do
+    for(int i = 1;i++;i<argc)
     {   //如果是参数就跳过，否则（是路径）就保存该路径
         if(argv[i][0] == '-')
         {
@@ -104,40 +117,13 @@ int main (int argc,char* argv[])
         }
         else
             strcpy(path,argv[i]);
-
-        //如果输入的路径不存在，报错并退出程序
+        //如果输入的路径不存在，传到错误函数，报错并退出
         if(lstat(path,&buf) == -1)
             my_err("lstat",__LINE__);
-
-        if(S_ISDIR(buf.st_mode))    //argv[i]是目录
-        {
-            display_dir(path);
-            i++;
-        }
-        else        //argv[i]是文件
-        {
-            if(flag_param & PARAM_L)
-                display_l(path);
-            else
-            {
-                display_single(path);
-                printf("\n");
-            }
-            i++;
-        }
-    }while(i < argc);
+    }
     
 
-
-
-
-
-    return 0;
 }
-
-
-
-
 //错误处理函数
 void my_err(const char *err_string, int line)
 {
