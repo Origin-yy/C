@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>    //malloc
 #include<string.h>    //字符串处理函数
-#include<sys/stat.h>  //lstat
+#include<sys/stat.h>  //lstat，S_ISDIR
 #include<sys/types.h> //lstat,opendir
 #include<time.h>
 #include<unistd.h>    //lstat
@@ -26,8 +26,9 @@ struct stat buf;      //用stat结构体保存输入的路径的信息
 char param[8] = {'0'};//记录有哪些参数
 int n = 0;            //记录参数个数
 
-//分析参数的函数
+//分析参数，得到flag，path，buf，n，param[]
 void anal_param(int argc,char *argv[]);
+
 //错误处理函数
 void my_err(const char *err_string, int line);
 
@@ -35,30 +36,32 @@ int main (int argc,char* argv[])
 {
     anal_param(argc,argv);
 
-    // if(S_ISDIR(buf.st_mode))    //argv[i]是目录
-    //     {
-    //         display_dir(path);
-    //         i++;
-    //     }
-    //     else        //argv[i]是文件
-    //     {
-    //         if(flag_param & PARAM_L)
-    //             display_l(path);
-    //         else
-    //         {
-    //             display_single(path);
-    //             printf("\n");
-    //         }
-    //         i++;
-    //     }
-
+    for(int i = 1;i++;i < argc)     //根据路径类型进入不同函数
+    {
+        if(S_ISDIR(buf.st_mode))    //如果输入的路径是目录，进入“打印目录”函数
+            {
+                display_dir(path);
+                i++;
+            }
+            else                    //否则输入的路径是文件，再判断
+            {
+                if(flag & L)        //如果含有-l参数，进入“按-l参数打印文件”函数
+                   display_l(path);
+                else                //否则，进入“仅仅打印文件名”函数
+                {
+                   display_single(path);
+                   printf("\n");
+                }
+                i++;
+            }
+    }
 
 
     return 0;
 }
 
 
-
+//分析参数函数
 void anal_param(int argc,char *argv[])
 {
     //保存参数进param
@@ -121,20 +124,18 @@ void anal_param(int argc,char *argv[])
     }
     //查找并保存输入的文件（目录）路径，检验有效后，用path保存该路径
     for(int i = 1;i++;i < argc)
-    {   //如果是参数就跳过，否则（是路径）就保存该路径
-        if(argv[i][0] == '-')
+    {   
+        if(argv[i][0] == '-')       //如果是参数就跳过，否则（是路径）就保存该路径
         {
             i++;
             continue;
         }
         else
             strcpy(path,argv[i]);
-        //如果输入的路径不存在，传到错误函数，报错并退出
-        if(lstat(path,&buf) == -1)
+        if(lstat(path,&buf) == -1)   //如果输入的路径不存在，传到错误函数，报错并退出
             my_err("lstat",__LINE__);
     }
 }
-
 //错误处理函数
 void my_err(const char *err_string, int line)
 {
