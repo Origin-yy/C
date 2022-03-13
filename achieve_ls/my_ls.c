@@ -20,20 +20,37 @@
 #define S 64      //-s：按文件大小排序显示
 #define max_rowline 100   //一行显示的最多字符串
 
-int flag = 0;     //记录所有参数
-char path[260];   //记录路径名
+int flag = 0;         //记录所有参数
+char path[260];       //记录路径名
+struct stat buf;      //用stat结构体保存输入的路径的信息
+char param[8] = {'0'};//记录有哪些参数
+int n = 0;            //记录参数个数
 
 //分析参数的函数
-void ana_param(int argc,char *argv[],char (path));
+void anal_param(int argc,char *argv[]);
 //错误处理函数
 void my_err(const char *err_string, int line);
 
-
-
 int main (int argc,char* argv[])
 {
-    
+    anal_param(argc,argv);
 
+    // if(S_ISDIR(buf.st_mode))    //argv[i]是目录
+    //     {
+    //         display_dir(path);
+    //         i++;
+    //     }
+    //     else        //argv[i]是文件
+    //     {
+    //         if(flag_param & PARAM_L)
+    //             display_l(path);
+    //         else
+    //         {
+    //             display_single(path);
+    //             printf("\n");
+    //         }
+    //         i++;
+    //     }
 
 
 
@@ -42,14 +59,10 @@ int main (int argc,char* argv[])
 
 
 
-void anal_param(int argc,char *argv[],char (path))
+void anal_param(int argc,char *argv[])
 {
-    char param[8] = {'0'};//记录有哪些参数
-    int n = 0;            //记录参数个数
-    struct stat buf;      //用stat结构体保存文件信息
-
     //保存参数进param
-    for(int i = 1; i < argc; i++)
+    for(int i =  1; i < argc; i++)
     {
         if(argv[i][0] == '-')
         {
@@ -101,14 +114,13 @@ void anal_param(int argc,char *argv[],char (path))
             exit(1);
         }
     }
-    //如果没有输入文件（目录）路径，显示当前目录
+    //如果没有输入文件（目录）路径，用path保存当前路径
     if((n + 1) == argc)
     {
         strcpy(path,".");
-        display_dir(path);
     }
-    //查找并保存输入的文件（目录）路径，并显示该目录
-    for(int i = 1;i++;i<argc)
+    //查找并保存输入的文件（目录）路径，检验有效后，用path保存该路径
+    for(int i = 1;i++;i < argc)
     {   //如果是参数就跳过，否则（是路径）就保存该路径
         if(argv[i][0] == '-')
         {
@@ -121,9 +133,8 @@ void anal_param(int argc,char *argv[],char (path))
         if(lstat(path,&buf) == -1)
             my_err("lstat",__LINE__);
     }
-    
-
 }
+
 //错误处理函数
 void my_err(const char *err_string, int line)
 {
