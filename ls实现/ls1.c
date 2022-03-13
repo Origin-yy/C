@@ -1,638 +1,568 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-#include <pwd.h>
-#include <grp.h>
-#include <time.h>
-#include <dirent.h>
+#include<stdio.h>
 #include<stdlib.h>
-#include<sys/ioctl.h>
-int terminalWidth ;
-char filenames[256][PATH_MAX];
-char filenames1[256][100];
-int alfag=0,lflag=0;//参数种类,对-l和-a,-r,-R进行判断
-int cnt=0;
-void Quicksort(int cnt1,char filenames2[][PATH_MAX],int start);
-void recursion(char * path,int alfag);
-int ls_prepare(char *path,int lflag);
-int ls_prepare(char *pathname,int lflag);
-int _ls(char *path,int lflag,int alfag);
-int colormode,foreground,background;    
-void getcolor( char *filename ){
-    struct stat info;    //通过设置可以获取文件属性
-    foreground=0;
-   lstat( filename,&info );//将文件输入获得赋值给info
-//    foreground = 37;
-    switch ( (info.st_mode & S_IFMT) ){
-        case S_IFREG:               /*regular 普通文件 , 色*/
-            {
-                foreground = 37;
-                    if((info.st_mode&S_IXOTH)||(info.st_mode&S_IXGRP)||(info.st_mode&S_IXUSR))
-      {
-            foreground = 32;
-        }
-            break;
-            }
-        case S_IFLNK:               /*symbolic link 链接文件 , 青蓝色*/
-            foreground = 36;
-            break;
-        case S_IFSOCK:              /*紫红色*/
-            foreground = 35;
-            break;
-        case S_IFDIR:               /*directory 目录文件 , 蓝色*/
-        foreground = 34;
-            break;
-        case S_IFBLK:               /*block special 块设备文件 , 黄色*/
-            foreground = 33;
-            break;
-        case S_IFCHR:               /*character special 字符设备文件 , 黄色*/
-            foreground = 33;
-            break;
-    }
-}
-struct filename
-{
-    char filename[PATH_MAX];
-    struct filename * next;
-};
-void Quicksort1(struct filename * pHead,struct filename * tail)
-{
-    if(pHead->next==tail)
-        return ;
-    if(pHead->next->next==tail)
-    {
-            return ;
-    }
-    struct filename * mid = pHead->next;
-    struct filename * p = pHead;
-    struct filename * q =mid;
-    struct filename * t = mid->next;
-    char name[MAXNAMLEN];
-    strcpy(name,mid->filename);
-    while(t!=tail)
-    {
-        if(strcmp(t->filename,name)<0)
-            p=p->next=t;
-        else
-            q=q->next=t;
-        t=t->next;
-    }
-    p->next= mid;
-    q->next =tail;
-    Quicksort1( pHead ,mid );
-    Quicksort1( mid  , tail);
-}
-void list_R(const char * dirname,int lflag)
-{
-        DIR     *dir_ptr;       
-        struct dirent   *direntp;       
-        char        *fullpath;
-        struct stat info;
-//        int i;
-        struct filename * pHead,*p1;
-        pHead=p1=(struct filename *)malloc(sizeof(struct filename));
-        pHead->next=p1->next=NULL;
-        printf("%s:\n",dirname);
-        if ( ( dir_ptr = opendir( dirname ) ) == NULL ){
-            fprintf(stderr,"list_R: cannot open %s\n", dirname);
-            return;
-        }
-     //  printf("%s:\n",dirname);
-//        i=0;
-        fullpath = (char *)malloc(strlen(dirname) + 1 + MAXNAMLEN + 1);
-        while ( ( direntp = readdir( dir_ptr ) ) != NULL )
-        {   
-            struct filename *new1=(struct filename *)malloc(sizeof(struct filename));
-            if(alfag==0)
-           { 
-            if(direntp->d_name[0]=='.')
-            {
-                continue;
-            }
-          }          
+#include<string.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+#include<time.h>
+#include<unistd.h>
+#include<dirent.h>
+#include<grp.h>
+#include<pwd.h>
+#include<errno.h>
 
-             sprintf(fullpath,"%s/%s",dirname,direntp->d_name);
-         if(lflag==3)
-             _ls(fullpath,lflag,alfag);
-             else
-             {
-                   strcpy(new1->filename,direntp->d_name);
-                   p1->next=new1;
-                   p1=new1;
-                   new1->next=NULL;
-            }
-        }
-        Quicksort1(pHead,NULL);
-       struct filename *  pTemp=pHead->next;
-        struct filename * q=pHead;
-        if(pHead->next!=NULL)
-        {
-            while(pTemp!=NULL)
-        {
-            getcolor(pTemp->filename);
-            printf("\033[%dm%s\033[0m\n",foreground,pTemp->filename);
-            free(q); 
-            q=pTemp;
-            pTemp=pTemp->next;
-        }
-        }
-        if ( lflag ){
-            rewinddir(dir_ptr);
-            while ( ( direntp = readdir( dir_ptr ) ) != NULL )
-            {
-             if(alfag==0)
-          { 
-              if(direntp->d_name[0]=='.')
-             {
-               continue;
-             }
-           }
-                sprintf(fullpath,"%s/%s",dirname,direntp->d_name);
-            //                printf("%s",direntp->d_name);
-           //   puts("");
-               lstat(fullpath,&info);
-        //       _ls(fullpath,lflag,alfag);
-        if(alfag==0)
-        {
-            if(S_ISDIR(info.st_mode))
-                  {
-                        putchar('\n');
-                        list_R( fullpath, lflag );
-                    }
-        }
-        else
-        {
-            if ( S_ISDIR(info.st_mode)&& direntp->d_name[0]!='.')
-                    //
-                     {
-                    putchar('\n');
-                    list_R( fullpath, lflag );
-                }
-             }
-        }
-        }
-        closedir(dir_ptr);
-        free(fullpath);
+//初步实现-a,-l,-R,-r,-d,-f及相应结合操作
+
+#define PARAM_NONE 0    //无参数
+#define PARAM_A 1       //-a：显示所有文件
+#define PARAM_L 2       //-l：显示文件的详细信息
+#define PARAM_R 4       //-R：连同子目录内容一起列出来
+#define PARAM_r 8       //-r：反向输出
+#define PARAM_d 16      //-d：只显示目录本身信息
+#define PARAM_f 32      //-f：无序输出
+#define MAXROWLEN 100   //一行显示的最多字符串
+
+int g_leave_len = MAXROWLEN;    //一行剩余长度，用于输出对亲
+int g_maxlen;                   //存放某目录下最长文件名的长度
+
+int flag_param = PARAM_NONE;    //参数种类
+int Index[100000];        //记录filenames下标
+char PATH[PATH_MAX + 1];        //记录路径名（-R）
+int flag;
+
+void display_dir(char *path);
+
+//错误处理函数
+void my_err(const char *err_string, int line)
+{
+    fprintf(stderr,"line: %d ",line);
+    perror(err_string);            //根据errno的值输出错误信息
+    exit(1);
+}
+
+//染色函数
+void color(char *name, struct stat buf)
+{
+    if(S_ISDIR(buf.st_mode))    //目录
+        printf("\e[1;34m%-s\e[0m",name);
+    else if(S_ISDIR(buf.st_mode) && (buf.st_mode & 0777) == 0777)   //满权限目录
+        printf("\e[1;34;42m%-s\e[0m",name);
+    else if(S_ISLNK(buf.st_mode))   //符号链接
+        printf("\e[1;36m%-s\e[0m",name);
+    else if(buf.st_mode & S_IXUSR || buf.st_mode & S_IXGRP || buf.st_mode & S_IXOTH)    //可执行文件
+        printf("\e[1;32m%-s\e[0m",name);
+    else
+        printf("%-s",name);
+}
+
+//-l显示
+void display_l(char *name)
+{
+    struct stat buf;
+    char buf_time[32];
+    struct passwd *psd;     //获取用户名
+    struct group *grp;      //获取所属组名
+
+    if(lstat(name,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+    //获取并打印文件类型
+    if(S_ISLNK(buf.st_mode))
+        printf("1");
+    else if(S_ISREG(buf.st_mode))
+        printf("-");
+    else if(S_ISDIR(buf.st_mode))
+        printf("d");
+    else if(S_ISCHR(buf.st_mode))
+        printf("c");
+    else if(S_ISBLK(buf.st_mode))
+        printf("b");
+    else if(S_ISFIFO(buf.st_mode))
+        printf("f");
+    else if(S_ISSOCK(buf.st_mode))
+        printf("s");
+
+    //获取并打印文件所有者权限
+    if(buf.st_mode & S_IRUSR)
+        printf("r");
+    else
+        printf("-");
+    if(buf.st_mode & S_IWUSR)
+        printf("w");
+    else
+        printf("-");
+    if(buf.st_mode & S_IXUSR)
+        printf("x");
+    else
+        printf("-");
+
+    //获取并打印同组其他用户对该文件的操作权限
+    if(buf.st_mode & S_IRGRP)
+        printf("r");
+    else
+        printf("-");
+    if(buf.st_mode & S_IWGRP)
+        printf("w");
+    else
+        printf("-");
+    if(buf.st_mode & S_IXGRP)
+        printf("x");
+    else
+        printf("-");
+
+    //获取并打印其他用户对该文件操作权限
+    if(buf.st_mode & S_IROTH)
+        printf("r");
+    else
+        printf("-");
+    if(buf.st_mode & S_IWOTH)
+        printf("w");
+    else
+        printf("-");
+    if(buf.st_mode & S_IXOTH)
+        printf("x");
+    else
+        printf("-");
+
+    printf(" ");
+
+    //根据uid和gid获取文件所有者的用户名和组名
+    psd = getpwuid(buf.st_uid);
+    grp = getgrgid(buf.st_gid);
+    printf("%3ld ",buf.st_nlink);    //打印文件链接数
+    printf("%-9s",psd->pw_name);
+    printf("%-8s",grp->gr_name);
+
+    printf("%6ld",buf.st_size);      //打印文件大小
+    strcpy(buf_time,ctime(&buf.st_mtime));
+    buf_time[strlen(buf_time) - 1] = '\0';  //去掉换行符
+    printf(" %s ",buf_time);         //打印文件时间信息
+    color(name,buf);
+    printf("\n");
+}
+//-l-R
+void display_R_l(char *name)
+{
+    struct stat buf;
+    if(lstat(name,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+
+    if(S_ISDIR(buf.st_mode))
+    {
+        printf("\n");
+
+        display_dir(name);
+    
+        char *p = PATH;
+        while(*++p);
+        while(*--p != '/');
+        *p = '\0';
+        chdir("..");    //返回上层目录
     }
-void Quicksort(int cnt1,char filenames2[][PATH_MAX],int start)
+    free(name);
+}
+//无
+void display_single(char *name)
+{
+    int i,len;
+    struct stat buf;
+    if(lstat(name,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+    //如果本行不足以打印一个文件名则换行
+    if(g_leave_len < g_maxlen)
+    {
+        printf("\n");
+        g_leave_len = MAXROWLEN;
+    }
+
+    len = strlen(name);
+    len = g_maxlen - len;
+    color(name,buf);
+
+    for(i = 0; i < len; i++)
+        printf(" ");
+    printf("  ");   //多打两个空格
+    g_leave_len -= (g_maxlen + 2);
+}
+//-R
+void display_R_single(char *name)
+{
+    struct stat buf;
+
+    if(lstat(name,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+    if(S_ISDIR(buf.st_mode))
+    {
+        printf("\n\n");
+        
+        display_dir(name);
+        
+        char *p = PATH;
+        while(*++p);
+        while(*--p != '/');
+        *p = '\0';
+        chdir("..");
+        printf("\n");
+    }
+    free(name);
+}
+
+void display(char **name, int count)
 {
     int i,j;
-    char *name;
-    char *name1;
-    name=(char *)malloc(MAXNAMLEN);
-    name1=(char *)malloc(MAXNAMLEN);
-    memset(name,0,MAXNAMLEN);
-    memset(name,0,MAXNAMLEN);
-    if(start >cnt1)
-        return ;
-    strcpy(name,filenames2[start]);
-    i=start;
-    j=cnt1;
-    while(i!=j)
-    {
-        while(strcmp(filenames2[j],name)<=0 && i<j)
-            j--;
-        while(strcmp(filenames2[i],name)>=0 && i<j)
-            i++;
-        if(i<j)
-        {
-                strcpy(name1,filenames2[i]);
-           strcpy(filenames2[i],filenames2[j]);
-            strcpy(filenames2[j],name1);
-      }
-    }
-    strcpy(filenames2[start],filenames2[i]);
-    strcpy(filenames2[i],name);
-       Quicksort(i-1,filenames2,start);
-       Quicksort(cnt1,filenames2,i+1);
-       return ;
-       free(name);
-       free(name1);
-}
-void getWidth(){
-    struct winsize wbuf;
-    terminalWidth = 80;
-    if( isatty(STDOUT_FILENO) ){
-        if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &wbuf) == -1 || wbuf.ws_col == 0){
-        }
-        else
-            terminalWidth = wbuf.ws_col;
-    }
-    return ;
-}
-int getlen_str(char * str)
-{
-    int res=0,i;
-    while(*str!='\0')
-    {
-        if(*str > 0)
-        {
-            res++;
-            str++;
-        }
-        else
-        {
-            for(i=7;i>=0;i--)
-            {
-                if(!((*str>>7)&1))
-                    break;
-                res+=2;
-                str+=7-i;
-             //   if((*str>>7)&1)
-            //        break;
-            }
-        }
-    }
-    return res;
-}
-void display_single(int cnt,int alfag)
-{
-    int i,k,n=0,m=0,j=0,n1;
-   n=cnt,n1=cnt;
-   i=0;
-  Quicksort(cnt,filenames,0);
-    while(n>=0)
-    {
-        n--;
-        strcpy(filenames1[i],filenames[i]);
-        for(m=0;m<((int)strlen(filenames[i]));m++)
-        {
-
-            if((filenames[i][m]=='.'&&filenames[i][m-1]=='/'))
-             {   
-                 break ;
-             }
-             if(filenames[i][m]=='/')
-             {
-                 k=m;
-           }
-        }   
-              for(j=0;j<=k;j++)
-           {
-               filenames[i][j]=' ';
-            }
-                                  if(alfag==0)
-                     {
-
-                       if(filenames[i][k+1]=='.')
-                       {
-                                strcpy(filenames[i]," ");
-                        }
-                     }
-        i++;
-    }
-    Quicksort(cnt,filenames,0);
-    int wordColNUM=20;
-     cnt=cnt<wordColNUM?cnt:wordColNUM;//列
-    while(cnt>0)
-    {  int wordLenMax[4000]={0};//窗口的长度
-      int wordRowNum=0;//窗口的行
-      j=0;
-      int sum=0;
-      int length[4000];
-      for(j=0;j<n1;j++)
-      {
-          length[j]=getlen_str(filenames[j]);
-      }
-     wordRowNum=(n1%cnt)?(n1/cnt):(n1/cnt+1);//行
-     if((cnt-1)*wordRowNum>=terminalWidth)
-         cnt-- ;
-     for(j=0;j<cnt;j++)
-     {
-         int f=j*wordRowNum;
-         for(i=0;i<wordRowNum;i++)//求出行数最宽的是
-      {
-          if(f>n1)
-              break;
-          if(getlen_str(filenames[f])>wordLenMax[j])
-              wordLenMax[j]=(getlen_str(filenames[f]));
-          f++;
-      }
-         if(j!=cnt-1)
-         sum+=wordLenMax[j]+2;
-     }
-     if(sum<terminalWidth)
-     {
-       //  cnt--;
-         int t=wordRowNum - cnt * wordRowNum +n1;
-         for(int p=0;p<wordRowNum;p++)
-         {
-             for(int o=0;o<cnt-1;o++)
-             {
-               getcolor(filenames1[p+o*wordRowNum]);
-                 printf("\033[%dm%s\033[0m",foreground,filenames[p+o*wordRowNum]);
-                 for(int y=0;y<wordLenMax[o]-length[p+o*wordRowNum];y++)
-                 printf(" ");
-                 for( int g=0;g<2;g++)
-                    printf(" ");
-          //   printf("\n");
-            }
-             if(t)
-             {
-                 getcolor(filenames1[p+(cnt-1 )*wordRowNum]);
-                 printf("\033[%dm%s\033[0m",foreground,filenames[p+(cnt-1)*wordRowNum]);
-                 t--;
-             }
-             printf("\n");
-         }            
-         break;
-     }
- //     wordLenMax +=2; //空格防止一组由多行输出;
- //     wordRowNum = terminalWidth/wordLenMax;    //面积除宽等于列的长度
-     cnt--;
-     if(!cnt)
-     {
-         cnt=1;
-         for(int x=0;x<n;x++)
-         {
-             getcolor(filenames1[x]);
-             printf("\033[%dm%s\033[0m\n",foreground,filenames[x]);
-
-         }
-     }
-    }
-      return ;
-}
-int _ls(char *path,int lflag,int alfag)
-{
-    int i,n,k;
-    int  temp;
+    int index[100000];
+    memset(&index,0,sizeof(index));
     struct stat buf;
-    char *out=NULL;
-//   char out[PATH_MAX];
-    struct passwd *pw=NULL;
-    struct group *gr=NULL;
-    char *t=NULL;
-    char *name=NULL;
-    char *name1=NULL;
-      name = (char *)malloc(strlen(path) + 1 + MAXNAMLEN + 1);
-      name1 =(char *)malloc(strlen(path)+1 +MAXNAMLEN +1);
-      out=(char *)malloc(PATH_MAX);
-        memset(out,0,PATH_MAX);
-   //   j=strlen(out);
-    strcpy(name,path);
-    strcpy(name1,path);
-    for(i=0;i<((int)strlen(name));i++)
+
+    //-r需要逆序
+    if(flag_param & PARAM_r)
     {
-         if((name[i]=='.'&&name[i-1]=='/')&&alfag==0)
-         {   // cnt--;
-             return 0;
-         }
-         if(name[i]=='/')
-            k=i;
+        for(i = count - 1,j = 0; i >= 0; i--,j++)
+            index[j] = Index[i];
     }
-    for(i=0;i<=k;i++)
+    else
     {
-         name[i]=' ';     
+        for(i = 0; i < count; i++)
+            index[i] = Index[i];
     }
-    if(lflag==2)
-        return 0;
-   // lstat(path,&buf);
-    if(lstat(path,&buf)<0)
+
+    memset(&Index,0,sizeof(Index));
+
+    switch(flag_param)
     {
-    //  fprintf(stderr,"stat error:%s\n",strerror(errno));
-        return 0 ;
+
+    case PARAM_r + PARAM_f:
+    case PARAM_f:
+    case PARAM_r:
+    case PARAM_NONE:     
+        for(i = 0; i < count; i++)
+            if(name[index[i]][0] != '.')
+                display_single(name[index[i]]);
+        break;
+    
+    case PARAM_A + PARAM_r + PARAM_f:
+    case PARAM_A + PARAM_f:
+    case PARAM_A + PARAM_r:
+    case PARAM_A:           
+        for(i = 0; i < count; i++)
+            display_single(name[index[i]]);
+        break;
+    
+    case PARAM_L + PARAM_r + PARAM_f:
+    case PARAM_L + PARAM_f:
+    case PARAM_L + PARAM_r:
+    case PARAM_L:           
+        for(i = 0; i < count; i++)
+            if(name[index[i]][0] != '.')
+                display_l(name[index[i]]);
+        break;
+    
+    case PARAM_R + PARAM_r + PARAM_f:
+    case PARAM_R + PARAM_f:
+    case PARAM_R + PARAM_r:
+    case PARAM_R:
+        for(i = 0; i < count; i++)
+            if(name[index[i]][0] != '.')
+                display_single(name[index[i]]);
+        
+        for(i = 0; i < count; i++)
+            if(name[index[i]][0] != '.')
+                display_R_single(name[index[i]]);
+        break;
+
+    case PARAM_A + PARAM_L + PARAM_r + PARAM_f:
+    case PARAM_A + PARAM_L + PARAM_f:
+    case PARAM_A + PARAM_L + PARAM_r:
+    case PARAM_A + PARAM_L:
+        for(i = 0; i < count; i++)
+            display_l(name[index[i]]);
+        break;
+
+    case PARAM_A + PARAM_R + PARAM_r + PARAM_f:
+    case PARAM_A + PARAM_R + PARAM_f:
+    case PARAM_A + PARAM_R + PARAM_r:
+    case PARAM_A + PARAM_R:
+        for(i = 0; i < count; i++)
+                display_single(name[index[i]]);
+        
+        for(i = 0; i < count; i++)
+            if((strcmp(name[index[i]],".") != 0) && (strcmp(name[index[i]],"..") != 0))
+                display_R_single(name[index[i]]);
+        break;
+    
+    case PARAM_R + PARAM_L + PARAM_r + PARAM_f:
+    case PARAM_R + PARAM_L + PARAM_f:
+    case PARAM_R + PARAM_L + PARAM_r:
+    case PARAM_R + PARAM_L:
+        for(i = 0; i < count; i++)
+            if(name[index[i]][0] != '.')
+                display_l(name[index[i]]);
+        
+        for(i = 0; i < count; i++)
+            if(name[index[i]][0] != '.')
+                display_R_l(name[index[i]]);
+        break;
+    
+    case PARAM_A + PARAM_L + PARAM_R + PARAM_r + PARAM_f:
+    case PARAM_A + PARAM_L + PARAM_R + PARAM_f:
+    case PARAM_A + PARAM_L + PARAM_R + PARAM_r:
+    case PARAM_A + PARAM_L + PARAM_R:
+        for(i = 0; i < count; i++)
+                display_l(name[index[i]]);
+        
+        for(i = 0; i < count; i++)
+            if((strcmp(name[index[i]],".") != 0) && (strcmp(name[index[i]],"..") != 0))
+                display_R_l(name[index[i]]);
+        break;
+    default:
+        break;
+    
     }
-    //获取字符串的属性：普通文件-、目录d、字符设备c、块设备b、
-    //管道文件p、连接文件l、套接字文件s
-    //st.mode表示的是文件的权限和文件的用户
-        switch(buf.st_mode & S_IFMT)        //S_IFMT表示位遮罩
+}
+
+//对文件名排序
+void quickSort(char **array, int left, int right)
+{
+    int i,j,t;
+    char temp[PATH_MAX+1];
+    i = left;
+    j = right;
+    strcpy(temp,array[Index[right]]);
+
+    if(left > right)
+        return;
+    while(i != j)
     {
-    case S_IFREG:   
+        while((strcmp(array[Index[i]],temp) <= 0) && i < j)
+            i++;
+        while((strcmp(array[Index[j]],temp) >= 0) && i < j)
+            j--;
+        if(i < j)
         {
-            printf("-");
+            t = Index[i];
+            Index[i] = Index[j];
+            Index[j] = t;
         }
-        break;
-    case S_IFDIR:   
-        {
-            printf("d");
-        }
-        break;
-    case S_IFCHR:   
-        {
-            printf("c");
-        }
-        break;
-    case S_IFBLK:   
-        {
-            printf("b");
-        }
-        break;
-    case S_IFIFO:   
-        {
-            printf("p");
-        }
-        break;
-    case S_IFLNK:   
-        {
-            printf("l");
-        }
-        break;
-    case S_IFSOCK:  
-        {
-            printf("s");
-        }
-        break;
     }
-    //打印文件的读写属性：读r、写w、执行x、无权限-
-    for(n=8;n>=0;n--)       
+    
+    t = Index[right];
+    Index[right] = Index[j];
+    Index[j] = t;
+    quickSort(array,left,j - 1);
+    quickSort(array,j + 1,right);
+}
+
+void display_dir(char *path)
+{
+    DIR *dir;
+    struct dirent *ptr;
+    int count = 0;      //该目录下文件总数
+    //char filenames[256][PATH_MAX + 1];
+    int i,j,len;
+    
+    //-d
+    if(flag_param & PARAM_d)
     {
-        if(buf.st_mode&(1<<n))
+        if(flag_param & PARAM_L)
+            display_l(path);
+        else
         {
-            switch(n%3)
-            {
-            case 2:
-                printf("r");
-                break;
-            case 1:
-                printf("w");
-                break;
-            case 0:
-                {
-                    printf("x");
-                }
-                    break;
-            default:
-                break;
-            }
+            display_single(path);
+            printf("\n");
+        }
+        return;
+    }
+
+    if((flag_param & PARAM_R) != 0)
+    {
+        //要考虑全面一些
+        len = strlen(PATH);
+        if(len > 0)
+        {
+            if(PATH[len - 1] == '/')
+                PATH[len - 1] = '\0';
+        }
+        if((path[0] == '.' || path[0] == '/') && flag == 0)
+        {
+            strcat(PATH,path);
+            flag++;
         }
         else
         {
-            printf("-");
+            strcat(PATH,"/");
+            strcat(PATH,path);
         }
+        printf("%s:\n",PATH);
     }
 
-    //硬链接数，此链接非彼链接，指（包含）目录的个数，
-    //文件为1，目录起始为2，再加上目录里包含的目录个数（不递归，只一层）
-    printf(" %4d ",(int)buf.st_nlink);      
-    pw = getpwuid(buf.st_uid);      //所属用户名//可以得到用户指定的信息
-                 //根据struct passswd * getpwuid来进行判断
-        printf(" %s ",pw->pw_name);     
-
-
-    gr = getgrgid(buf.st_gid);      //所属组名
-    printf(" %6s ",gr->gr_name);
-    printf(" %8ld ",buf.st_size);       //字节计总大小
-    t = ctime(&buf.st_atime);   //最后一次访问时间
-     printf(" %10.12s ",4+t);
-     getcolor(path);
-               printf("\033[%dm%4s\033[0m",foreground,name);
-    //判断是否为链接，是返回真   
-    if(S_ISLNK(buf.st_mode))        
+    
+    //获取该目录下文件总数和最长文件名
+    dir = opendir(path);
+    if(dir == NULL)
+        my_err("opendir",__LINE__);
+    
+    g_maxlen = 0;
+    while((ptr = readdir(dir)) != NULL)
     {
-             printf(" -> "); 
-        if((temp=readlink(name1,out,PATH_MAX)==-1))//读取链接数失败
-        {
-        //  printf("readlink error");
-        }
-        strcat(out,"\0");
-        printf("%4s",out);
-    }
-    printf("\n");
-    free(name);
-    free(name1);
-    free(out);
-    return 0;
-}
-// ls的准备工作
-int ls_prepare(char *path,int lflag)        
-{
-    struct stat buf;        //man lstat可以看到此结构
-    DIR *dir;       //opendir会返回一个类似于dir的数据流
-    struct dirent *ptr;
-    int count = 0;
-    //man readdir可以看到此结构
-    //获取文件/目录属性并赋值给buf，该函数和lstat一样，
-    //只是当w为链接时，指代他本身，并不存在文件
-lstat(path,&buf);
-    /*  if(lstat(path,&buf)<0)      
-    {
-        fprintf(stderr,"stat error:%s\n",strerror(errno));
-        return -1;
-    }*/
-    dir=opendir(path);
-    while((ptr= readdir(dir))!=NULL)
-    {
-            count++;
+        if(g_maxlen < strlen(ptr->d_name))
+            g_maxlen = strlen(ptr->d_name);
+        count++;
     }
     closedir(dir);
-     int i,len=strlen(path);
-     dir=opendir(path);
-     for(i=0;i<count;i++)
-     {
-         ptr=readdir(dir);
-         if(ptr==NULL)
-         {
-             perror("readdir");
-         }
-         strcpy(filenames[i],path);
-         filenames[i][len]='\0';
-         strcat(filenames[i],ptr->d_name);
-         filenames[i][len+strlen(ptr->d_name)]='\0';
-     }
-     cnt=i;
-    //S_IRUSR表示读权限,S_IWUSR表示写权限 
-  Quicksort(cnt-1,filenames,0);
-    if(lflag==0)
+    
+    //动态分配空间，减少栈的消耗
+    char **filenames = (char **)malloc(sizeof(char *) * count);
+    memset(filenames,0,sizeof(char *) * count);
+    for(i = 0; i < count; i++)
     {
-        display_single(cnt,alfag);
+        filenames[i] = (char *)malloc(sizeof(char) * g_maxlen + 1);
+        memset(filenames[i],0,sizeof(char) * g_maxlen + 1);
+    }
+
+    //获取该目录下所有文件名
+    dir = opendir(path);
+    len = strlen(path);
+    for(i = 0; i < count; i++)
+    {
+        ptr = readdir(dir);
+        if(ptr == NULL)
+            my_err("readdir",__LINE__);
+        strcpy(filenames[i],ptr->d_name);
+
+        Index[i] = i;
+    }
+    closedir(dir);
+
+    //对文件名排序
+    if(!(flag_param & PARAM_f))
+        quickSort(filenames,0,count - 1);
+
+    //切换工作目录
+    if(chdir(path) < 0)
+        my_err("chdir",__LINE__);
+
+    display(filenames,count);
+
+    
+    //释放空间
+    if(flag_param & PARAM_R)
+        free(filenames);
+    else
+    {
+        for(i = 0; i < count; i++)
+            free(filenames[i]);
+        free(filenames);
+    }
+
+    if(!(flag_param & PARAM_L) && !(flag_param & PARAM_R))
+        printf("\n");
+}
+
+int main(int argc, char *argv[])
+{
+    int i,j,k,n;
+    char path[PATH_MAX+1];  //记录路径名（目录或文件名）
+    char param[32];         //保存命令行参数（a，l...）
+    struct stat buf;
+
+    //命令行参数解析
+    j = 0;
+    n = 0;  //记录‘-’的出现次数
+    for(i = 1; i < argc; i++)
+    {
+        if(argv[i][0] == '-')
+        {
+            for(k = 1; k < strlen(argv[i]); k++, j++)
+                param[j] = argv[i][k];  //获取‘-’后的参数保存到数组param中
+
+            n++;
+        }
+    }
+
+    //支持参数a和l，如果含有其他参数就报错
+    for(i = 0; i < j; i++)
+    {
+        if(param[i] == 'a')
+        {  
+            flag_param |= PARAM_A;
+            continue;
+        }
+        else if(param[i] == 'l')
+        {
+            flag_param |= PARAM_L;
+            continue;
+        }
+        else if(param[i] == 'R')
+        {
+            flag_param |= PARAM_R;
+            continue;
+        }
+        else if(param[i] == 'r')
+        {
+            flag_param |= PARAM_r;
+            continue;
+        }
+        else if(param[i] == 'd')
+        {
+            flag_param |= PARAM_d;
+            continue;
+        }
+        else if(param[i] == 'f')
+        {
+            flag_param |= PARAM_f;
+            continue;
+        }
+        else
+        {
+            printf("my_ls: error -%c\n",param[i]);
+            exit(1);
+        }
+    }
+    param[j] = '\0';
+
+    //如果没有输入文件名或目录，显示当前目录
+    if((n + 1) == argc)
+    {
+        strcpy(path,".");
+        display_dir(path);
         return 0;
     }
-        for(i=0;i<count;i++)
+
+    i = 1;
+    do
+    {
+        //如果不是目标文件名或目录，解析下一个命令行参数
+        if(argv[i][0] == '-')
         {
-            _ls(filenames[i],lflag,alfag);
-    }
-   closedir(dir);   
+            i++;
+            continue;
+        }
+        else
+            strcpy(path,argv[i]);
+
+        //如果目标文件或目录不存在，报错并退出程序
+        if(lstat(path,&buf) == -1)
+            my_err("lstat",__LINE__);
+
+        if(S_ISDIR(buf.st_mode))    //argv[i]是目录
+        {
+            display_dir(path);
+            i++;
+        }
+        else        //argv[i]是文件
+        {
+            if(flag_param & PARAM_L)
+                display_l(path);
+            else
+            {
+                display_single(path);
+                printf("\n");
+            }
+            i++;
+        }
+    }while(i < argc);
+    
     return 0;
-}
-int main(int argc,char ** argv)
-{
-   getWidth();
-    char param[32];//用来保存命令行的参数,命令行的形式一般为 -l -al -a
-   char path[81];
-   struct stat buf;
-   int i,j,k,num=0;
-    //命令行中实现解析
-    j=0;
-   for(i=1;i<argc;i++)
-   {
-       if(argv[i][0]=='-')
-       {
-           for(k=1;k<(int)strlen(argv[i]);k++,j++)
-           {
-                param[j] = argv[i][k];
-           }
-           num++;
-       }
-   }
-  for(i=0;i<j;i++)
-  {
-        if(param[i]=='a')
-        {
-            alfag=1;
-            continue;
-        }
-        if(param[i]=='l')
-        {
-          lflag+=1;
-          continue;
-        }
-        if(param[i]=='R')
-        {
-            lflag=lflag+2;
-            continue;
-        }
-  }
-  param[j]='\0';
-  //如果在其后没有输入文件名或者目录，默认为当前目录
-  if((num+1)==argc)
-  {
-      strcpy(path,"./");
-      path[2]='\0';
-      ls_prepare(path,lflag);
-      return 0;     
-  }
-  i=1;
-  do
-  {
-      if(argv[i][0]=='-')
-      {
-          i++;
-          continue;
-      }
-      else
-      {
-          strcpy(path,argv[i]);
-          if(stat(path,&buf)==-1)
-          {
-              perror("stat");
-          }
-          if(S_ISDIR(buf.st_mode))//argv[i]是一个目录
-           //   ，如果目录的最后一个字符不是'/',添加
-          {
-                    if(path[strlen(argv[i])-1]!='/')
-                    {
-                        path[strlen(argv[i])]='/';
-                        path[strlen(argv[i])+1]='\0';//添加文件结束符号
-                    }
-                    else  
-                        path[strlen(argv[i])]='\0';
-                    if(lflag>=2)
-                    {
-                      list_R(path,lflag);
-                       return 0;
-                     }  
-                        ls_prepare(path,lflag);
-                        i++;
-          }
-          else{
-                        display_single(cnt,alfag);
-                        i++;
-          }
-      }
-  }while(i<argc);
-return 0;
 }
