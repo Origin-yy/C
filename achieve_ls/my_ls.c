@@ -28,32 +28,29 @@ int n = 0;            //记录参数个数
 
 //分析参数，得到flag，path，buf，n，param[]
 void anal_param(int argc,char *argv[]);
-
 //错误处理函数
 void my_err(const char *err_string, int line);
+//“路径是文件”打印函数
+void disply_file(char *filename);
+//“路径是目录”打印函数
+void displt_dir(char *dirname);
 
 int main (int argc,char* argv[])
 {
-    anal_param(argc,argv);
+    anal_param(argc,argv);          //解析参数和判断是否含有有效路径
 
-    for(int i = 1;i++;i < argc)     //根据路径类型进入不同函数
+    for(int i = 1;i++;i < argc)     //根据路径类型进入不同函数 
     {
         if(S_ISDIR(buf.st_mode))    //如果输入的路径是目录，进入“打印目录”函数
-            {
-                display_dir(path);
-                i++;
-            }
-            else                    //否则输入的路径是文件，再判断
-            {
-                if(flag & L)        //如果含有-l参数，进入“按-l参数打印文件”函数
-                   display_l(path);
-                else                //否则，进入“仅仅打印文件名”函数
-                {
-                   display_single(path);
-                   printf("\n");
-                }
-                i++;
-            }
+        {
+            display_dir(flag,path);
+            i++;
+        }
+        else                        //否则输入的路径是文件，进入“打印文件”函数                  
+        {
+            display_file(flag,path);
+            i++;
+        }
     }
 
 
@@ -143,4 +140,13 @@ void my_err(const char *err_string, int line)
     perror(err_string);
     exit(1);
 }
+//“路径是文件”打印函数
+void disply_file(char *filename)
+{
+    
+}
+//“路径是目录”打印函数
+void disply_dir(char *dirname)
+{
 
+}
