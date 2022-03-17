@@ -36,6 +36,7 @@ int flag = 0;         //记录所有参数
 char path[260];       //记录路径名
 char param[8] = {'0'};//记录有哪些参数
 int n = 0;            //记录参数个数
+int Index[100000];    //记录filenames下标
 
 //分析参数，得到flag，path，buf，n，param[]
 void anal_param(int argc,char *argv[]);
@@ -52,6 +53,7 @@ int main (int argc,char* argv[])
 
     //根据路径类型进入不同函数 
     int i = 1;
+    struct stat buf;
     do{
         if(S_ISDIR(buf.st_mode))    //如果输入的路径是目录，进入“打印目录”函数
         {
@@ -165,7 +167,7 @@ void color(char *name, struct stat buf)
     else
         printf("%-s",name);
 }
-//“路径是文件”打印函数（只需考虑参数a,l,i）
+//“路径是文件”打印函数（只需考虑参数l,i）
 void disply_file(char *filename)
 {
     if(flag & L)     //有-l参数
@@ -241,28 +243,27 @@ void disply_file(char *filename)
         else 
             printf("-");
 
-        if(buf.st_mode & S_IXOTH){
+        if(buf.st_mode & S_IXOTH)
             printf("x");
-        }
         else 
             printf("-");
 
         printf("\t");   
-        //通过stat结构体里的UID和gid得到存有用户名和组名的passwd和group结构体
+        //通过stat结构体里的uid和gid得到存有用户名和组名的passwd和group结构体
         psd = getpwuid(buf.st_uid);
         grp = getgrgid(buf.st_gid);
 
-        printf("%4ld ",buf.st_nlink);     //打印文件的硬链接数
-        printf("%-8s  ",psd->pw_name);    //打印用户的名字
-        printf("%-8s", grp->gr_name);     //打印用户组的名字
+        printf("%4ld ",buf.st_nlink);            //打印文件的硬链接数
+        printf("%-8s  ",psd->pw_name);           //打印用户的名字
+        printf("%-8s", grp->gr_name);            //打印用户组的名字
 
-        printf("%6ld", buf.st_size);     //打印文件大小
-        strcpy(buf_time,ctime(&buf.st_mtime));  //把时间转换成普通表示格式
+        printf("%6ld", buf.st_size);             //打印文件大小
+        strcpy(buf_time,ctime(&buf.st_mtime));   //把时间转换成普通表示格式
 
-        buf_time[strlen(buf_time)-1] = '\0';    //去掉换行符
-        printf("  %s", buf_time);               //输出时间 
+        buf_time[strlen(buf_time)-1] = '\0';     //去掉换行符
+        printf("  %s", buf_time);                //输出时间 
 
-        color(filename,color);                //颜色打印
+        color(filename,buf);                     //染色打印
         printf("\n");
     }
     else             //无-l参数
@@ -279,20 +280,105 @@ void disply_file(char *filename)
             g_leave_len = MAX_ROWLEN;
         }
 
+        if(flag & I)                    //有参数i就打印inode号  
+            printf("%ld ",buf.st_ino);
+
         len = strlen(filename);
         len = g_maxlen - len;
         color(filename,buf);
 
         for(i = 0; i < len; i++)
             printf(" ");
-        printf("  ");   //多打两个空格
+        printf("  ");               //多打两个空格
         g_leave_len -= (g_maxlen + 2);
     }
 }
 //“路径是目录”打印函数
 void disply_dir(char *dirname)
 {
+    DIR *dir;
+    struct dirent *ptr;
+    int count = 0;      //该目录下文件总数
+    int i,j,len;
     
 
+    if((flag & R) != 0)
+    {
+        //要考虑全面一些
+        len = strlen(path);
+        if(len > 0)
+        {
+            if(path[len - 1] == '/')
+                path[len - 1] = '\0';
+        }
+        if((dirname[0] == '.' || dirname[0] == '/') && flag == 0)
+        {
+            strcat(path,dirname);
+            //flag++;
+        }
+        else
+        {
+            strcat(path,"/");
+            strcat(path,dirname);
+        }
+        printf("%s:\n",path);
+    }
 
+    
+    //获取该目录下文件总数和最长文件名
+    dir = opendir(dirname);
+    if(dir == NULL)
+        my_err("opendir",__LINE__);
+    
+    g_maxlen = 0;
+    while((ptr = readdir(dir)) != NULL)
+    {
+        if(g_maxlen < strlen(ptr->d_name))
+            g_maxlen = strlen(ptr->d_name);
+        count++;
+    }
+    closedir(dir);
+    
+    //动态分配空间，减少栈的消耗
+    char **filenames = (char **)malloc(sizeof(char *) * count);
+    memset(filenames,0,sizeof(char *) * count);
+    for(i = 0; i < count; i++)
+    {
+        filenames[i] = (char *)malloc(sizeof(char) * g_maxlen + 1);
+        memset(filenames[i],0,sizeof(char) * g_maxlen + 1);
+    }
+
+    //获取该目录下所有文件名
+    dir = opendir(dirname);
+    len = strlen(dirname);
+    for(i = 0; i < count; i++)
+    {
+        ptr = readdir(dir);
+        if(ptr == NULL)
+            my_err("readdir",__LINE__);
+        strcpy(filenames[i],ptr->d_name);
+
+        Index[i] = i;
+    }
+    closedir(dir);
+
+    //切换工作目录
+    if(chdir(path) < 0)
+        my_err("chdir",__LINE__);
+
+    display(filenames,count);
+
+    
+    //释放空间
+    if(flag & R)
+        free(filenames);
+    else
+    {
+        for(i = 0; i < count; i++)
+            free(filenames[i]);
+        free(filenames);
+    }
+
+    if(!(flag & L) && !(flag & R))
+        printf("\n");
 }
