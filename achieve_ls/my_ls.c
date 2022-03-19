@@ -25,19 +25,18 @@ int g_leave_len = MAX_ROWLEN;   //一行剩余长度，用于输出对齐
 int g_maxlen;                   //存放某目录下最长文件名的长度
 
 int flag = 0;      //记录输入的所有选项
-char path[260];    //记录输入的路径名
+char pathname[260];    //记录输入的路径名
 char PATH;         //有-R选项时的路径名
-int Index[100000]; //记录filenames下标
 
 void anal_param(int argc,char *argv[]);//分析参数，得到flag，path
 
 void my_err(const char *err_string, int line);//错误处理函数
 
-void disply_file_l(void);//-l文件打印函数，打印文件详细信息
+void disply_file_l(char* path);//-l文件打印函数，打印文件详细信息
 
-void disply_file_only(void);//无-l文件打印函数,仅打印文件名
+void disply_file_only(char* path);//无-l文件打印函数,仅打印文件名
 
-void disply_dir(void);//目录打印函数
+void disply_dir(char* path);//目录打印函数
 
 void color_printf(char *filename,struct stat buf);//染色打印文件名函数
 
@@ -48,20 +47,20 @@ int main (int argc,char* argv[])
     //根据路径类型进入不同函数 
     int i = 1;
     struct stat Stat;    //保存路径信息的结构体Stat
-    lstat(path,&Stat);   //获取路径信息
+    lstat(pathname,&Stat);   //获取路径信息
     
     if(S_ISDIR(Stat.st_mode))    //如果输入的路径是目录，进入目录打印函数
     {
-        disply_dir();
+        disply_dir(pathname);
         i++;
     }
     else                        //否则输入的路径是文件                  
     {
         if(flag & L)            //有-l选项，进入-l文件打印函数
-            disply_file_l();
+            disply_file_l(pathname);
         else
         {
-            disply_file_only(); //无-l选项，进入无-l文件打印函数
+            disply_file_only(pathname); //无-l选项，进入无-l文件打印函数
             printf("\n");
         }
         i++;
@@ -136,7 +135,7 @@ void anal_param(int argc,char  *argv[])
     }
     //如果没有输入文件（目录）路径，用path保存当前所在目录
     if((n + 1) == argc)
-        strcpy(path,".");
+        strcpy(pathname,".");
     //否则至少输入了一个路径，检验路径是否有效后，用path保存该路径
     else
     {
@@ -149,8 +148,8 @@ void anal_param(int argc,char  *argv[])
                 continue;
             }
             else
-                strcpy(path,argv[i]);
-            if(lstat(path,&Stat) == -1)   //如果输入的路径不存在，传到错误函数，报错并退出
+                strcpy(pathname,argv[i]);
+            if(lstat(pathname,&Stat) == -1)   //如果输入的路径不存在，传到错误函数，报错并退出
                 my_err("lstat",__LINE__);
         }
     }
@@ -163,7 +162,7 @@ void my_err(const char *err_string, int line)
     exit(1);
 }
 //-l文件打印函数
-void disply_file_l(void)
+void disply_file_l(char* path)
 {
     struct stat Stat;         //内含文件信息的结构体
     char time[32];            //保存转换后的时间
@@ -250,7 +249,7 @@ void disply_file_l(void)
     printf("\n");
 }
 //无-l打印函数
-void disply_file_only(void)
+void disply_file_only(char* path)
 {
     int i,len;
     struct stat Stat;
@@ -268,19 +267,18 @@ void disply_file_only(void)
     len = g_maxlen - len;
     color_printf(path,Stat);
 
-    for(i = 0; i < len; i++)  //按当前目录下最长的文件名对齐
-        printf(" ");
     printf("  ");   //多打两个空格
     g_leave_len -= (g_maxlen + 2);
 }
 //目录打印函数
-void disply_dir(void)
+void disply_dir(char* path)
 {
     DIR *dir;           //存储目录信息的结构体
     struct dirent *ptr; //存储目录下文件信息的结构体
     int count = 0;      //该目录下文件总数
     int i,j,len;
-    
+    char a[1] = {'.'};
+
     //获取该目录下文件总数和最长文件名
     dir = opendir(path);
     if(dir == NULL)
@@ -313,14 +311,41 @@ void disply_dir(void)
         if(ptr == NULL)
             my_err("readdir",__LINE__);
         strcpy(filenames[i],ptr->d_name);
-
-        Index[i] = i;
     }
+
     closedir(dir);
-    printf("asdf");
+    //如果没有-a就删除filenames里的.和..两个目录名
+    
     //对文件名排序-t,-r,-s(-t会覆盖-s)
 
     //含有所有文件名的数组中的每个文件依次传进打印函数打印
+
+    //切换工作目录到输入的目录下
+    if(chdir(path) == -1)
+        my_err("chdir",__LINE__);
+
+    for(int i = 0;i < count;i++)
+    {
+        if(flag & L)
+            disply_file_l(filenames[i]);
+        else
+            disply_file_only(filenames[i]);
+        i++;
+    }
+
+    
+    //释放空间
+    if(flag & R)
+        free(filenames);
+    else
+    {
+        for(i = 0; i < count; i++)
+            free(filenames[i]);
+        free(filenames);
+    }
+
+    if(!(flag & L) && !(flag & R))
+        printf("\n");
     //释放空间
 }
 //染色打印文件名函数
