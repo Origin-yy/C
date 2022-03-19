@@ -362,18 +362,7 @@ void display_dir(char *path)
     //char filenames[256][PATH_MAX + 1];
     int i,j,len;
     
-    //-d
-    if(flag_param & PARAM_d)
-    {
-        if(flag_param & PARAM_L)
-            display_l(path);
-        else
-        {
-            display_single(path);
-            printf("\n");
-        }
-        return;
-    }
+   
 
     if((flag_param & PARAM_R) != 0)
     {
@@ -440,7 +429,7 @@ void display_dir(char *path)
         quickSort(filenames,0,count - 1);
 
     //切换工作目录
-    if(chdir(path) < 0)
+    if(chdir(path) == -1)
         my_err("chdir",__LINE__);
 
     display(filenames,count);
