@@ -29,7 +29,6 @@ char path[260];    //记录输入的路径名
 char PATH;         //有-R选项时的路径名
 int Index[100000]; //记录filenames下标
 
-
 void anal_param(int argc,char *argv[]);//分析参数，得到flag，path
 
 void my_err(const char *err_string, int line);//错误处理函数
@@ -70,7 +69,6 @@ int main (int argc,char* argv[])
     
     return 0;
 }
-
 
 //分析参数，得到flag，path
 void anal_param(int argc,char  *argv[])
@@ -319,7 +317,7 @@ void disply_dir(void)
         Index[i] = i;
     }
     closedir(dir);
-
+    printf("asdf");
     //对文件名排序-t,-r,-s(-t会覆盖-s)
 
     //含有所有文件名的数组中的每个文件依次传进打印函数打印
