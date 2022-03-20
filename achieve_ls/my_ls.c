@@ -1,3 +1,4 @@
+//qsort排序文件名有问题
 #include<stdio.h>
 #include<stdlib.h>    //malloc，qsort
 #include<string.h>    //字符串处理函数
@@ -15,7 +16,7 @@
 #define L 2       //-l：显示文件的详细信息
 #define R 4       //-R：连同子目录内容一起列出来
 #define I 2       //-i：显示每个文件的inode号
-#define T 8       //-t：按文件创建时间排序
+#define T 8       //-t：按文件最后的修改时间排序
 #define r 16      //-r：将文件以相反次序显示
 #define S 64      //-s：按文件大小排序显示
 
@@ -44,6 +45,10 @@ int cmp(const void*a,const void*b);//比较函数
 void file_sort(char **filenames,int count);//目录下多文件排序函数（-r,-t>-s）
 
 void color_printf(char *filename,struct stat buf);//染色打印文件名函数
+
+int cmp_T(const void* x, const void* y);//按文件最后修改时间排序
+
+int cmp_S(const void* x, const void* y);//按文件大小排序
 
 int main (int argc,char* argv[])
 {
@@ -364,18 +369,22 @@ void disply_dir(char* path)
         printf("\n");
     //释放空间
 }
-//比较函数
-int cmp(const void* x, const void* y)
-{
-	//assert(x && y);
-    return strcmp(*(char**)x, *(char**)y);
-    //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
-    //然后再解引用一下才是字符串的地址
-}
 //目录下多文件排序函数（-r,-t>-s）
 void file_sort(char **filenames,int count)
 {
     qsort(filenames,count,sizeof(char*),cmp);//调用qsort排序
+
+    if(flag & S)
+        qsort(filenames,count,sizeof(char*),cmp_S);
+    if(flag & T)
+        qsort(filenames,count,sizeof(char*),cmp_T);
+    if(flag & r)
+    {
+        for(int i = 0;i<count;i++)
+        {
+            strcpy(filenames[i],filenames[count - i]);
+        }
+    }
 }
 //染色打印文件名函数
 void color_printf(char *filename,struct stat buf)
@@ -391,3 +400,31 @@ void color_printf(char *filename,struct stat buf)
     else
         printf("%-s",filename);
 }
+//按文件名排序函数
+int cmp(const void* x, const void* y)
+{
+    return strcmp(*(char**)x, *(char**)y);
+    //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
+    //然后再解引用一下才是字符串的地址
+}
+//按文件最后修改时间排序
+int cmp_T(const void* x, const void* y)
+{
+    struct stat buf_x,buf_y;
+    lstat(*(char**)x,&buf_x);
+    lstat(*(char**)y,&buf_y);
+    return &buf_x.st_mtime - &buf_y.st_mtime;
+    //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
+    //然后再解引用一下才是字符串的地址
+}
+//按文件的大小排序
+int cmp_S(const void* x, const void* y)
+{
+    struct stat buf_x,buf_y;
+    lstat(*(char**)x,&buf_x);
+    lstat(*(char**)y,&buf_y);
+    return &buf_x. st_size - &buf_y. st_size;
+    //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
+    //然后再解引用一下才是字符串的地址
+}
+//逆序
