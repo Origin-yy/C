@@ -181,7 +181,8 @@ void disply_file_l(char *path)
 
     if (lstat(path, &Stat) == -1)
         my_err("lstat", __LINE__);
-
+    if(flag & S)
+        printf("%2ld ",Stat.st_blocks/2);
     //获取并打印文件类型
     if (S_ISLNK(Stat.st_mode))
         printf("1");
@@ -275,6 +276,8 @@ void disply_file_only(char *path)
 
     len = strlen(path);
     len = g_maxlen - len;
+    if(flag & S)
+        printf("%2ld ",Stat.st_blocks/2);
     color_printf(path, Stat);
 
     printf("  "); //多打两个空格
@@ -288,28 +291,6 @@ void disply_dir(char *path)
     int count = 0;      //该目录下文件总数
     int i, j, len;
     char a[1] = {'.'};
-
-    if((flag & R)
-    {
-        //要考虑全面一些
-        len = strlen(PATH);
-        if(len > 0)
-        {
-            if(PATH[len - 1] == '/')
-                PATH[len - 1] = '\0';
-        }
-        if((path[0] == '.' || path[0] == '/') && flag == 0)
-        {
-            strcat(PATH,path);
-            flag++;
-        }
-        else
-        {
-            strcat(PATH,"/");
-            strcat(PATH,path);
-        }
-        printf("%s:\n",PATH);
-    }
 
     //获取该目录下文件总数和最长文件名
     dir = opendir(path);
@@ -390,25 +371,11 @@ void disply_dir(char *path)
         printf("\n");
     //释放空间
 }
-//目录下多文件排序函数（-r,-t>-s）
+//目录下多文件排序函数（-r,-t）
 void file_sort(char **filenames, int count)
 {
     char* temp;
     qsort(filenames, count, sizeof(char *), cmp); //调用qsort排序
-
-    if (flag & S)
-        qsort(filenames, count, sizeof(char *), cmp_S);
-    if (flag & T)
-        qsort(filenames, count, sizeof(char *), cmp_T);
-    if (flag & r)
-    {
-        for (int i = 0; i < count/2; i++)
-        {
-            strncpy(temp, filenames[i],100);
-            strncpy(filenames[i], filenames[count - i - 1],100);
-            strncpy(filenames[count - i - 1], temp,100);
-        }
-    }
 }
 //染色打印文件名函数
 void color_printf(char *filename, struct stat buf)
@@ -427,28 +394,26 @@ void color_printf(char *filename, struct stat buf)
 //按文件名排序函数
 int cmp(const void *x, const void *y)
 {
-    return strcmp(*(char **)x, *(char **)y);
-    //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
-    //然后再解引用一下才是字符串的地址
+    int a = 0;
+    if(!(flag & r) && !(flag & T))
+        a = strcmp(*(char**)x, *(char**)y);
+        //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
+        //然后再解引用一下才是字符串的地址
+    else if(!(flag & r) && (flag & T))
+    {
+        struct stat buf_x,buf_y;
+        lstat(*(char**)x,&buf_x);
+        lstat(*(char**)y,&buf_y);
+        a = buf_y.st_mtime - buf_x.st_mtime;
+    }
+    else if((flag & r) && !(flag & T))
+        a = strcmp(*(char**)y, *(char**)x);
+    else
+    {
+        struct stat buf_x,buf_y;
+        lstat(*(char**)x,&buf_x);
+        lstat(*(char**)y,&buf_y);
+        a = -(buf_y.st_mtime - buf_x.st_mtime);
+    }
+    return a;
 }
-//按文件最后修改时间排序
-int cmp_T(const void *x, const void *y)
-{
-    struct stat buf_x, buf_y;
-    lstat(*(char **)x, &buf_x);
-    lstat(*(char **)y, &buf_y);
-    return buf_y.st_mtime - buf_x.st_mtime;
-    //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
-    //然后再解引用一下才是字符串的地址
-}
-//按文件的大小排序
-int cmp_S(const void *x, const void *y)
-{
-    struct stat buf_x, buf_y;
-    lstat(*(char **)x, &buf_x);
-    lstat(*(char **)y, &buf_y);
-    return buf_y.st_size - buf_x.st_size;
-    //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
-    //然后再解引用一下才是字符串的地址
-}
-//逆序
