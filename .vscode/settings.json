@@ -4,6 +4,7 @@
         "math.h": "c",
         "istream": "c",
         "ostream": "c",
-        "cstring": "c"
+        "cstring": "c",
+        "typeinfo": "c"
     }
 }
