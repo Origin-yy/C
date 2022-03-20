@@ -32,8 +32,6 @@ void anal_param(int argc,char *argv[]);//分析参数，得到flag，path
 
 void my_err(const char *err_string, int line);//错误处理函数
 
-void disply_file_l(char* path);//-l文件打印函数，打印文件详细信息
-
 void disply_file_only(char* path);//无-l文件打印函数,仅打印文件名
 
 void disply_dir(char* path);//目录打印函数
@@ -232,13 +230,13 @@ void disply_file_l(char* path)
 
     printf(" ");
 
-    printf("%3ld ",Stat.st_nlink);     //打印文件链接数
+    printf("%2ld ",Stat.st_nlink);     //打印文件链接数
 
     has_user = getpwuid(Stat.st_uid);  //根据uid获取用户名
-    printf("%-9s",has_user->pw_name);  //打印用户名
+    printf("%-s ",has_user->pw_name);  //打印用户名
 
     has_group = getgrgid(Stat.st_gid); //跟据gid获取组名
-    printf("%-8s",has_group->gr_name); //打印组名
+    printf("%-s",has_group->gr_name); //打印组名
     
     printf("%6ld",Stat.st_size);       //打印文件大小
 
@@ -314,26 +312,36 @@ void disply_dir(char* path)
     }
 
     closedir(dir);
-    //如果没有-a就删除filenames里的.和..两个目录名
-    
-    //对文件名排序-t,-r,-s(-t会覆盖-s)
-
-    //含有所有文件名的数组中的每个文件依次传进打印函数打印
 
     //切换工作目录到输入的目录下
     if(chdir(path) == -1)
         my_err("chdir",__LINE__);
 
-    for(int i = 0;i < count;i++)
-    {
-        if(flag & L)
-            disply_file_l(filenames[i]);
-        else
-            disply_file_only(filenames[i]);
-        i++;
-    }
+    //对文件名排序-t,-r,-s(-t会覆盖-s)
 
-    
+    //是否有-a(即filenames中的.和..是否打印)
+    if(!(flag & A))
+    {
+        for(i = 0; i < count; i++)
+                if(filenames[i][0] != '.')
+                {
+                    if(flag & L)
+                        disply_file_l(filenames[i]);
+                    else
+                        disply_file_only(filenames[i]);
+                }
+    }
+    else
+    {
+        for(i = 0; i < count; i++)
+        {
+            if(flag & L)
+                disply_file_l(filenames[i]);
+            else
+                disply_file_only(filenames[i]);
+        }
+                
+    }
     //释放空间
     if(flag & R)
         free(filenames);
