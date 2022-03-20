@@ -318,7 +318,7 @@ void disply_dir(char* path)
         my_err("chdir",__LINE__);
 
     //对文件名排序-t,-r,-s(-t会覆盖-s)
-
+    
     //是否有-a(即filenames中的.和..是否打印)
     if(!(flag & A))
     {
