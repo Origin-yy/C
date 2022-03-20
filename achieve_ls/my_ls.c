@@ -12,13 +12,13 @@
 #include <errno.h>
 
 #define NO 0 //无参数
-#define A  1  //-a：显示所有文件
-#define L  2  //-l：显示文件的详细信息
-#define R  4  //-R：连同子目录内容一起列出来
-#define I  2  //-i：显示每个文件的inode号
-#define T  8  //-t：按文件最后的修改时间排序
-#define r  16 //-r：将文件以相反次序显示
-#define S  64 //-s：按文件大小排序显示
+#define A  1   //-a：显示所有文件
+#define L  2   //-l：显示文件的详细信息
+#define R  4   //-R：连同子目录内容一起列出来
+#define I  8   //-i：显示每个文件的inode号
+#define T  16  //-t：按文件最后的修改时间排序
+#define r  32  //-r：将文件以相反次序显示
+#define S  64  //-s：以块大小为单位列出所有文件的大小
 
 //分析参数，得到flag，path
 #define MAX_ROWLEN 100 //一行显示的最多字符串
@@ -29,6 +29,7 @@ int g_maxlen;                 //存放某目录下最长文件名的长度
 int flag = 0;       //记录输入的所有选项
 char pathname[260]; //记录输入的路径名
 char PATH[260];          //有-R选项时的路径名
+int f = 0;
 
 void anal_param(int argc, char *argv[]); //分析参数，得到flag，path
 
@@ -42,27 +43,23 @@ void disply_dir(char *path); //目录下多文件打印函数
 
 int cmp(const void *a, const void *b); //比较函数
 
-void file_sort(char **filenames, int count); //目录下多文件排序函数（-r,-t>-s）
+void file_sort(char **filenames, int count); //目录下多文件排序函数（-r,-t）
 
 void color_printf(char *filename, struct stat buf); //染色打印文件名函数
 
-int cmp_T(const void *x, const void *y); //按文件最后修改时间排序
-
-int cmp_S(const void *x, const void *y); //按文件大小排序
+int cmp(const void *x, const void *y); //用于qsort比较函数
 
 int main(int argc, char *argv[])
 {
     anal_param(argc, argv); //解析参数和判断是否含有有效路径
 
     //根据路径类型进入不同函数
-    int i = 1;
     struct stat Stat;       //保存路径信息的结构体Stat
     lstat(pathname, &Stat); //获取路径信息
 
     if (S_ISDIR(Stat.st_mode)) //如果输入的路径是目录，进入目录打印函数
     {
         disply_dir(pathname);
-        i++;
     }
     else //否则输入的路径是文件
     {
@@ -73,7 +70,6 @@ int main(int argc, char *argv[])
             disply_file_only(pathname); //无-l选项，进入无-l文件打印函数
             printf("\n");
         }
-        i++;
     }
 
     return 0;
@@ -292,6 +288,27 @@ void disply_dir(char *path)
     int i, j, len;
     char a[1] = {'.'};
 
+    if(flag & R)
+    {
+        //
+        len = strlen(PATH);
+        if(len > 0)
+        {
+            if(PATH[len - 1] == '/')
+                PATH[len - 1] = '\0';
+        }
+        if((path[0] == '.' || path[0] == '/') && f == 0)
+        {
+            strcat(PATH,path);
+            f++;
+        }
+        else
+        {
+            strcat(PATH,"/");
+            strcat(PATH,path);
+        }
+        printf("%s:\n",PATH);
+    }
     //获取该目录下文件总数和最长文件名
     dir = opendir(path);
     if (dir == NULL)
@@ -357,8 +374,9 @@ void disply_dir(char *path)
                 disply_file_only(filenames[i]);
         }
     }
+
     //释放空间
-    if (flag & R)
+    if(flag & R)
         free(filenames);
     else
     {
@@ -416,4 +434,49 @@ int cmp(const void *x, const void *y)
         a = -(buf_y.st_mtime - buf_x.st_mtime);
     }
     return a;
+}
+
+
+void disply_R_l(char *name)
+{
+    struct stat buf;
+    if(lstat(name,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+
+    if(S_ISDIR(buf.st_mode))
+    {
+        printf("\n");
+
+        disply_dir(name);
+    
+        char *p = PATH;
+        while(*++p);
+        while(*--p != '/');
+        *p = '\0';
+        chdir("..");    //返回上层目录
+    }
+    free(name);
+}
+void disply_R_single(char *name)
+{
+    struct stat buf;
+
+    if(lstat(name,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+    if(S_ISDIR(buf.st_mode))
+    {
+        printf("\n\n");
+        
+        disply_dir(name);
+        
+        char *p = PATH;
+        while(*++p);
+        while(*--p != '/');
+        *p = '\0';
+        chdir("..");
+        printf("\n");
+    }
+    free(name);
 }
