@@ -288,27 +288,6 @@ void disply_dir(char *path)
     int i, j, len;
     char a[1] = {'.'};
 
-    if(flag & R)
-    {
-        //
-        len = strlen(PATH);
-        if(len > 0)
-        {
-            if(PATH[len - 1] == '/')
-                PATH[len - 1] = '\0';
-        }
-        if((path[0] == '.' || path[0] == '/') && f == 0)
-        {
-            strcat(PATH,path);
-            f++;
-        }
-        else
-        {
-            strcat(PATH,"/");
-            strcat(PATH,path);
-        }
-        printf("%s:\n",PATH);
-    }
     //获取该目录下文件总数和最长文件名
     dir = opendir(path);
     if (dir == NULL)
@@ -434,49 +413,4 @@ int cmp(const void *x, const void *y)
         a = -(buf_y.st_mtime - buf_x.st_mtime);
     }
     return a;
-}
-
-
-void disply_R_l(char *name)
-{
-    struct stat buf;
-    if(lstat(name,&buf) == -1)
-        my_err("lstat",__LINE__);
-
-
-    if(S_ISDIR(buf.st_mode))
-    {
-        printf("\n");
-
-        disply_dir(name);
-    
-        char *p = PATH;
-        while(*++p);
-        while(*--p != '/');
-        *p = '\0';
-        chdir("..");    //返回上层目录
-    }
-    free(name);
-}
-void disply_R_single(char *name)
-{
-    struct stat buf;
-
-    if(lstat(name,&buf) == -1)
-        my_err("lstat",__LINE__);
-
-    if(S_ISDIR(buf.st_mode))
-    {
-        printf("\n\n");
-        
-        disply_dir(name);
-        
-        char *p = PATH;
-        while(*++p);
-        while(*--p != '/');
-        *p = '\0';
-        chdir("..");
-        printf("\n");
-    }
-    free(name);
 }
