@@ -12,14 +12,17 @@
 # include <errno.h>
 # include <signal.h>
 
-# define PARAM_NONE 0    // 无参数
-# define PARAM_A 1       // -a: 显示所有文件,连同隐藏文件一起列出来
-# define PARAM_L 2       // -l: 一行只显示一个文件的详细信息
-# define PARAM_R 4       // -R: 递归输出
-# define PARAM_r 8       // -r: 逆序输出文件名
-# define PARAM_i 16      // -i: 输出文件的 i 节点的索引信息
-# define MAXROWLEN 80    // 一行显示的最多字符数
+#define PARAM_NONE 0      //无参数
+#define PARAM_A 1       //-a：显示所有文件
+#define PARAM_L 2       //-l：显示文件的详细信息
+#define PARAM_R 4       //-R：连同子目录内容一起列出来
+#define PARAM_I 8       //-i：显示每个文件的inode号
+#define PARAM_T 16       //-t：按文件创建时间排序
+#define PARAM_S 32      //-s：按文件大小排序显示
+#define PARAM_r 64      //-r：将文件以相反次序显示
+#define MAXROWLEN 80    // 一行显示的最多字符数
 
+int flag_param = PARAM_NONE;
 int  g_leave_len = MAXROWLEN;    // 一行剩余长度，用于输出对齐
 int g_maxlen;                    // 存放某目录下最长文件名的长度
 
@@ -159,7 +162,7 @@ void display_i(char *name)
 *   参数flag：命令行参数
 *   参数pathname：包含了文件名的路径名
 */
-void display(int flag, char * pathname)
+void display(char * pathname)
 {
     int i, j;
     struct stat buf;
@@ -180,7 +183,7 @@ void display(int flag, char * pathname)
         my_err("stat",__LINE__);
     }
 
-    switch (flag) {
+    switch (flag_param) {
         case PARAM_NONE:  //没有选项
             if (name[0] != '.') {
                 display_single(name);
@@ -231,7 +234,7 @@ void display(int flag, char * pathname)
             }
         break;
 
-        case PARAM_i:
+        case PARAM_I:
             if(name[0] != '.') {
                 display_i(name);
             }
@@ -241,7 +244,7 @@ void display(int flag, char * pathname)
     }
 }
 
-void display_dir(int flag_param, char *path)
+void display_dir(char *path)
 {
     DIR *dir;
     struct dirent *ptr;                                                                      //struct dirent
@@ -312,7 +315,7 @@ void display_dir(int flag_param, char *path)
     }
 
     for (i = 0; i < count; i++)
-        display(flag_param, filenames[i]);
+        display(filenames[i]);
 
     if(flag_param & PARAM_R) {  
         rewinddir(dir);
@@ -357,7 +360,7 @@ void display_dir(int flag_param, char *path)
                 path_R[x+1]='\0';
 
                 printf("%s\n",path_R);
-                display_dir(flag_param,path_R);
+                display_dir(path_R);
             }
         }
     }
@@ -369,10 +372,9 @@ void display_dir(int flag_param, char *path)
         printf("\n");
 }
 
-int main(int argc, char ** argv)
+void anal_param(int argc,char* argv[],char* path)
 {
     int i, j, k, num;
-    char path[260+1];
     char param[32];   //保存命令行参数，目标文件名和目录名不在此列
     int flag_param = PARAM_NONE;   //参数种类，即是否有-l和-a选项
     struct stat buf;
@@ -400,11 +402,17 @@ int main(int argc, char ** argv)
         } else if (param[i] == 'R') {
             flag_param |=PARAM_R;
             continue;
-        } else if (param[i] == 'r') {
+        }else if (param[i] == 's') {
+            flag_param |=PARAM_S;
+            continue;
+        } else if (param[i] == 't') {
+            flag_param |=PARAM_T;
+            continue;
+        }else if (param[i] == 'r') {
             flag_param |=PARAM_r;
             continue;
         } else if (param[i] == 'i') {
-            flag_param |=PARAM_i;
+            flag_param |=PARAM_I;
             continue;
         } else {
             printf("my_ls: invalid option -%c\n",param[i]);
@@ -417,8 +425,6 @@ int main(int argc, char ** argv)
     if ((num + 1) == argc) {
         strcpy(path, "./");
         path[2] = '\0';
-        display_dir(flag_param,path);
-        return 0;
     }
 
     i = 1;
@@ -442,15 +448,37 @@ int main(int argc, char ** argv)
                 }
                 else
                     path[ strlen(argv[i]) ] = '\0';
-
-                display_dir(flag_param,path);
                 i++;
-            }
-            else {      //argv[i]是一个文件
-                display(flag_param, path);
             }
             i++;
         }
+    } while (i<argc);
+}
+int main(int argc, char ** argv)
+{
+    int i, j, k, num;
+    char path[260];
+    char param[32];   //保存命令行参数，目标文件名和目录名不在此列
+    int flag_param = PARAM_NONE;   //参数种类，即是否有-l和-a选项
+    struct stat buf;
+
+    anal_param(argc,argv,path);
+    //如果没有输入文件名或目录，就显示当前目录
+    if ((num + 1) == argc) {
+        display_dir(path);
+        return 0;
+    }
+
+    i = 1;
+    do{
+        if ( S_ISDIR(buf.st_mode) ) {
+            display_dir(path);
+            i++;
+        }
+        else {      //argv[i]是一个文件
+            display(path);
+        }
+        i++;
     } while (i<argc);
 
     return 0;
