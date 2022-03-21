@@ -111,11 +111,11 @@ void display_attribute(struct stat buf, char * name)
     //根据 uid 与 gid 获取文件所有者的用户名与组名
     psd = getpwuid(buf.st_uid);
     grp = getgrgid(buf.st_gid);
-    printf("%4ld ",buf.st_nlink);  //打印文件的链接数 
+    printf("%4d ",buf.st_nlink);  //打印文件的链接数 
     printf("%-8s ",psd->pw_name);
     printf("%-8s ",grp->gr_name);
 
-    printf("%6ld",buf.st_size);
+    printf("%6d",buf.st_size);
     strcpy(buf_time, ctime(&buf.st_mtime));
     buf_time[strlen(buf_time) - 1] = '0';    // 去掉换行符
     printf(" %s",buf_time);    //打印文件的时间信息
@@ -136,7 +136,10 @@ void display_single(char *name)
     len = g_maxlen - len;
     printf("%-s",name);
 
-    printf("  ");
+    for (i=0; i<len; i++) {
+        printf(" ");
+    }
+    printf(" ");
     //下面的 2 指空两格
     g_leave_len -= (g_maxlen + 2);
 }
@@ -163,7 +166,7 @@ void display(int flag, char * pathname)
 {
     int i, j;
     struct stat buf;
-    char name[260];
+    char name[NAME_MAX +1];
 
     //从路径中解析出文件名
     for (i=0, j=0; i<strlen(pathname); i++) {
@@ -246,70 +249,15 @@ void display_dir(int flag_param, char *path)
     DIR *dir;
     struct dirent *ptr;                                                                      //struct dirent
     int count = 0;
-    char filenames[256][260],temp[260];
+    char filenames[256][PATH_MAX+1],temp[PATH_MAX+1];
 
-    //获取该目录下文件总数和最长的文件名
-    dir = opendir(path); 
-    
-    if (dir == NULL) {
-        my_err("opendir",__LINE__);
-    }
-
-    while ((ptr = readdir(dir)) != NULL) {   // readdir()读取opendir 返回值的那个列表
-        if (g_maxlen < strlen(ptr->d_name)) {
-            g_maxlen = strlen(ptr->d_name);
-        }
-        count++;
-    }
-    closedir(dir);
-
-    if(count>256)
-        my_err("too many files under this dir",__LINE__);
+    //获取该目录下文件总数count和最长的文件名g_maxlen
 
     int i, j, len = strlen(path);
     
-    //获取该目录下所有的文件名
-    dir = opendir(path);
-    
-    for(i = 0; i < count; i++) {
-        ptr = readdir(dir);
-        if( ptr == NULL ) {
-            my_err("readdir",__LINE__);
-        }
-        strncpy(filenames[i],path,len);
-        filenames[i][len] = '\0';
-        strcat(filenames[i],ptr->d_name);
-        filenames[i][len+strlen(ptr->d_name)] = '\0';
-    }
+    //获取该目录下所有的文件名filenames
 
     //使用冒泡法对文件名进行排序，排序后文件名按字母顺序存储于filenames
-    if(flag_param & PARAM_r) {
-        for(i = 0; i < count - 1; i++) {
-            for(j = 0; j < count - 1 - i; j++) {
-                if(strcmp(filenames[j], filenames[j+1]) < 0) {
-                    strcpy(temp, filenames[j + 1]);
-                    temp[strlen(filenames[j+1])] = '\0';
-                    strcpy(filenames[j+1], filenames[j]);
-                    filenames[j+1][strlen(filenames[j])] = '\0';
-                    strcpy(filenames[j], temp);
-                    filenames[j][strlen(temp)] = '\0';
-                }
-            }
-        }
-    } else {
-        for(i = 0; i < count-1; i++) {
-            for(j = 0; j < count-1-i; j++) {
-                if( strcmp(filenames[j],filenames[j+1]) > 0 ) {
-                    strcpy(temp,filenames[j+1]);
-                    temp[strlen(filenames[j+1])] = '\0';
-                    strcpy(filenames[j+1],filenames[j]);
-                    filenames[j+1][strlen(filenames[j])] = '\0';
-                    strcpy(filenames[j],temp);
-                    filenames[j][strlen(temp)] = '\0';
-                }
-            }
-        }
-    }
 
     for (i = 0; i < count; i++)
         display(flag_param, filenames[i]);
@@ -332,7 +280,7 @@ void display_dir(int flag_param, char *path)
 
         while( (ptr=readdir(dir)) != NULL)
         {
-            char path_R[260];
+            char path_R[PATH_MAX+1];
             strncpy(path_R,path,sizeof(path));
             path_R[strlen(path_R)+1]='\0';
             strcat(path_R,ptr->d_name);
@@ -346,7 +294,7 @@ void display_dir(int flag_param, char *path)
 
             if(ptr->d_name[0]!=46 && ptr->d_name[1]!=46 && S_ISDIR(buf_R.st_mode)) {
                 printf("\n");
-                char path_R[260];
+                char path_R[PATH_MAX+1];
                 strncpy(path_R,path,sizeof(path));
 
                 path_R[strlen(path_R)+1]='\0';
@@ -365,14 +313,13 @@ void display_dir(int flag_param, char *path)
     closedir(dir);
 
     //如果命令行中没有-l选项，打印一个换行符
-    if ( (flag_param & PARAM_L) == 0 )
-        printf("\n");
 }
 
 int main(int argc, char ** argv)
 {
+    signal(SIGINT, SIG_IGN);
     int i, j, k, num;
-    char path[260+1];
+    char path[PATH_MAX+1];
     char param[32];   //保存命令行参数，目标文件名和目录名不在此列
     int flag_param = PARAM_NONE;   //参数种类，即是否有-l和-a选项
     struct stat buf;

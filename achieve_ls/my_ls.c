@@ -49,6 +49,8 @@ void color_printf(char *filename, struct stat buf); //染色打印文件名函�
 
 int cmp(const void *x, const void *y); //用于qsort比较函数
 
+void display(char * pathname);//根据选项和传入的路径进入不同函数
+
 int main(int argc, char *argv[])
 {
     anal_param(argc, argv); //解析参数和判断是否含有有效路径
@@ -59,6 +61,11 @@ int main(int argc, char *argv[])
 
     if (S_ISDIR(Stat.st_mode)) //如果输入的路径是目录，进入目录打印函数
     {
+        if( pathname[strlen(pathname)-1] !='/' )
+        {
+            pathname[strlen(pathname)] = '/';
+            pathname[strlen(pathname)+1] = '\0';
+        }
         disply_dir(pathname);
     }
     else //否则输入的路径是文件
@@ -286,7 +293,6 @@ void disply_dir(char *path)
     struct dirent *ptr; //存储目录下文件信息的结构体
     int count = 0;      //该目录下文件总数
     int i, j, len;
-    char a[1] = {'.'};
 
     //获取该目录下文件总数和最长文件名
     dir = opendir(path);
@@ -331,6 +337,10 @@ void disply_dir(char *path)
     //对文件名排序-t,-r,-s(-t会覆盖-s)
     file_sort(filenames, count);
 
+    //如果有R
+    if(flag &R)
+        printf("%s:\n",path);
+
     //是否有-a(即filenames中的.和..是否打印)
     if (!(flag & A))
     {
@@ -354,6 +364,28 @@ void disply_dir(char *path)
         }
     }
 
+    if (!(flag & L))
+        printf("\n");
+    //如果目录下有R则递归 
+    if(flag & R)
+    {
+        for(int i = 0;i<count;i++)
+        {
+            struct stat buf;
+            if (filenames[i][0] != '.')
+                if(lstat(filenames[i],&buf) == -1)
+                    my_err("stat",__LINE__); 
+
+            if(S_ISDIR(buf.st_mode))
+            {
+            //if(chdir(filenames[i]) == -1)
+            //      my_err("stat ",__LINE__);
+                disply_dir(filenames[i]);
+                if(chdir("..") == -1)
+                    my_err("stat ",__LINE__);   
+            }  
+        }
+    }
     //释放空间
     if(flag & R)
         free(filenames);
@@ -363,9 +395,6 @@ void disply_dir(char *path)
             free(filenames[i]);
         free(filenames);
     }
-
-    if (!(flag & L) && !(flag & R))
-        printf("\n");
     //释放空间
 }
 //目录下多文件排序函数（-r,-t）
@@ -413,4 +442,39 @@ int cmp(const void *x, const void *y)
         a = -(buf_y.st_mtime - buf_x.st_mtime);
     }
     return a;
+}
+//根据选项和传入的路径进入不同函数
+void display(char * pathname)
+{
+    char name[260];
+    int i, j;
+    //从路径中解析出文件名
+    for (i=0,j=0; i<strlen(pathname); i++) 
+    {
+        if (pathname[i] == '/') {
+            j = 0;
+            continue;
+        }
+        name[j++] = pathname[i];
+    }
+    name[j] = '\0';
+    
+    struct stat Stat;       //保存路径信息的结构体Stat
+    lstat(pathname, &Stat); //获取路径信息
+
+    if (S_ISDIR(Stat.st_mode)) //如果输入的路径是目录，进入目录打印函数
+    {
+        
+        disply_dir(pathname);
+    }
+    else //否则输入的路径是文件
+    {
+        if (flag & L) //有-l选项，进入-l文件打印函数
+            disply_file_l(pathname);
+        else
+        {
+            disply_file_only(pathname); //无-l选项，进入无-l文件打印函数
+            printf("\n");
+        }
+    }
 }
