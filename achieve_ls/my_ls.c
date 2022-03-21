@@ -21,15 +21,13 @@
 #define S  64  //-s：以块大小为单位列出所有文件的大小
 
 //分析参数，得到flag，path
-#define MAX_ROWLEN 100 //一行显示的最多字符串
+#define MAX_ROWLEN 200 //一行显示的最多字符串
 
 int g_leave_len = MAX_ROWLEN; //一行剩余长度，用于输出对齐
 int g_maxlen;                 //存放某目录下最长文件名的长度
 
 int flag = 0;       //记录输入的所有选项
 char pathname[260]; //记录输入的路径名
-char PATH[260];          //有-R选项时的路径名
-int f = 0;
 
 void anal_param(int argc, char *argv[]); //分析参数，得到flag，path
 
@@ -48,8 +46,6 @@ void file_sort(char **filenames, int count); //目录下多文件排序函数（
 void color_printf(char *filename, struct stat buf); //染色打印文件名函数
 
 int cmp(const void *x, const void *y); //用于qsort比较函数
-
-void display(char * pathname);//根据选项和传入的路径进入不同函数
 
 int main(int argc, char *argv[])
 {
@@ -182,6 +178,9 @@ void disply_file_l(char *path)
     struct passwd *has_user; //内含用户名的结构体
     struct group *has_group; //内含组名的结构体
 
+    if(flag & I)//有，打印inode号
+        printf("%7ld ",Stat.st_ino);
+
     if (lstat(path, &Stat) == -1)
         my_err("lstat", __LINE__);
     if(flag & S)
@@ -267,8 +266,12 @@ void disply_file_only(char *path)
 {
     int i, len;
     struct stat Stat;
-    if (lstat(path, &Stat) == -1)
+
+    if(lstat(path, &Stat) == -1)
         my_err("lstat", __LINE__);
+
+    if(flag & I)//有，打印inode号
+        printf("%7ld ",Stat.st_ino);
 
     //如果本行不足以打印一个文件名则换行
     if (g_leave_len < g_maxlen)
@@ -279,6 +282,7 @@ void disply_file_only(char *path)
 
     len = strlen(path);
     len = g_maxlen - len;
+
     if(flag & S)
         printf("%2ld ",Stat.st_blocks/2);
     color_printf(path, Stat);
@@ -366,6 +370,8 @@ void disply_dir(char *path)
 
     if (!(flag & L))
         printf("\n");
+    if  ((flag & R))
+        printf("\n");
     //如果目录下有R则递归 
     if(flag & R)
     {
@@ -381,6 +387,7 @@ void disply_dir(char *path)
             //if(chdir(filenames[i]) == -1)
             //      my_err("stat ",__LINE__);
                 disply_dir(filenames[i]);
+                g_leave_len = 200;
                 if(chdir("..") == -1)
                     my_err("stat ",__LINE__);   
             }  
@@ -444,37 +451,3 @@ int cmp(const void *x, const void *y)
     return a;
 }
 //根据选项和传入的路径进入不同函数
-void display(char * pathname)
-{
-    char name[260];
-    int i, j;
-    //从路径中解析出文件名
-    for (i=0,j=0; i<strlen(pathname); i++) 
-    {
-        if (pathname[i] == '/') {
-            j = 0;
-            continue;
-        }
-        name[j++] = pathname[i];
-    }
-    name[j] = '\0';
-    
-    struct stat Stat;       //保存路径信息的结构体Stat
-    lstat(pathname, &Stat); //获取路径信息
-
-    if (S_ISDIR(Stat.st_mode)) //如果输入的路径是目录，进入目录打印函数
-    {
-        
-        disply_dir(pathname);
-    }
-    else //否则输入的路径是文件
-    {
-        if (flag & L) //有-l选项，进入-l文件打印函数
-            disply_file_l(pathname);
-        else
-        {
-            disply_file_only(pathname); //无-l选项，进入无-l文件打印函数
-            printf("\n");
-        }
-    }
-}
