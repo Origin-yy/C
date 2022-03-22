@@ -21,7 +21,7 @@
 #define S  64  //-s：以块大小为单位列出所有文件的大小
 
 //分析参数，得到flag，path
-#define MAX_ROWLEN 200 //一行显示的最多字符串
+#define MAX_ROWLEN 100 //一行显示的最多字符串
 
 int g_leave_len = MAX_ROWLEN; //一行剩余长度，用于输出对齐
 int g_maxlen;                 //存放某目录下最长文件名的长度
@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     //根据路径类型进入不同函数
     struct stat Stat;       //保存路径信息的结构体Stat
     lstat(pathname, &Stat); //获取路径信息
-
+    
     if (S_ISDIR(Stat.st_mode)) //如果输入的路径是目录，进入目录打印函数
     {
         if( pathname[strlen(pathname)-1] !='/' )
@@ -157,7 +157,7 @@ void anal_param(int argc, char *argv[])
                 continue;
             }
             else
-                strcpy(pathname, argv[i]);
+                strncpy(pathname, argv[i],100);
             if (lstat(pathname, &Stat) == -1) //如果输入的路径不存在，传到错误函数，报错并退出
                 my_err("lstat", __LINE__);
         }
