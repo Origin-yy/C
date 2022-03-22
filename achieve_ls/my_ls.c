@@ -424,7 +424,7 @@ void color_printf(char *filename, struct stat buf)
     else
         printf("%-s", filename);
 }
-//按文件名排序函数
+//比较函数
 int cmp(const void *x, const void *y)
 {
     int a = 0;
@@ -450,4 +450,4 @@ int cmp(const void *x, const void *y)
     }
     return a;
 }
-//根据选项和传入的路径进入不同函数
+
