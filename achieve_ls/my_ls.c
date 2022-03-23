@@ -19,15 +19,15 @@
 #define T  16  //-t：按文件最后的修改时间排序
 #define r  32  //-r：将文件以相反次序显示
 #define S  64  //-s：以块大小为单位列出所有文件的大小
-
-//分析参数，得到flag，path
 #define MAX_ROWLEN 100 //一行显示的最多字符串
 
 int g_leave_len = MAX_ROWLEN; //一行剩余长度，用于输出对齐
 int g_maxlen;                 //存放某目录下最长文件名的长度
 
-int flag = 0;       //记录输入的所有选项
+int flag = NO;      //记录输入的所有选项
 char pathname[260]; //记录输入的路径名
+char PATH[260];     //记录路径名（-R）
+int f;              //在有R时用来保证操作只做一次
 
 void anal_param(int argc, char *argv[]); //分析参数，得到flag，path
 
@@ -35,9 +35,15 @@ void my_err(const char *err_string, int line); //错误处理函数
 
 void disply_file_only(char *path); //无-l单文件打印函数,仅打印文件名
 
+void disply_R_only(char *path);//-R，无-l单文件打印函数
+
 void disply_file_l(char *path); //-l单文件打印函数，打印文件详细信息
 
+void disply_R_l(char *path);//-l,-R单文件打印函数
+
 void disply_dir(char *path); //目录下多文件打印函数
+
+void disply(char **name, int count);//多文件打印函数
 
 int cmp(const void *a, const void *b); //比较函数
 
@@ -46,6 +52,7 @@ void file_sort(char **filenames, int count); //目录下多文件排序函数（
 void color_printf(char *filename, struct stat buf); //染色打印文件名函数
 
 int cmp(const void *x, const void *y); //用于qsort比较函数
+
 
 int main(int argc, char *argv[])
 {
@@ -77,6 +84,7 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
 
 //分析参数，得到flag，path
 void anal_param(int argc, char *argv[])
@@ -123,7 +131,7 @@ void anal_param(int argc, char *argv[])
         }
         else if (param[i] == 'r')
         {
-            flag |= R;
+            flag |= r;
             continue;
         }
         else if (param[i] == 'i')
@@ -261,6 +269,28 @@ void disply_file_l(char *path)
     color_printf(path, Stat);
     printf("\n");
 }
+//-l,-R单文件打印函数
+void disply_R_l(char *path)
+{
+    struct stat buf;
+    if(lstat(path,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+
+    if(S_ISDIR(buf.st_mode))
+    {
+        printf("\n");
+
+        disply_dir(path);
+    
+        char *p = PATH;
+        while(*++p);
+        while(*--p != '/');
+        *p = '\0';
+        chdir("..");    //返回上层目录
+    }
+    free(path);
+}
 //无-l打印函数
 void disply_file_only(char *path)
 {
@@ -287,8 +317,33 @@ void disply_file_only(char *path)
         printf("%2ld ",Stat.st_blocks/2);
     color_printf(path, Stat);
 
+    for(i = 0; i < len; i++)//按最长的文件名对齐，多打空格
+        printf(" ");
     printf("  "); //多打两个空格
     g_leave_len -= (g_maxlen + 2);
+}
+//-R，无-l单文件打印函数
+void disply_R_only(char *path)
+{
+    struct stat buf;
+
+    if(lstat(path,&buf) == -1)
+        my_err("lstat",__LINE__);
+
+    if(S_ISDIR(buf.st_mode))
+    {
+        printf("\n\n");
+        
+        disply_dir(path);
+        
+        char *p = PATH;
+        while(*++p);
+        while(*--p != '/');
+        *p = '\0';
+        chdir("..");
+        printf("\n");
+    }
+    free(path);
 }
 //目录打印函数
 void disply_dir(char *path)
@@ -297,6 +352,28 @@ void disply_dir(char *path)
     struct dirent *ptr; //存储目录下文件信息的结构体
     int count = 0;      //该目录下文件总数
     int i, j, len;
+
+    if(flag & R)
+    {
+        //对打印的路径名进行修饰处理
+        len = strlen(PATH);
+        if(len > 0)
+        {
+            if(PATH[len - 1] == '/')
+                PATH[len - 1] = '\0';
+        }
+        if((path[0] == '.' || path[0] == '/') && f == 0)
+        {
+            strcat(PATH,path);
+            f++;
+        }
+        else
+        {
+            strcat(PATH,"/");
+            strcat(PATH,path);
+        }
+        printf("%s:\n",PATH); 
+    }
 
     //获取该目录下文件总数和最长文件名
     dir = opendir(path);
@@ -334,75 +411,93 @@ void disply_dir(char *path)
 
     closedir(dir);
 
+    //对文件名排序-t,-r
+    file_sort(filenames, count);
+
     //切换工作目录到输入的目录下
     if (chdir(path) == -1)
         my_err("chdir", __LINE__);
 
-    //对文件名排序-t,-r,-s(-t会覆盖-s)
-    file_sort(filenames, count);
+    //printf("%s",filenames[0]);
 
-    //如果有R
-    if(flag &R)
-        printf("%s:\n",path);
+    //传进打印函数进行打印
+    disply(filenames,count);
 
-    //是否有-a(即filenames中的.和..是否打印)
-    if (!(flag & A))
-    {
-        for (i = 0; i < count; i++)
-            if (filenames[i][0] != '.')
-            {
-                if (flag & L)
-                    disply_file_l(filenames[i]);
-                else
-                    disply_file_only(filenames[i]);
-            }
-    }
-    else
-    {
-        for (i = 0; i < count; i++)
-        {
-            if (flag & L)
-                disply_file_l(filenames[i]);
-            else
-                disply_file_only(filenames[i]);
-        }
-    }
-
-    if (!(flag & L))
-        printf("\n");
-    if  ((flag & R))
-        printf("\n");
-    //如果目录下有R则递归 
-    if(flag & R)
-    {
-        for(int i = 0;i<count;i++)
-        {
-            struct stat buf;
-            if (filenames[i][0] != '.')
-                if(lstat(filenames[i],&buf) == -1)
-                    my_err("stat",__LINE__); 
-
-            if(S_ISDIR(buf.st_mode))
-            {
-            //if(chdir(filenames[i]) == -1)
-            //      my_err("stat ",__LINE__);
-                disply_dir(filenames[i]);
-                g_leave_len = 200;
-                if(chdir("..") == -1)
-                    my_err("stat ",__LINE__);   
-            }  
-        }
-    }
     //释放空间
     if(flag & R)
         free(filenames);
     else
     {
-        for (i = 0; i < count; i++)
+        for(i = 0; i < count; i++)
             free(filenames[i]);
         free(filenames);
     }
-    //释放空间
+
+    if(!(flag & L) && !(flag & R))
+        printf("\n");
+}
+//多文件打印函数(判断-R-a-l)
+void disply(char **filenames, int count)
+{
+    if(!(flag & R) && !(flag & A) && !(flag & L))   //q全无
+    {
+        for(int i = 0; i < count; i++)
+            if(filenames[i][0] != '.')
+                disply_file_only(filenames[i]);
+    }
+    else if((flag & R) && !(flag & A) && !(flag & L))//-R
+    {
+        for(int i = 0; i < count; i++)
+            if(filenames[i][0] != '.')
+                disply_R_only(filenames[i]);
+        
+        for(int i = 0; i < count; i++)
+            if(filenames[i][0] != '.')
+                disply_R_only(filenames[i]);
+    }
+    else if(!(flag & R) && (flag & A) && !(flag & L))//-a
+    {
+        for(int i = 0; i < count; i++)
+            disply_file_only(filenames[i]);
+    }
+    else if(!(flag & R) && !(flag & A) && (flag & L))//-l
+    {
+        for(int i = 0; i < count; i++)
+            disply_file_l(filenames[i]);
+    }
+    else if((flag & R) && (flag & A) && !(flag & L))//-R,-a
+    {
+        for(int i = 0; i < count; i++)
+            disply_R_only(filenames[i]);
+        
+        for(int i = 0; i < count; i++)
+            if((strcmp(filenames[i],".") != 0) && (strcmp(filenames[i],"..") != 0))
+                disply_R_only(filenames[i]);
+    }
+    else if((flag & R) && !(flag & A) && (flag & L))//-R,-l
+    {
+        for(int i = 0; i < count; i++)
+            if(filenames[i][0] != '.')
+                disply_R_l(filenames[i]);
+        
+        for(int i = 0; i < count; i++)
+            if(filenames[i][0] != '.')
+                disply_R_l(filenames[i]);
+    }
+    else if(!(flag & R) && (flag & A) && (flag & L))//-a,-l
+    {
+        for(int i = 0; i < count; i++)
+            disply_file_l(filenames[i]);
+    }
+    else                                           //-R,-a,-l
+    {
+        for(int i = 0; i < count; i++)
+                disply_R_l(filenames[i]);
+
+        for(int i = 0; i < count; i++)
+            if((strcmp(filenames[i],".") != 0) && (strcmp(filenames[i],"..") != 0))
+                disply_R_l(filenames[i]);
+    }
 }
 //目录下多文件排序函数（-r,-t）
 void file_sort(char **filenames, int count)
@@ -424,30 +519,31 @@ void color_printf(char *filename, struct stat buf)
     else
         printf("%-s", filename);
 }
-//比较函数
+//比较函数(-r,-t)
 int cmp(const void *x, const void *y)
 {
     int a = 0;
-    if(!(flag & r) && !(flag & T))
-        a = strcmp(*(char**)x, *(char**)y);
+    if(!(flag & r) && !(flag & T))             //只有-r,
+        a = -strcmp(*(char**)y, *(char**)x);
         //因为数组里存的是字符串的地址，所以要强制类型转换成(char **)
         //然后再解引用一下才是字符串的地址
-    else if(!(flag & r) && (flag & T))
+    else if(!(flag & r) && (flag & T))         //只有-t
     {
         struct stat buf_x,buf_y;
         lstat(*(char**)x,&buf_x);
         lstat(*(char**)y,&buf_y);
         a = buf_y.st_mtime - buf_x.st_mtime;
     }
-    else if((flag & r) && !(flag & T))
-        a = strcmp(*(char**)y, *(char**)x);
-    else
+    else if((flag & r) && (flag & T))          //-r,-t
     {
         struct stat buf_x,buf_y;
         lstat(*(char**)x,&buf_x);
         lstat(*(char**)y,&buf_y);
         a = -(buf_y.st_mtime - buf_x.st_mtime);
     }
+    else                                       //全无
+    {
+        a = strcmp(*(char**)y, *(char**)x);
+    }
     return a;
-}
-
+} 
