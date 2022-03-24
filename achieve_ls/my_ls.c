@@ -10,7 +10,6 @@
 #include <grp.h>
 #include <pwd.h> //getpwuid，getgrgid
 #include <errno.h>
-
 #define NO 0 //无参数
 #define A  1   //-a：显示所有文件
 #define L  2   //-l：显示文件的详细信息
@@ -64,7 +63,7 @@ int main(int argc, char *argv[])
     
     if (S_ISDIR(Stat.st_mode)) //如果输入的路径是目录，进入目录打印函数
     {
-        if( pathname[strlen(pathname)-1] !='/' )
+        if( pathname[strlen(pathname)-1] !='/' ) //如果输入的路径最后一个不是/，则加上/
         {
             pathname[strlen(pathname)] = '/';
             pathname[strlen(pathname)+1] = '\0';
@@ -73,11 +72,11 @@ int main(int argc, char *argv[])
     }
     else //否则输入的路径是文件
     {
-        if (flag & L) //有-l选项，进入-l文件打印函数
+        if (flag & L) //有-l选项，进入-l单文件打印函数
             disply_file_l(pathname);
         else
         {
-            disply_file_only(pathname); //无-l选项，进入无-l文件打印函数
+            disply_file_only(pathname); //无-l选项，进入无-l单文件打印函数
             printf("\n");
         }
     }
@@ -89,22 +88,19 @@ int main(int argc, char *argv[])
 //分析参数，得到flag，path
 void anal_param(int argc, char *argv[])
 {
-    char param[8] = {'0'}; //记录有哪些参数
-    int n = 0;             //记录参数个数
-    int j = 0;
-    int k = 0;
-    //保存参数进param
-    for (int i = 1; i < argc; i++)
+    char param[8] = {'0'}; //保存输入的选项
+    int n = 0;             //记录选项个数
+    //保存选项进param
+    for (int i = 1,j = 0; i < argc; i++)
     {
-        if (argv[i][0] == '-')
+        if (argv[i][0] == '-')   //如果有-说明后面是选项
         {
-            for (k = 1; k < strlen(argv[i]); k++, j++)
-                param[j] = argv[i][k]; //获取‘-’后的参数保存到数组param中
-
+            for (int k = 1; k < strlen(argv[i]); k++, j++)
+                param[j] = argv[i][k]; //获取‘-’后的选项保存到数组param中
             n++;
         }
     }
-    //将参数保存在flag中
+    //将输入的选项保存在flag中
     for (int i = 0; i < n; i++)
     {
         if (param[i] == '0')
@@ -150,11 +146,10 @@ void anal_param(int argc, char *argv[])
             exit(1);
         }
     }
-    //如果没有输入文件（目录）路径，用path保存当前所在目录
-    if ((n + 1) == argc)
+
+    if ((n + 1) == argc)    //如果没有输入文件（目录）路径，用pathname保存当前所在目录
         strcpy(pathname, ".");
-    //否则至少输入了一个路径，检验路径是否有效后，用path保存该路径
-    else
+    else//否则至少输入了一个路径，检验路径是否有效后，用pathname保存该路径
     {
         struct stat Stat; //用stat结构体保存输入的路径的信息，用以检验路径是否存在
         for (int i = 1; i < argc; i++)
@@ -186,13 +181,15 @@ void disply_file_l(char *path)
     struct passwd *has_user; //内含用户名的结构体
     struct group *has_group; //内含组名的结构体
 
-    if(flag & I)//有，打印inode号
-        printf("%7ld ",Stat.st_ino);
-
     if (lstat(path, &Stat) == -1)
         my_err("lstat", __LINE__);
-    if(flag & S)
+    
+    if(flag & I)    //有-i，打印inode号
+        printf("%7ld ",Stat.st_ino);
+ 
+    if(flag & S)    //有-s，打印以块为单位的文件大小
         printf("%2ld ",Stat.st_blocks/2);
+
     //获取并打印文件类型
     if (S_ISLNK(Stat.st_mode))
         printf("1");
@@ -276,17 +273,17 @@ void disply_R_l(char *path)
     if(lstat(path,&buf) == -1)
         my_err("lstat",__LINE__);
 
-
     if(S_ISDIR(buf.st_mode))
     {
-        printf("\n");
+        printf("\n");     //两个目录之间的空行
 
-        disply_dir(path);
-    
+        disply_dir(path); //递归调用，打印下一个目录
+        //利用循环加指针把PTAH的最后一个‘/’改为‘\0’，即把PTAH改为上一层目录
         char *p = PATH;
-        while(*++p);
-        while(*--p != '/');
-        *p = '\0';
+        while(*++p);          //循环结束后p指到最后PATH结尾的‘\0’
+        while(*--p != '/');   //循环结束后p指向PATH的最后一个'/'
+        *p = '\0';            //把最后一个‘\’改为‘\0’
+
         chdir("..");    //返回上层目录
     }
     free(path);
@@ -300,9 +297,6 @@ void disply_file_only(char *path)
     if(lstat(path, &Stat) == -1)
         my_err("lstat", __LINE__);
 
-    if(flag & I)//有，打印inode号
-        printf("%7ld ",Stat.st_ino);
-
     //如果本行不足以打印一个文件名则换行
     if (g_leave_len < g_maxlen)
     {
@@ -310,11 +304,32 @@ void disply_file_only(char *path)
         g_leave_len = MAX_ROWLEN;
     }
 
-    len = strlen(path);
-    len = g_maxlen - len;
-
-    if(flag & S)
+    if(!(flag & I) && !(flag & S))      //-i,-s都无，长度仅为文件名长度
+    {
+        len = strlen(path);
+        len = g_maxlen - len;
+    }
+    else if((flag & I) && !(flag & S))  //只有-i，长度为文件名长度+8
+    {
+        len = strlen(path) + 8;
+        len = g_maxlen - len;
+    }
+    else if(!(flag & I) && (flag & S)) //只有-s，长度为文件名长度+3
+    {
+        len = strlen(path) + 3;
+        len = g_maxlen - len;
+    }
+    else if((flag & I) && (flag & S))  //-i,-s都有，长度为文件名长度+11
+    {
+        len = strlen(path) + 11;
+        len = g_maxlen - len;
+    }
+    if(flag & I)    //有-i，打印inode号
+        printf("%7ld ",Stat.st_ino);
+ 
+    if(flag & S)    //有-s，打印以块为单位的文件大小
         printf("%2ld ",Stat.st_blocks/2);
+
     color_printf(path, Stat);
 
     for(i = 0; i < len; i++)//按最长的文件名对齐，多打空格
@@ -332,15 +347,16 @@ void disply_R_only(char *path)
 
     if(S_ISDIR(buf.st_mode))
     {
-        printf("\n\n");
+        printf("\n\n");      //文件全部打完后的换行以及两个目录之间的空行
         
-        disply_dir(path);
-        
+        disply_dir(path);    //递归调用，打印下一个目录 
+        //利用循环加指针把PTAH的最后一个‘/’改为‘\0’，即把PTAH改为上一层目录
         char *p = PATH;
-        while(*++p);
-        while(*--p != '/');
-        *p = '\0';
-        chdir("..");
+        while(*++p);         //循环结束后p指到最后PATH结尾的‘\0’
+        while(*--p != '/');  //循环结束后p指向PATH的最后一个'/'
+        *p = '\0';           //把最后一个‘\’改为‘\0’
+
+        chdir("..");         //返回上层目录
         printf("\n");
     }
     free(path);
@@ -362,12 +378,12 @@ void disply_dir(char *path)
             if(PATH[len - 1] == '/')
                 PATH[len - 1] = '\0';
         }
-        if((path[0] == '.' || path[0] == '/') && f == 0)
+        if((path[0] == '.' || path[0] == '/') && f == 0) //如果是第一次进入并且输入的路径为‘.’或者第一个字符为'/'，则保存路径到PATH
         {
             strcat(PATH,path);
             f++;
         }
-        else
+        else  //不是第一次进入，已经保存了路径名则在路径名后加上‘/’,并把输入的路径加到已保存路径PATH后面，表示接下来要打印的目录
         {
             strcat(PATH,"/");
             strcat(PATH,path);
@@ -375,7 +391,7 @@ void disply_dir(char *path)
         printf("%s:\n",PATH); 
     }
 
-    //获取该目录下文件总数和最长文件名
+    //获取该目录下文件总数count和最长文件名g_maxlen，用于打印和对齐
     dir = opendir(path);
     if (dir == NULL)
         my_err("opendir", __LINE__);
@@ -387,6 +403,12 @@ void disply_dir(char *path)
             g_maxlen = strlen(ptr->d_name);
         count++;
     }
+    if ((flag & I) && !(flag & S))
+        g_maxlen += 3;
+    else if (!(flag & I) && (flag & S))
+        g_maxlen += 8;
+    else
+        g_maxlen += 11;
     closedir(dir);
 
     //动态分配空间，减少栈的消耗
@@ -417,8 +439,6 @@ void disply_dir(char *path)
     //切换工作目录到输入的目录下
     if (chdir(path) == -1)
         my_err("chdir", __LINE__);
-
-    printf("%s",filenames[0]);
 
     //传进打印函数进行打印
     disply(filenames,count);
@@ -507,14 +527,15 @@ void file_sort(char **filenames, int count)
 }
 //染色打印文件名函数
 void color_printf(char *filename, struct stat buf)
-{
-    if (S_ISDIR(buf.st_mode)) //目录
+{   
+    //染色打印格式：printf("\033[字背景颜色;字体颜色m字符串\033[0m" );\033可用\e替换
+    if (S_ISDIR(buf.st_mode))                //目录，蓝色高亮打印
         printf("\e[1;34m%-s\e[0m", filename);
-    else if (S_ISDIR(buf.st_mode) && (buf.st_mode & 0777) == 0777) //满权限目录
+    else if (S_ISDIR(buf.st_mode) && (buf.st_mode & 0777) == 0777) //满权限目录，蓝色高亮？42是啥
         printf("\e[1;34;42m%-s\e[0m", filename);
-    else if (S_ISLNK(buf.st_mode)) //符号链接
+    else if (S_ISLNK(buf.st_mode))           //符号链接，深绿色高亮打印
         printf("\e[1;36m%-s\e[0m", filename);
-    else if (buf.st_mode & S_IXUSR || buf.st_mode & S_IXGRP || buf.st_mode & S_IXOTH) //可执行文件
+    else if (buf.st_mode & S_IXUSR || buf.st_mode & S_IXGRP || buf.st_mode & S_IXOTH) //可执行文件。绿色高亮打印
         printf("\e[1;32m%-s\e[0m", filename);
     else
         printf("%-s", filename);
