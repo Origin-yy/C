@@ -418,7 +418,7 @@ void disply_dir(char *path)
     if (chdir(path) == -1)
         my_err("chdir", __LINE__);
 
-    //printf("%s",filenames[0]);
+    printf("%s",filenames[0]);
 
     //传进打印函数进行打印
     disply(filenames,count);
@@ -439,7 +439,7 @@ void disply_dir(char *path)
 //多文件打印函数(判断-R-a-l)
 void disply(char **filenames, int count)
 {
-    if(!(flag & R) && !(flag & A) && !(flag & L))   //q全无
+    if(!(flag & R) && !(flag & A) && !(flag & L))   //全无
     {
         for(int i = 0; i < count; i++)
             if(filenames[i][0] != '.')
@@ -449,7 +449,7 @@ void disply(char **filenames, int count)
     {
         for(int i = 0; i < count; i++)
             if(filenames[i][0] != '.')
-                disply_R_only(filenames[i]);
+                disply_file_only(filenames[i]);
         
         for(int i = 0; i < count; i++)
             if(filenames[i][0] != '.')
@@ -468,7 +468,7 @@ void disply(char **filenames, int count)
     else if((flag & R) && (flag & A) && !(flag & L))//-R,-a
     {
         for(int i = 0; i < count; i++)
-            disply_R_only(filenames[i]);
+            disply_file_only(filenames[i]);
         
         for(int i = 0; i < count; i++)
             if((strcmp(filenames[i],".") != 0) && (strcmp(filenames[i],"..") != 0))
@@ -478,7 +478,7 @@ void disply(char **filenames, int count)
     {
         for(int i = 0; i < count; i++)
             if(filenames[i][0] != '.')
-                disply_R_l(filenames[i]);
+                disply_file_l(filenames[i]);
         
         for(int i = 0; i < count; i++)
             if(filenames[i][0] != '.')
@@ -492,7 +492,7 @@ void disply(char **filenames, int count)
     else                                           //-R,-a,-l
     {
         for(int i = 0; i < count; i++)
-                disply_R_l(filenames[i]);
+                disply_file_l(filenames[i]);
 
         for(int i = 0; i < count; i++)
             if((strcmp(filenames[i],".") != 0) && (strcmp(filenames[i],"..") != 0))
