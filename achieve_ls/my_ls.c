@@ -407,7 +407,7 @@ void disply_dir(char *path)
         g_maxlen += 3;
     else if (!(flag & I) && (flag & S))
         g_maxlen += 8;
-    else
+    else if((flag & I) &&  flag &S)
         g_maxlen += 11;
     closedir(dir);
 
