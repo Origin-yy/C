@@ -3,7 +3,6 @@
 <head>
     <title>留言簿</title>
 </head>
-
 <body>
     <form action="https://pintia.cn/problem-sets?tab=1">
         <table width="800" border="1" align="center" style="background-color:#ece8e8">
