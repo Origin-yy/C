@@ -1,14 +1,14 @@
 //qsort排序文件名有问题
-#include <stdio.h>
+#include <stdio.h>     //perror
 #include <stdlib.h>    //malloc，qsort
 #include <string.h>    //字符串处理函数
 #include <sys/stat.h>  //lstat，S_ISDIR等宏
 #include <sys/types.h> //lstat,opendir，getpwuid，getgrgid
 #include <time.h>
-#include <unistd.h> //lstat
-#include <dirent.h> //opendir,readdir
+#include <unistd.h>    //lstat
+#include <dirent.h>    //opendir,readdir
 #include <grp.h>
-#include <pwd.h> //getpwuid，getgrgid
+#include <pwd.h>       //getpwuid，getgrgid
 #include <errno.h>
 #define NO 0 //无参数
 #define A  1   //-a：显示所有文件
@@ -167,11 +167,13 @@ void anal_param(int argc, char *argv[])
     }
 }
 //错误处理函数
-void my_err(const char *err_string, int line)
-{
-    fprintf(stderr, "line: %d ", line);
+void my_err(const char *err_string,int line) {
+    fprintf(stderr,"line:%d ",line);
     perror(err_string);
-    exit(1);
+    if(errno != 13)
+        exit(1);
+    else
+        printf("无权限\n");
 }
 //-l文件打印函数
 void disply_file_l(char *path)
@@ -395,7 +397,6 @@ void disply_dir(char *path)
     dir = opendir(path);
     if (dir == NULL)
         my_err("opendir", __LINE__);
-
     g_maxlen = 0;
     while ((ptr = readdir(dir)) != NULL)
     {
