@@ -5,7 +5,7 @@
 int main(void)
 {
     double x;
-    scanf("")
+    scanf("");
 
 
 
