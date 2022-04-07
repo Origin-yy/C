@@ -167,11 +167,14 @@ void anal_param(int argc, char *argv[])
     }
 }
 //错误处理函数
-void my_err(const char *err_string,int line) {
-    fprintf(stderr,"line:%d ",line);
+void my_err(const char *err_string,int line) 
+{
     perror(err_string);
     if(errno != 13)
+    {
+        fprintf(stderr,"line:%d ",line);
         exit(1);
+    }
     else
         printf("无权限\n");
 }
