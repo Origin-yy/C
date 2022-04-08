@@ -299,9 +299,12 @@ void disply_file_only(char *path)
     int i, len;
     struct stat Stat;
 
+    printf("0k %s ok",path);
     if(lstat(path, &Stat) == -1)
+    {
         my_err("lstat", __LINE__);
-
+        return ;
+    }
     //如果本行不足以打印一个文件名则换行
     if (g_leave_len < g_maxlen)
     {
