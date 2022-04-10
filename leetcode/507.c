@@ -15,3 +15,4 @@ bool checkPerfectNumber(int num){
     return sum == num;
 }
 
+
