@@ -50,7 +50,7 @@ int main(int argc,char** argv)
         for(int i = 0; i<10; i++)
             memset(cmd_list[i],0,256);
 
-        
+        printf("%s",buf);
         //如果输入的时exit就终止循环退出shell
         if( strncmp(buf,"exit\n",5) == 0 )
             break;
@@ -100,6 +100,7 @@ void get_input(char* buf)
     //在结尾手动填上\n和\0
     buf[len] = '\n';
     buf[len+1] = '\0';
+    printf("%s",buf);
 }
 //解析用户输入的函数
 void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
