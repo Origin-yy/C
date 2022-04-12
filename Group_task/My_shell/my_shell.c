@@ -38,19 +38,18 @@ int main(int argc,char** argv)
         perror("malloc failed");
         exit(-1);
     }
-
+    //循环读取和执行用户输入的命令
     while(1)
     {
-        printf_hand();  //打印导航栏和当前工作目录
-        get_input(buf); //获取用户的输入
-
         //将buf,cmd_num和cmd_list全部重置为0，确保每次用户输入的命令正常运行
         memset(buf,0,256);
         cmd_num = 0;
         for(int i = 0; i<10; i++)
             memset(cmd_list[i],0,256);
 
-        printf("%s",buf);
+        printf_hand();  //打印导航栏和当前工作目录
+        get_input(buf); //获取用户的输入
+
         //如果输入的时exit就终止循环退出shell
         if( strncmp(buf,"exit\n",5) == 0 )
             break;
@@ -58,13 +57,11 @@ int main(int argc,char** argv)
         parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
         do_cmd(cmd_num,cmd_list);  //执行用户输入的命令
     }
-
     if(buf != NULL)
     {
         free(buf);
         buf = NULL;
     }
-
     return 0;
 }
 
@@ -72,23 +69,29 @@ int main(int argc,char** argv)
 void printf_hand()
 {
     char *hand1 = "yuanye@my_shell";   //保存导航栏
-    char *hand2 = NULL;                //保存当前工作目录
-    hand2 = getcwd(NULL,0);
+    char *hand2 = NULL;                //用于保存当前工作目录
+    hand2 = getcwd(NULL,0);            //获取当前工作目录
+    //将当前工作目录的“/home/yuanye”改为“~”
+    if(strncmp(hand2,"/home/yuanye",12) == 0)
+    {
+        hand2 += 11;
+        strncpy(hand2,"~",1);
+    }
     printf("\e[1;32m%-s\e[0m:\e[1;34m%-s\e[0m",hand1,hand2);
 
-    free(hand2);
+    free(hand2-11);
 }
 //获取用户输入的函数
 void get_input(char* buf)
 {
     int len = 0;    //保存用户输入的长度
-    char ch = '\0';    
+    char ch;    
 
     //逐个字符读取，当读到回车时停止(未读入\n)
     ch = getchar();
     while (len < 256 && ch != '\n')
     {
-        buf[len++] = getchar();
+        buf[len++] = ch;
         ch = getchar();
     }
     //用户输入不可以超过256个字符
@@ -100,7 +103,6 @@ void get_input(char* buf)
     //在结尾手动填上\n和\0
     buf[len] = '\n';
     buf[len+1] = '\0';
-    printf("%s",buf);
 }
 //解析用户输入的函数
 void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
