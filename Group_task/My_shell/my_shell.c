@@ -54,12 +54,13 @@ int main(int argc,char** argv)
         //如果输入的时exit就终止循环退出shell
         if( strncmp(buf,"exit\n",5) == 0 || strncmp(buf,"logout\n",8) == 0)
             break;
+        
         parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
         //是否有cd命令
-         if(!strcmp(arglist[0],"cd"))
+         if(!strcmp(cmd_list[0],"cd"))
         {
-            arglist[1][strlen(arglist[1])]='\0';
-            if(my_cd(arglist[1]))
+            cmd_list[1][strlen(cmd_list[1])]='\0';
+            if(my_cd(cmd_list[1]))
             {
                 char tmp_file[256];
                 getcwd(tmp_file,256);
