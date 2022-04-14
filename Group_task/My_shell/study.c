@@ -90,16 +90,9 @@ void explain_input(char* buf, int* argcount, char (*arglist)[256])
     while(1)
     {
         if(p[0] == '\n')
-        {
-            //如果buf第一个字符就是'\n', 就退出
             break;
-        }
-
         if(p[0] == ' ')
-        {
-            //如果第一个字符是空格, 指针往后+1
             p++;
-        }
         else
         {
             q = p;

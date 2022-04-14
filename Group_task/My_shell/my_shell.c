@@ -52,13 +52,14 @@ int main(int argc,char** argv)
         printf_hand();  //打印导航栏和当前工作目录
         get_input(buf); //获取用户的输入
         //如果输入的时exit就终止循环退出shell
-        if( strncmp(buf,"exit\n",5) == 0 || strncmp(buf,"logout\n",8) == 0)
+        if( strcmp(buf,"exit") == 0 || strcmp(buf,"logout") == 0)
             break;
-        
+        printf("aa%saa",buf);
         parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
         //是否有cd命令
-         if(!strcmp(cmd_list[0],"cd"))
+         if(!strcmp(cmd_list[0],"cd\n"))
         {
+            printf("AA");
             cmd_list[1][strlen(cmd_list[1])]='\0';
             if(my_cd(cmd_list[1]))
             {
@@ -126,9 +127,9 @@ void get_input(char* buf)
         perror("command is too long\n");
         exit(-1);
     }
-    //在结尾手动填上\n和\0
-    buf[len] = '\n';
-    buf[len+1] = '\0';
+    //在结尾手动填上\0
+    buf[len] = '\0';
+    printf("aa%saa",buf);
 }
 //解析用户输入的函数
 void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
@@ -141,10 +142,10 @@ void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
     for (int i=0; i<strlen(buf); i++)
         if(buf[i] == '#')
             background = 1;
-    //循环解析每一个参数（空额分割）
-    while(1)                /*两个指针都指向参数头，然后其中一个跑到参数尾，*/
-    {                       /*得到这个参数的字符数，拷贝这个参数进参数列表，*/
-        if(begin[0]=='\0')  /*然后两个指针指到下一个参数头，解析下一个参数*/
+    //循环解析每一个参数（空格分割）
+    while(1)
+    {                       
+        if(begin[0]=='\n')  
             break;
         if(begin[0]==' ')
             begin++;
@@ -159,10 +160,11 @@ void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
             }
             strncpy(cmd_list[*cmd_num],begin,number+1);
             cmd_list[*cmd_num][number] = '\0';
-            *cmd_num ++;
+            *cmd_num++;
             begin = end;
         }
     }
+    printf("bb%sbb%sbb",cmd_list[0],cmd_list[1]);
 }
 //执行命令的函数
 void do_cmd(int cmd_num,char cmd_list[10][256])
