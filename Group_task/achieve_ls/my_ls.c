@@ -1,4 +1,3 @@
-//qsort排序文件名有问题
 #include <stdio.h>     //perror
 #include <stdlib.h>    //malloc，qsort
 #include <string.h>    //字符串处理函数
@@ -76,6 +75,7 @@ int main(int argc, char *argv[])
             disply_file_l(pathname);
         else
         {
+            printf("进打印函数之前%sok",pathname);
             disply_file_only(pathname); //无-l选项，进入无-l单文件打印函数
             printf("\n");
         }
@@ -95,8 +95,10 @@ void anal_param(int argc, char *argv[])
         if (argv[i][0] == '-')   //如果有-说明后面是选项
         {
             for (int k = 1; k < strlen(argv[i]); k++, j++)
+            {
                 param[j] = argv[i][k]; //获取‘-’后的选项保存到数组param中
-            n++;
+                n++;
+            }
         }
     }
     //将输入的选项保存在flag中
@@ -145,7 +147,6 @@ void anal_param(int argc, char *argv[])
             exit(1);
         }
     }
-
     if ((n + 1) == argc)    //如果没有输入文件（目录）路径，用pathname保存当前所在目录
         strcpy(pathname, ".");
     else//否则至少输入了一个路径，检验路径是否有效后，用pathname保存该路径
@@ -155,7 +156,6 @@ void anal_param(int argc, char *argv[])
         {
             if (argv[i][0] == '-') //如果是参数就跳过，否则（是路径）就保存该路径
             {
-                i++;
                 continue;
             }
             else
@@ -168,10 +168,10 @@ void anal_param(int argc, char *argv[])
 //错误处理函数
 void my_err(const char *err_string,int line) 
 {
-    perror(err_string);
     if(errno != 13)
     {
         fprintf(stderr,"line:%d ",line);
+        perror(err_string);
         exit(1);
     }
     else
@@ -298,7 +298,6 @@ void disply_file_only(char *path)
     int i, len;
     struct stat Stat;
 
-    printf("0k %s ok",path);
     if(lstat(path, &Stat) == -1)
     {
         my_err("lstat", __LINE__);
