@@ -449,14 +449,14 @@ void disply_dir(char *path)
     disply(filenames,count);
 
     //释放空间
-    if(flag & R)
-        free(filenames);
-    else
+    for(i = 0; i < count; i++)
     {
-        for(i = 0; i < count; i++)
-            free(filenames[i]);
-        free(filenames);
+        free(filenames[i]);
+        filenames[i] = NULL;
     }
+    free(filenames);
+    filenames = NULL;
+
 
     if(!(flag & L) && !(flag & R))
         printf("\n");
