@@ -55,7 +55,6 @@ int cmp(const void *x, const void *y); //用于qsort比较函数
 int main(int argc, char *argv[])
 {
     anal_param(argc, argv); //解析参数和判断是否含有有效路径
-
     //根据路径类型进入不同函数
     struct stat Stat;       //保存路径信息的结构体Stat
     lstat(pathname, &Stat); //获取路径信息
@@ -89,11 +88,13 @@ void anal_param(int argc, char *argv[])
 {
     char param[8] = {'0'}; //保存输入的选项
     int n = 0;             //记录选项个数
+    int k = 0;             //记录-的个数
     //保存选项进param
     for (int i = 1,j = 0; i < argc; i++)
     {
         if (argv[i][0] == '-')   //如果有-说明后面是选项
         {
+            k++;
             for (int k = 1; k < strlen(argv[i]); k++, j++)
             {
                 param[j] = argv[i][k]; //获取‘-’后的选项保存到数组param中
@@ -147,7 +148,7 @@ void anal_param(int argc, char *argv[])
             exit(1);
         }
     }
-    if ((n + 1) == argc)    //如果没有输入文件（目录）路径，用pathname保存当前所在目录
+    if ((k + 1) == argc)    //如果没有输入文件（目录）路径，用pathname保存当前所在目录
         strcpy(pathname, ".");
     else//否则至少输入了一个路径，检验路径是否有效后，用pathname保存该路径
     {
@@ -444,7 +445,6 @@ void disply_dir(char *path)
     //切换工作目录到输入的目录下
     if (chdir(path) == -1)
         my_err("chdir", __LINE__);
-
     //传进打印函数进行打印
     disply(filenames,count);
 
