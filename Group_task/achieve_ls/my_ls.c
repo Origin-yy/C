@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
             disply_file_l(pathname);
         else
         {
-            printf("进打印函数之前%sok",pathname);
+
             disply_file_only(pathname); //无-l选项，进入无-l单文件打印函数
             printf("\n");
         }
