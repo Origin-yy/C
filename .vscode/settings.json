@@ -5,6 +5,9 @@
         "istream": "c",
         "ostream": "c",
         "cstring": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "cmath": "c",
+        "*.tcc": "c",
+        "type_traits": "c"
     }
 }

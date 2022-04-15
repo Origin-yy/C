@@ -298,61 +298,64 @@ void disply_file_only(char *path)
     int i, len;
     struct stat Stat;
 
-    if(lstat(path, &Stat) == -1)
+    if(lstat(path,&Stat) == -1)
     {
-        my_err("lstat", __LINE__);
-        //return ;
-    }else
-    {
-        //如果本行不足以打印一个文件名则换行
-        if (g_leave_len < g_maxlen)
-        {
-            printf("\n");
-            g_leave_len = MAX_ROWLEN;
-        }
-
-        if(!(flag & I) && !(flag & S))      //-i,-s都无，长度仅为文件名长度
-        {
-            len = strlen(path);
-            len = g_maxlen - len;
-        }
-        else if((flag & I) && !(flag & S))  //只有-i，长度为文件名长度+8
-        {
-            len = strlen(path) + 8;
-            len = g_maxlen - len;
-        }
-        else if(!(flag & I) && (flag & S)) //只有-s，长度为文件名长度+3
-        {
-            len = strlen(path) + 3;
-            len = g_maxlen - len;
-        }
-        else if((flag & I) && (flag & S))  //-i,-s都有，长度为文件名长度+11
-        {
-            len = strlen(path) + 11;
-            len = g_maxlen - len;
-        }
-        if(flag & I)    //有-i，打印inode号
-            printf("%7ld ",Stat.st_ino);
-    
-        if(flag & S)    //有-s，打印以块为单位的文件大小
-            printf("%2ld ",Stat.st_blocks/2);
-
-        color_printf(path, Stat);
-
-        for(i = 0; i < len; i++)//按最长的文件名对齐，多打空格
-            printf(" ");
-        printf("  "); //多打两个空格
-        g_leave_len -= (g_maxlen + 2);
+        if(errno != 13)
+            my_err("lstat",__LINE__);
+        else
+            return;
     }
+    //如果本行不足以打印一个文件名则换行
+    if (g_leave_len < g_maxlen)
+    {
+        printf("\n");
+        g_leave_len = MAX_ROWLEN;
+    }
+
+    if(!(flag & I) && !(flag & S))      //-i,-s都无，长度仅为文件名长度
+    {
+        len = strlen(path);
+        len = g_maxlen - len;
+    }
+    else if((flag & I) && !(flag & S))  //只有-i，长度为文件名长度+8
+    {
+        len = strlen(path) + 8;
+        len = g_maxlen - len;
+    }
+    else if(!(flag & I) && (flag & S)) //只有-s，长度为文件名长度+3
+    {
+        len = strlen(path) + 3;
+        len = g_maxlen - len;
+    }
+    else if((flag & I) && (flag & S))  //-i,-s都有，长度为文件名长度+11
+    {
+        len = strlen(path) + 11;
+        len = g_maxlen - len;
+    }
+    if(flag & I)    //有-i，打印inode号
+        printf("%7ld ",Stat.st_ino);
+ 
+    if(flag & S)    //有-s，打印以块为单位的文件大小
+        printf("%2ld ",Stat.st_blocks/2);
+
+    color_printf(path, Stat);
+
+    for(i = 0; i < len; i++)//按最长的文件名对齐，多打空格
+        printf(" ");
+    printf("  "); //多打两个空格
+    g_leave_len -= (g_maxlen + 2);
 }
 //-R，无-l单文件打印函数
 void disply_R_only(char *path)
 {
     struct stat buf;
-
     if(lstat(path,&buf) == -1)
-        my_err("lstat",__LINE__);
-
+    {
+        if(errno != 13)
+            my_err("lstat",__LINE__);
+        else
+            return;
+    }
     if(S_ISDIR(buf.st_mode))
     {
         printf("\n\n");      //文件全部打完后的换行以及两个目录之间的空行
@@ -401,68 +404,83 @@ void disply_dir(char *path)
     //获取该目录下文件总数count和最长文件名g_maxlen，用于打印和对齐
     dir = opendir(path);
     if (dir == NULL)
-        my_err("opendir", __LINE__);
-    else
     {
-        g_maxlen = 0;
-        while ((ptr = readdir(dir)) != NULL)
-        {
-            if (g_maxlen < strlen(ptr->d_name))
-                g_maxlen = strlen(ptr->d_name);
-            count++;
-        }
-        if ((flag & I) && !(flag & S))
-            g_maxlen += 3;
-        else if (!(flag & I) && (flag & S))
-            g_maxlen += 8;
-        else if((flag & I) &&  flag &S)
-            g_maxlen += 11;
-        closedir(dir);
-
-        //动态分配空间，减少栈的消耗
-        char **filenames = (char **)malloc(sizeof(char *) * count);
-        memset(filenames, 0, sizeof(char *) * count);
-        for (i = 0; i < count; i++)
-        {
-            filenames[i] = (char *)malloc(sizeof(char) * g_maxlen + 1);
-            memset(filenames[i], 0, sizeof(char) * g_maxlen + 1);
-        }
-
-        //获取并保存该目录下所有文件名进数组
-        dir = opendir(path);
-        len = strlen(path);
-        for (i = 0; i < count; i++)
-        {
-            ptr = readdir(dir);
-            if (ptr == NULL)
-                my_err("readdir", __LINE__);
-            strcpy(filenames[i], ptr->d_name);
-        }
-
-        closedir(dir);
-
-        //对文件名排序-t,-r
-        file_sort(filenames, count);
-
-        //切换工作目录到输入的目录下
-        if (chdir(path) == -1)
-            my_err("chdir", __LINE__);
-        //传进打印函数进行打印
-        disply(filenames,count);
-
-        //释放空间
-        for(i = 0; i < count; i++)
-        {
-            free(filenames[i]);
-            filenames[i] = NULL;
-        }
-        free(filenames);
-        filenames = NULL;
-
-
-        if(!(flag & L) && !(flag & R))
-            printf("\n");
+        if(errno!=13)
+            my_err("opendir", __LINE__);
+        else
+            return;
     }
+    g_maxlen = 0;
+    while ((ptr = readdir(dir)) != NULL)
+    {
+        if (g_maxlen < strlen(ptr->d_name))
+            g_maxlen = strlen(ptr->d_name);
+        count++;
+    }
+    if ((flag & I) && !(flag & S))
+        g_maxlen += 3;
+    else if (!(flag & I) && (flag & S))
+        g_maxlen += 8;
+    else if((flag & I) &&  flag &S)
+        g_maxlen += 11;
+    closedir(dir);
+
+    //动态分配空间，减少栈的消耗
+    char **filenames = (char **)malloc(sizeof(char *) * count);
+    memset(filenames, 0, sizeof(char *) * count);
+    for (i = 0; i < count; i++)
+    {
+        filenames[i] = (char *)malloc(sizeof(char) * g_maxlen + 1);
+        memset(filenames[i], 0, sizeof(char) * g_maxlen + 1);
+    }
+
+    //获取并保存该目录下所有文件名进数组
+    dir = opendir(path);
+    if(dir == NULL)
+    {
+        if(errno!=13)
+            my_err("opendir", __LINE__);
+        else
+            return;
+    }
+    len = strlen(path);
+    for (i = 0; i < count; i++)
+    {
+        ptr = readdir(dir);
+        if(ptr == NULL)
+        {
+            if(errno!=13)
+                my_err("readdir", __LINE__);
+            else
+                return;
+        }
+        if (ptr == NULL)
+            my_err("readdir", __LINE__);
+        strcpy(filenames[i], ptr->d_name);
+    }
+
+    closedir(dir);
+
+    //对文件名排序-t,-r
+    file_sort(filenames, count);
+
+    //切换工作目录到输入的目录下
+    if (chdir(path) == -1)
+        my_err("chdir", __LINE__);
+    //传进打印函数进行打印
+    disply(filenames,count);
+
+    //释放空间
+    for(i = 0; i < count; i++)
+    {
+        free(filenames[i]);
+        filenames[i] = NULL;
+    }
+    free(filenames);
+    filenames = NULL;
+
+    if(!(flag & L) && !(flag & R))
+        printf("\n");
 }
 //多文件打印函数(判断-R-a-l)
 void disply(char **filenames, int count)
