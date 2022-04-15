@@ -51,13 +51,12 @@ int main(int argc,char** argv)
             memset(cmd_list[i],0,256);
         printf_hand();  //打印导航栏和当前工作目录
         get_input(buf); //获取用户的输入
-        printf("11%s11\n",buf);
         //如果输入的时exit就终止循环退出shell
         if( strcmp(buf,"exit") == 0 || strcmp(buf,"logout") == 0)
             break;
         parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
         //是否有cd命令
-         if(!strcmp(cmd_list[0],"cd\n"))
+        if(strcmp(cmd_list[0],"cd") == 0)
         {
             printf("AA");
             cmd_list[1][strlen(cmd_list[1])]='\0';
@@ -133,10 +132,6 @@ void get_input(char* buf)
 //解析用户输入的函数
 void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
 {
-    //把用户输入按空格分割成多个字符串，保存进cmd_list
-    char *begin = buf;   //一个参数的开头
-    char *end = buf;     //一个参数的结尾
-    int number = 0;      //一个参数的字符数
     //判断是否在后台运行
     for (int i=0; i<strlen(buf); i++)
         if(buf[i] == '#')
