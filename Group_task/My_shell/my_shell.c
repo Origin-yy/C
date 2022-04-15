@@ -40,7 +40,7 @@ int main(int argc,char** argv)
         perror("malloc failed");
         exit(-1);
     }
-    background=0; //默认无在后台运行的命令
+    background=0; //默认不在后台运行
     //循环读取和执行用户输入的命令
     while(1)
     {
@@ -129,7 +129,6 @@ void get_input(char* buf)
     }
     //在结尾手动填上\0
     buf[len] = '\0';
-    printf("aa%saa",buf);
 }
 //解析用户输入的函数
 void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
@@ -142,29 +141,8 @@ void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
     for (int i=0; i<strlen(buf); i++)
         if(buf[i] == '#')
             background = 1;
-    //循环解析每一个参数（空格分割）
-    while(1)
-    {                       
-        if(begin[0]=='\n')  
-            break;
-        if(begin[0]==' ')
-            begin++;
-        else
-        {
-            end = begin;
-            number = 0;
-            while(end[0] !='\n' && end[0] != ' ')
-            {
-                number++;
-                end++;
-            }
-            strncpy(cmd_list[*cmd_num],begin,number+1);
-            cmd_list[*cmd_num][number] = '\0';
-            *cmd_num++;
-            begin = end;
-        }
-    }
-    printf("bb%sbb%sbb",cmd_list[0],cmd_list[1]);
+    //解析出每一个参数（空格分割）
+
 }
 //执行命令的函数
 void do_cmd(int cmd_num,char cmd_list[10][256])
