@@ -51,10 +51,10 @@ int main(int argc,char** argv)
             memset(cmd_list[i],0,256);
         printf_hand();  //打印导航栏和当前工作目录
         get_input(buf); //获取用户的输入
+        printf("11%s11\n",buf);
         //如果输入的时exit就终止循环退出shell
         if( strcmp(buf,"exit") == 0 || strcmp(buf,"logout") == 0)
             break;
-        printf("aa%saa",buf);
         parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
         //是否有cd命令
          if(!strcmp(cmd_list[0],"cd\n"))
