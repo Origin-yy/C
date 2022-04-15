@@ -275,8 +275,11 @@ void disply_file_l(char *path)
 void disply_R_l(char *path)
 {
     struct stat buf;
-    if(chdir(PATH) == -1)
-        my_err("chdir",__LINE__);
+    if(strncmp(".",pathname,1) != 0)
+    {
+        if(chdir(PATH) == -1)
+            my_err("chdir",__LINE__);
+    }
     if(lstat(path,&buf) == -1)
         my_err("lstat",__LINE__);
 
@@ -351,8 +354,11 @@ void disply_file_only(char *path)
 void disply_R_only(char *path)
 {
     struct stat buf;
-    if(chdir(PATH) == -1)
-        my_err("chdir",__LINE__);
+    if(strncmp(".",pathname,1) != 0)
+    {
+        if(chdir(PATH) == -1)
+           my_err("chdir",__LINE__);
+    }
     if(lstat(path,&buf) == -1)
     {
         if(errno != 13)
