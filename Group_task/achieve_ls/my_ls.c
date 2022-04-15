@@ -187,8 +187,12 @@ void disply_file_l(char *path)
     struct group *has_group; //内含组名的结构体
 
     if (lstat(path, &Stat) == -1)
-        my_err("lstat", __LINE__);
-    
+    {
+        fprintf(stderr,"%s line:%d ",path,__LINE__);
+        perror("lstat");
+        
+        return;
+    }
     if(flag & I)    //有-i，打印inode号
         printf("%7ld ",Stat.st_ino);
  
