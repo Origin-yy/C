@@ -16,3 +16,12 @@ a.out
 my_shell.c
 study1.c
 study2.c
+achieve_ls
+Exercise
+My_shell
+achieve_ls
+Exercise
+My_shell
+achieve_ls
+Exercise
+My_shell
