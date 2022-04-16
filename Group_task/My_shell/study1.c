@@ -321,27 +321,6 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
         }
     }
 
-    //处理cd命令
-    if((arg[0] != NULL) && (strcmp(arg[0], "cd") == 0))
-    {
-        if(arg[1] == NULL)
-        {
-            return ;
-        }
-        if(strcmp(arg[1], "~") == 0)
-        {
-            // "~" 替换为家目录
-            strcpy(arg[1], "/home/rjm/");
-        }
-        //int chdir(const char *path);
-        //改变当前工作目录
-        if(chdir(arg[1]) ==  -1)
-        {
-            perror("cd");
-        }
-        return ;
-    }
-
     if((pid = fork()) < 0)
     {
         printf("fork error\n");
