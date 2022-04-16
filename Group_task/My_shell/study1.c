@@ -184,7 +184,7 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
     //将命令取出
     for(i = 0; i < cmd_num; i++)
     {
-        arg[i] = (char *)cmd_list[i];
+       arg[i] = (char *)cmd_list[i];
     }
     arg[cmd_num] = NULL;
 
@@ -254,7 +254,6 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
             }
         }
     }
-
 
     //flag大于1,说明命令中含有多个> < |符号，本程序不支持这样的命令，或者命令格式不对
     if(flag > 1)
@@ -356,7 +355,7 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
         //输入的命令中不含> < |
         if(pid == 0)
         {
-            if(!(find_exeProgram_In_command(arg[0])))
+            if(!(find_cmd(arg[0])))
             {
                 printf("%s : command not found\n", arg[0]);
                 exit(0);
@@ -371,7 +370,7 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
         //输入的命令中含有输出重定向符>
         if(pid == 0)
         {
-            if( !(find_exeProgram_In_command(arg[0])) )
+            if( !(find_cmd(arg[0])) )
             {
                 printf("%s : command not found\n", arg[0]);
                 exit(0);
@@ -390,7 +389,7 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
         //输入的命令中含有输入重定向<
         if(pid == 0)
         {
-            if( !(find_exeProgram_In_command (arg[0])) )
+            if( !(find_cmd (arg[0])) )
             {
                 printf("%s : command not found\n", arg[0]);
                 exit(0);
@@ -418,7 +417,7 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
             }
             else if(pid2 == 0)
             {
-                if( !(find_exeProgram_In_command(arg[0])) )
+                if( !(find_cmd(arg[0])) )
                 {
                     printf("%s : command not found\n", arg[0]);
                     exit(0);
@@ -432,7 +431,7 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
             {
                 printf("wait for child process error\n");
             }
-            if( !(find_exeProgram_In_command(argnext[0])) )
+            if( !(find_cmd(argnext[0])) )
             {
                 printf("%s : command not found\n", argnext[0]);
                 exit(0);
@@ -455,7 +454,7 @@ void do_cmd(int cmd_num,char cmd_list[10][256])
         //输入的命令中含有输出追加重定向符>>
         if(pid == 0)
         {
-            if( !(find_exeProgram_In_command(arg[0])) )
+            if( !(find_cmd(arg[0])) )
             {
                 printf("%s : command not found\n", arg[0]);
                 exit(0);
