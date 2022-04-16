@@ -1,0 +1,24 @@
+1.txt
+a.out
+my_shell
+my_shell.c
+study
+study2.c
+study.c
+1.txt
+a.out
+my_shell
+my_shell.c
+study
+study2.c
+study.c
+总用量 160
+drwxrwxr-x 2 yuanye yuanye  4096 4月  16 16:09 .
+drwxrwxr-x 5 yuanye yuanye  4096 4月  11 17:45 ..
+-rw-rw-r-- 1 yuanye yuanye   110 4月  16 16:09 1.txt
+-rwxrwxr-x 1 yuanye yuanye 53248 4月  16 16:09 a.out
+-rwxrwxr-x 1 yuanye yuanye 21336 4月  12 22:28 my_shell
+-rw-rw-r-- 1 yuanye yuanye 13656 4月  16 16:09 my_shell.c
+-rwxrwxr-x 1 yuanye yuanye 28168 4月  12 22:28 study
+-rw-rw-r-- 1 yuanye yuanye 11313 4月  16 11:24 study2.c
+-rw-rw-r-- 1 yuanye yuanye 15827 4月  16 15:55 study.c

@@ -29,6 +29,8 @@ void get_input(char* buf);
 void parse_input(char *buf,int* cmd_num,char cmd_list[100][256]);
 //执行命令的函数
 void do_cmd(int cmd_num,char cmd_list[100][256]);
+//查找命令的函数
+int find_cmd(char *command);
 
 int main(int argc,char** argv)
 {
@@ -164,6 +166,11 @@ void parse_input(char *buf,int* cmd_num,char cmd_list[100][256])
         if(*cmd_num > 99)
            printf("命令太多了\n");
     }
+}
+//查找命令的函数
+int find_cmd(char *command)
+{
+    
 }
 //执行命令的函数
 void do_cmd(int cmd_num,char cmd_list[10][256])
