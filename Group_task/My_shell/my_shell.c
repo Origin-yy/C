@@ -55,14 +55,13 @@ int main(int argc,char** argv)
             memset(cmd_list[i],0,256);
         printf_hand();  //打印导航栏和当前工作目录
         get_input(buf); //获取用户的输入
-        //如果输入的时exit就终止循环退出shell
+        //如果输入的时exit或者logout就终止循环退出shell
         if( strcmp(buf,"exit") == 0 || strcmp(buf,"logout") == 0)
             break;
         parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
         //是否有cd命令
         if(strcmp(cmd_list[0],"cd") == 0)
         {
-            //cmd_list[1][strlen(cmd_list[1])]='\0';
             if(my_cd(cmd_list[1]))
             {
                 char tmp_file[256];
@@ -170,10 +169,10 @@ void parse_input(char *buf,int* cmd_num,char cmd_list[100][256])
 //查找命令的函数
 int find_cmd(char *command)
 {
-    
+
 }
 //执行命令的函数
 void do_cmd(int cmd_num,char cmd_list[10][256])
 {
-
+    
 }
