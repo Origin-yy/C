@@ -16,6 +16,8 @@
 #define out_a_r   4   //输出追加重定向
 
 int background = 0;   //判断是否在后台运行
+char his_workpath[100][256] = {'\0'};   //记录历史工作目录
+int i = 0;             //历史工作目录下标
 
 //实现cd命令的实函数
 int my_cd(char *buf);
@@ -87,6 +89,8 @@ void printf_hand()
     char *hand1 = "yuanye@my_shell";   //保存导航栏
     char *hand2 = NULL;                //用于保存当前工作目录
     hand2 = getcwd(NULL,0);            //获取当前工作目录
+    strcpy(his_workpath[i],hand2);
+    i++;
     //如果当前工作目录有“/home/yuanye”，则将其改为“~”
     if(strncmp(hand2,"/home/yuanye",12) == 0)
     {
@@ -104,10 +108,20 @@ void printf_hand()
 //实现cd命令的实现
 int my_cd(char *buf)
 {
-    if(chdir(buf)<0)
-        return 0;
-    else
-        return 1;
+    if(strcmp("-",buf) != 0)
+    {
+        if(chdir(buf)<0)
+            return 0;
+        else
+            return 1;
+    }
+    else 
+    {
+        if(i > 1 && chdir(his_workpath[i-2])<0)
+            return 0;
+        else
+            return 1;
+    }
 }
 //获取用户输入的函数
 void get_input(char* buf)
