@@ -24,15 +24,15 @@ void printf_hand();
 //获取用户输入的函数
 void get_input(char* buf);
 //解析用户输入的函数
-void parse_input(char *buf,int* cmd_num,char cmd_list[10][256]);
+void parse_input(char *buf,int* cmd_num,char cmd_list[100][256]);
 //执行命令的函数
-void do_cmd(int cmd_num,char cmd_list[10][256]);
+void do_cmd(int cmd_num,char cmd_list[100][256]);
 
 int main(int argc,char** argv)
 {
     char* buf = NULL;         //用来保存用户输入的未解析的一或多个命令
     int cmd_num = 0;          //用来保存解析后的命令个数    
-    char cmd_list[10][256];   //用数组来保存解析后的命令列表(最多10个命令，一个命令的长度最长为256)
+    char cmd_list[100][256];   //用数组来保存解析后的命令列表(最多10个命令，一个命令的长度最长为256)
 
     buf = (char*)malloc(256);
     if(buf  == NULL)
@@ -47,7 +47,7 @@ int main(int argc,char** argv)
         //将buf,cmd_num和cmd_list全部重置为0，确保每次用户输入的命令正常运行
         memset(buf,0,256);
         cmd_num = 0;
-        for(int i = 0; i<10; i++)
+        for(int i = 0; i<100; i++)
             memset(cmd_list[i],0,256);
         printf_hand();  //打印导航栏和当前工作目录
         get_input(buf); //获取用户的输入
@@ -58,8 +58,7 @@ int main(int argc,char** argv)
         //是否有cd命令
         if(strcmp(cmd_list[0],"cd") == 0)
         {
-            printf("AA");
-            cmd_list[1][strlen(cmd_list[1])]='\0';
+            //cmd_list[1][strlen(cmd_list[1])]='\0';
             if(my_cd(cmd_list[1]))
             {
                 char tmp_file[256];
@@ -72,7 +71,6 @@ int main(int argc,char** argv)
                 continue;
             }
         }
-
         do_cmd(cmd_num,cmd_list);  //执行用户输入的命令
     }
     if(buf != NULL)
@@ -130,14 +128,24 @@ void get_input(char* buf)
     buf[len] = '\0';
 }
 //解析用户输入的函数
-void parse_input(char *buf,int* cmd_num,char cmd_list[10][256])
+void parse_input(char *buf,int* cmd_num,char cmd_list[100][256])
 {
     //判断是否在后台运行
-    for (int i=0; i<strlen(buf); i++)
+    for(int i=0; i<strlen(buf); i++)
         if(buf[i] == '#')
             background = 1;
-    //解析出每一个参数（空格分割）
-
+    //解析出每一个命令（空格分割）
+    char *ptr;
+    char *old;
+    ptr = strtok_r(buf," ",&old);
+    while(ptr != NULL)
+    {
+        strcpy(cmd_list[*cmd_num],ptr) == NULL;
+        *cmd_num += 1;
+        ptr = strtok_r(NULL," ",&old);
+        if(*cmd_num > 99)
+           printf("命令太多了\n");
+    }
 }
 //执行命令的函数
 void do_cmd(int cmd_num,char cmd_list[10][256])
