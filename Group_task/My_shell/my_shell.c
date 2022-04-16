@@ -87,23 +87,27 @@ void printf_hand()
     char *hand1 = "yuanye@my_shell";   //保存导航栏
     char *hand2 = NULL;                //用于保存当前工作目录
     hand2 = getcwd(NULL,0);            //获取当前工作目录
-    //将当前工作目录的“/home/yuanye”改为“~”
+    //如果当前工作目录有“/home/yuanye”，则将其改为“~”
     if(strncmp(hand2,"/home/yuanye",12) == 0)
     {
-        hand2 += 11;
-        strncpy(hand2,"~",1);
+        hand2+11;
+        strncpy(hand2+11,"~",1);
+        printf("\e[1;32m%-s\e[0m:\e[1;34m%-s\e[0m",hand1,hand2+11);
     }
-    printf("\e[1;32m%-s\e[0m:\e[1;34m%-s\e[0m",hand1,hand2);
-
-    free(hand2-11);
+    else
+    {
+        printf("\e[1;32m%-s\e[0m:\e[1;34m%-s\e[0m",hand1,hand2);
+    }
+    free(hand2);
+    hand2=NULL;
 }
 //实现cd命令的实现
 int my_cd(char *buf)
 {
     if(chdir(buf)<0)
-        exit(0);
+        return 0;
     else
-        exit(1);
+        return 1;
 }
 //获取用户输入的函数
 void get_input(char* buf)
