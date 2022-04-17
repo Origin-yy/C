@@ -53,11 +53,15 @@ int main(int argc,char** argv)
         cmd_num = 0;
         for(int i = 0; i<100; i++)
             memset(cmd_list[i],0,256);
+        printf("my_shell已运行");
         printf_hand();  //打印导航栏和当前工作目录
         get_input(buf); //获取用户的输入
         //如果输入的时exit就终止循环退出shell
         if( strcmp(buf,"exit") == 0 || strcmp(buf,"logout") == 0)
+        {
+            printf("my_shell已终止")；
             break;
+        }
         parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
         //是否有cd命令
         if(strcmp(cmd_list[0],"cd") == 0)
@@ -87,7 +91,7 @@ int main(int argc,char** argv)
 //打印导航栏的函数
 void printf_hand()
 {
-    char *hand1 = "yuanye@my_shell";   //保存导航栏
+    char *hand1 = "yuanye@yuanye-Lenovo-Legion-R70002021:";   //保存导航栏
     char *hand2 = NULL;                //用于保存当前工作目录
     hand2 = getcwd(NULL,0);            //获取当前工作目录
     strcpy(his_workpath[h],hand2);
