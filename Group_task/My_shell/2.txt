@@ -1,1 +1,11 @@
-1
+总用量 120
+drwxrwxr-x 2 yuanye yuanye  4096 4月  17 16:34 .
+drwxrwxr-x 5 yuanye yuanye  4096 4月  11 17:45 ..
+-rw-rw-r-- 1 yuanye yuanye   523 4月  17 16:33 1.txt
+-rw-rw-r-- 1 yuanye yuanye    12 4月  17 10:31 2.txt
+-rwxrwxr-x 1 yuanye yuanye 44120 4月  17 16:32 a.out
+-rwxrwxr-x 1 yuanye yuanye 27584 4月  17 16:22 my_shell2
+-rw-rw-r-- 1 yuanye yuanye  7561 4月  17 16:32 my_shell2.c
+-rw-rw-r-- 1 yuanye yuanye 13547 4月  17 08:48 my_shell.c
+-rw-rw-r-- 1 yuanye yuanye  4240 4月  17 15:52 study1.c
+-rw-rw-r-- 1 yuanye yuanye     0 4月  17 16:34 temp.txt
