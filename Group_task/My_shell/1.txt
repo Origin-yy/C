@@ -1,1 +1,32 @@
-  3  27 176
+1.txt
+2.txt
+a.out
+my_shell2
+my_shell2.c
+my_shell.c
+study1.c
+temp.txt
+1,txt
+1.txt
+2.txt
+a.out
+my_shell2
+my_shell2.c
+my_shell.c
+study1.c
+temp.txt
+achieve_ls
+Exercise
+My_shell
+总用量 140
+drwxrwxr-x 2 yuanye yuanye  4096 4月  17 19:44 .
+drwxrwxr-x 5 yuanye yuanye  4096 4月  11 17:45 ..
+-rw-rw-r-- 1 yuanye yuanye    75 4月  17 19:41 1,txt
+-rw-rw-r-- 1 yuanye yuanye   173 4月  17 19:44 1.txt
+-rw-rw-r-- 1 yuanye yuanye    12 4月  17 16:46 2.txt
+-rwxrwxr-x 1 yuanye yuanye 49280 4月  17 19:44 a.out
+-rwxrwxr-x 1 yuanye yuanye 27584 4月  17 16:22 my_shell2
+-rw-rw-r-- 1 yuanye yuanye  9217 4月  17 19:43 my_shell2.c
+-rw-rw-r-- 1 yuanye yuanye 13547 4月  17 19:12 my_shell.c
+-rw-rw-r-- 1 yuanye yuanye  4240 4月  17 18:53 study1.c
+-rw-rw-r-- 1 yuanye yuanye    32 4月  17 19:36 temp.txt
