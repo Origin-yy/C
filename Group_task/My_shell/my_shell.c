@@ -1,49 +1,48 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
 #include<unistd.h>
 #include<sys/types.h>
-#include<sys/wait.h>
 #include<sys/stat.h>
 #include<fcntl.h>
-#include<dirent.h>
+#include<ctype.h>
+#include<stdlib.h>
+#include<wait.h>
+#include<string.h>
 #include<signal.h>
+#include<dirent.h>
 
-#define normal    0   //普通命令
-#define out_r     1   //输出重定向
-#define in_r      2   //输入重定向
-#define have_pipe 3   //命令中有管道
-#define out_a_r   4   //输出追加重定向
-
-int background = 0;   //判断是否在后台运行
 char his_workpath[100][256] = {'\0'};   //记录历史工作目录
-int h = 0;             //历史工作目录下标
+int h = 0;                    //历史工作目录下标
+int cmd_num = 0;              //按空格切割后的命令个数
+char buf[1024] = {0};         //存储用户的输入（未解析的字符串）
+char cmd_list[100][256] = {0};//按空格切割后的命令列表
+int pid = 0;                  //存储子进程的进程号
+char *pipe_file = "temp.txt"; //用做管道的文件
+int flag[100][3] = {0};       //输入/输出/追加重定向标记。flag[i]表示以管道分割的第i个命令行，flag[i][0~1]表示是否有输入/追加/输出重定向(值为0表示无，1表示有)
+char *file[100][3] = {0};     //输入/输出重定向的目标文件
+char *argv[100][100] = {0};   //三维数组，每一个二维数组代表一个可执行程序的参数列表
+int pipe_num = 0;             //管道个数
+int background = 0;           //判断是否为有后台运行
+int one = 0;                  //保证“my_shell已运行”只提示一次
 
-//实现cd命令的实函数
+//实现cd命令的函数
 int my_cd(char *buf);
-//打印导航栏和当前工作目录的函数
+//打印导航栏的函数
 void printf_hand();
 //获取用户输入的函数
-void get_input(char* buf);
-//解析用户输入的函数
-void parse_input(char *buf,int* cmd_num,char cmd_list[100][256]);
+void get_input();
+//按空格切割用户输入的函数
+void cut_input();
+//解析命令中的管道，重定向等信息的函数
+void analysis_command();
+//创建子进程，执行命令的函数
+int do_cmd();
 //查找可执行命令的函数
 int find_cmd(char *command);
-//执行命令的函数
-void do_cmd(int cmd_num,char cmd_list[100][256]);
+
 
 int main(int argc,char** argv)
 {
-    char* buf = NULL;         //用来保存用户输入的未解析的一或多个命令
-    int cmd_num = 0;          //用来保存解析后的命令个数    
-    char cmd_list[100][256];   //用数组来保存解析后的命令列表(最多10个命令，一个命令的长度最长为256)
-
-    buf = (char*)malloc(256);
-    if(buf  == NULL)
-    {
-        perror("malloc failed");
-        exit(-1);
-    }
+    
     background=0; //默认不在后台运行
     //循环读取和执行用户输入的命令
     while(1)
@@ -53,16 +52,21 @@ int main(int argc,char** argv)
         cmd_num = 0;
         for(int i = 0; i<100; i++)
             memset(cmd_list[i],0,256);
-        printf("my_shell已运行\n");
+        if(one == 0)
+        {
+            printf("my_shell已运行\n");
+            one++;
+        }
         printf_hand();  //打印导航栏和当前工作目录
-        get_input(buf); //获取用户的输入
+        get_input(); //获取用户的输入
         //如果输入的时exit就终止循环退出shell
         if( strcmp(buf,"exit") == 0 || strcmp(buf,"logout") == 0)
         {
+            remove(pipe_file);//删除pipe_file文件
             printf("my_shell已终止\n");
             break;
         }
-        parse_input(buf,&cmd_num,cmd_list); //解析用户的输入，得到cmd_num和cmd_list
+        cut_input(); //按空格切割用户的输入，得到cmd_num和cmd_list
         //是否有cd命令
         if(strcmp(cmd_list[0],"cd") == 0)
         {
@@ -78,16 +82,30 @@ int main(int argc,char** argv)
                 continue;
             }
         }
-        do_cmd(cmd_num,cmd_list);  //执行用户输入的命令
+        analysis_command();
+        do_cmd();  //执行用户输入的命令
     }
-    if(buf != NULL)
-    {
-        free(buf);
-        buf = NULL;
-    }
-    return 0;
 }
 
+
+//实现cd命令的函数
+int my_cd(char *buf)
+{
+    if(strcmp("-",buf) != 0)
+    {
+        if(chdir(buf)<0)
+            return 0;
+        else
+            return 1;
+    }
+    else 
+    {
+        if(h > 1 && chdir(his_workpath[h-2])<0)
+            return 0;
+        else
+            return 1;
+    }
+}
 //打印导航栏的函数
 void printf_hand()
 {
@@ -110,38 +128,20 @@ void printf_hand()
     free(hand2);
     hand2=NULL;
 }
-//实现cd命令的实现
-int my_cd(char *buf)
-{
-    if(strcmp("-",buf) != 0)
-    {
-        if(chdir(buf)<0)
-            return 0;
-        else
-            return 1;
-    }
-    else 
-    {
-        if(h > 1 && chdir(his_workpath[h-2])<0)
-            return 0;
-        else
-            return 1;
-    }
-}
 //获取用户输入的函数
-void get_input(char* buf)
+void get_input()
 {
     int len = 0;    //保存用户输入的长度
     char ch;    
     //逐个字符读取，当读到回车时停止(未读入\n)
     ch = getchar();
-    while (len < 256 && ch != '\n')
+    while (len < 1024 && ch != '\n')
     {
         buf[len++] = ch;
         ch = getchar();
     }
     //用户输入不可以超过256个字符
-    if(len == 256)
+    if(len >= 1024)
     {
         perror("command is too long\n");
         exit(-1);
@@ -149,8 +149,8 @@ void get_input(char* buf)
     //在结尾手动填上\0
     buf[len] = '\0';
 }
-//解析用户输入的函数
-void parse_input(char *buf,int* cmd_num,char cmd_list[100][256])
+//按空格切割用户输入的函数
+void cut_input() 
 {
     //解析出每一个命令（空格分割）
     char *ptr;
@@ -158,312 +158,195 @@ void parse_input(char *buf,int* cmd_num,char cmd_list[100][256])
     ptr = strtok_r(buf," ",&old);
     while(ptr != NULL)
     {
-        strcpy(cmd_list[*cmd_num],ptr) == NULL;
-        *cmd_num += 1;
+        strcpy(cmd_list[cmd_num],ptr) == NULL;
+        cmd_num += 1;
         ptr = strtok_r(NULL," ",&old);
-        if(*cmd_num > 99)
+        if(cmd_num > 99)
            printf("命令太多了\n");
     }
+}
+//解析命令中的管道，重定向等信息的函数
+void analysis_command() 
+{
+	//管道个数,管道的输入/输出/追加重定向标记和参数数组初始化为0
+    pipe_num = 0;
+	for(int i=0;i<100;i++)
+    {
+		flag[i][0] = flag[i][1] = flag[i][2] = 0;
+		file[i][0] = file[i][1] = file[i][2] = 0;
+		for(int j=0;j<100;j++)
+			argv[i][j]=0;
+	}
+
+	for(int i=0; i<cmd_num; i++) 
+        argv[0][i] = cmd_list[i];//初始化第一个参数数组
+	argv[0][cmd_num] = NULL;     //参数数组最后一个元素为NULL
+	int a = 0;    //当前命令参数的序号
+
+	for(int i=0; i<cmd_num; i++) 
+    {
+		if(strcmp(cmd_list[i],"|") == 0) 
+        {
+			argv[pipe_num][a++] = NULL;
+			pipe_num++;
+			a = 0;
+		}
+		else if(strcmp(cmd_list[i],"<") == 0) 
+        {
+			flag[pipe_num][0] = 1;
+			file[pipe_num][0] = cmd_list[i+1];
+			argv[pipe_num][a++] = NULL;
+		}
+		else if(strcmp(cmd_list[i],">") == 0)
+         {
+			flag[pipe_num][1] = 1;
+			file[pipe_num][1] = cmd_list[i+1];
+			argv[pipe_num][a++] = NULL;
+		}
+        else if(strcmp(cmd_list[i],">>") == 0)
+         {
+			flag[pipe_num][2] = 1;
+			file[pipe_num][2] = cmd_list[i+1];
+			argv[pipe_num][a++] = NULL;
+		}
+        else 
+            argv[pipe_num][a++] = cmd_list[i];
+	}
+}
+//创建子进程，执行命令的函数
+int do_cmd() 
+{
+	pid = fork();
+	if(pid<0)
+    {
+		perror("fork error!\n");
+        exit(0);
+	}
+    //子进程执行命令
+	if(pid == 0)
+    {
+		if(pipe_num == 0)//如果没有管道，说明只有一个命令行
+        {
+			if(flag[0][0])
+            {
+				close(0);
+				int fd = open(file[0][0],O_RDONLY);
+			}
+			if(flag[0][1])
+            {
+				close(1);
+				int fd2 = open(file[0][1],O_WRONLY|O_CREAT|O_TRUNC,0666);
+			}
+            if(flag[0][2])
+            {
+				close(1);
+				int fd3 = open(file[0][2],O_WRONLY|O_CREAT|O_APPEND,0644);
+			}
+            if( !(find_cmd(argv[0][0])) )
+            {
+                printf("未找到该命令：%s\n", argv[0][0]);
+                exit(0);
+            }
+			execvp(argv[0][0],argv[0]);
+		}
+		else //有管道
+        {
+            int t;    //执行第t个管道前的命令行（t从零开始），最后一个管道后的命令行不会执行
+			for(t=0; t<pipe_num; t++) 
+            {
+				int pid2 = fork();
+				if(pid2<0)
+                {
+					perror("fork error!\n");
+					exit(0);
+				}
+				else if(pid2==0) //孙进程运行
+                {
+					if(t) //如果不是第一个命令行（0），则需要从共享文件处读取数据
+                    {
+                        close(0);
+					    int fd = open(pipe_file,O_RDONLY);
+                    }
+                    if(flag[t][0])
+                    {
+						close(0);
+						int fd = open(file[t][0],O_RDONLY);
+					}
+					if(flag[t][1]) 
+                    {
+						close(1);
+						int fd = open(file[t][1],O_WRONLY|O_CREAT|O_TRUNC,0666);
+					}
+                    if(flag[t][2])
+                    {
+						close(1);
+						int fd = open(file[t][1],O_WRONLY|O_CREAT|O_APPEND,0644);
+					}			
+                    close(1);
+                    remove(pipe_file);//每用一次管道文件，将其中内容清空，否则会出现输入也做输出的情况
+                    int fd = open(pipe_file,O_WRONLY|O_CREAT|O_TRUNC,0666);
+                    if( !(find_cmd(argv[t][0])) )
+                    {
+                        printf("未找到该命令：%s\n", argv[0][0]);
+                        exit(0);
+                    }
+					if(execvp(argv[t][0],argv[t]) == -1) 
+                    {
+                        perror("execvp error!\n");
+                        exit(0);
+                    }
+				}
+				else   //由于管道后的命令需要使用管道前命令的输出作为输入，因此子进程需要等待孙进程结束
+					waitpid(pid2,NULL,0);
+			}
+            //执行最后一个管道后的命令（最后的命令）
+			close(0);
+			int fd = open(pipe_file,O_RDONLY);//输入重定向
+			if(flag[t][1])
+            {
+				close(1);
+				int fd = open(file[t][1],O_WRONLY|O_CREAT|O_TRUNC,0666);
+			}
+            else if(flag[t][2])
+            {
+                close(1);
+				int fd = open(file[t][2],O_WRONLY|O_CREAT|O_APPEND,0644);
+            }
+            if( !(find_cmd(argv[t][0])) )
+            {
+                printf("未找到该命令：%s\n", argv[0][0]);
+                exit(0);
+            }
+			execvp(argv[t][0],argv[t]);
+		}
+	}
+	else //父进程等待子进程结束 
+		waitpid(pid,NULL,0);
+	return 1;
 }
 //查找可执行命令的函数
 int find_cmd(char *command)
 {
     DIR* dp;
     struct dirent* dirp;
-    char* path[] = {"./", "/bin", "/usr/bin", NULL};
-
+    char* path[] = {"./", "/bin","/usr/bin",NULL};
     //使当前目录下的程序可以运行，如命令“./fork”可以被正确解释和执行
     if( strncmp(command, "./", 2) == 0 )
-    {
         command = command + 2;
-    }
-
     //分别在当前目录，/bin和/usr/bin目录查找要执行的程序
     int i = 0;
     while(path[i] != NULL)
     {
         if( (dp = opendir(path[i])) == NULL )
-        {
-            printf("can not open /bin \n");
-        }
+            printf("my_shell:can't open /bin \n");
         while( (dirp = readdir(dp)) != NULL )
-        {
             if(strcmp(dirp->d_name, command) == 0)
             {
                 closedir(dp);
                 return 1;
             }
-        }
         closedir(dp);
         i++;
     }
     return 0;
-}
-//执行命令的函数
-void do_cmd(int cmd_num,char cmd_list[10][256])
-{
-    int flag = 0;       //标记命令行是否正确（只有一个<或>或|，1且格式正确）
-    int how = 0;        //用于标识命令中是否含有输出重定向> ,输入重定向< , 管道 |
-    int background = 0; //标识命令中是否有后台运行的标示符
-    int status;         //保存子函数的返回状态
-    int fd;             //重定向时保存目标文件的文件描述符，将这个文件作为标准输出/标准输入
-    char* arg[cmd_num + 1];     //有管道时保存第一个命令
-    char* argnext[cmd_num + 1]; //有管道时保存第二个命令
-    char* file;                 //重定向时用到的的文件名
-    pid_t pid;                  //子进程的pid
-
-    //将命令取出
-    for(int i = 0; i < cmd_num; i++)
-       arg[i] = (char *)cmd_list[i];
-    arg[cmd_num] = NULL;
-
-    //查找是否输入后台运行符&
-    for(int i = 0; i < cmd_num; i++)
-    {
-        if(strncmp(arg[i],"&",1) == 0)
-        {
-            if(i == cmd_num - 1) //如果&是最后一个命令，则后台运行
-            {
-                background = 1;
-                arg[cmd_num - 1] = NULL;
-                break;
-            }
-            else                 //否则&不是最后一个命令，输入错误，报错返回
-            {
-                printf("'&'应放在最后\n");
-                return ;
-            }
-        }
-    }
-    //查找含有有输出重定向>, 输入重定向<, 管道|中的哪一个
-    for(int i=0; arg[i] != NULL; i++)
-    {
-        if(strcmp(arg[i], ">") == 0)
-        {
-            flag++;
-            how = out_r;
-                if(arg[i + 1] == NULL)
-                    flag++;
-        }
-        if(strcmp(arg[i], ">>") == 0)
-        {
-            flag++;
-            how = out_a_r;
-                if(arg[i + 1] == NULL)
-                    flag++;
-        }
-        if(strcmp(arg[i], "<") == 0)
-        {
-            flag++;
-            how = in_r;
-            if(i == 0)  flag++;
-        }
-        if(strcmp(arg[i], "|") == 0)
-        {
-            flag++;
-            how = have_pipe;
-            if(arg[i + 1] == NULL)
-                flag++;
-            if(i == 0)
-                flag++;
-        }
-    }
-
-    //若flag大于1，说明有<，>，|的组合，或者命令的格式不对，报错返回
-    if(flag > 1)
-    {
-        printf("存在<,>,|的组合或命令格式错误\n");
-        return;
-    }
-    if(how == out_r)
-    {
-        //命令只含有一个输出重定向符号
-        for(int i=0; arg[i] != NULL; i++)
-        {
-            if(strcmp(arg[i], ">") == 0)
-            {
-                file = arg[i + 1];
-                arg[i] = NULL;
-            }
-        }
-    }
-    if(how == out_a_r)
-    {
-        //命令含有输出追加重定向符号
-        for(int i = 0; arg[i] != NULL; i++)
-        {
-            if(strcmp(arg[i], ">>") == 0)
-            {
-                    file = arg[i + 1];
-                    arg[i] = NULL;
-            }
-        }
-    }
-    if(how == in_r)
-    {
-        //命令只含有一个输入重定向
-        for(int i = 0; arg[i] != NULL; i++)
-        {
-            if(strcmp(arg[i], "<") == 0)
-            {
-                file = arg[i + 1];
-                arg[i] = NULL;
-            }
-        }
-    }
-
-    if(how == have_pipe)
-    {
-        //命令只有一个管道符号，把管道符后面的部分存入argnext中，管道后面的部分是一个可执行的shell命令
-        for(int i=0; arg[i] != NULL; i++)
-        {
-            if(strcmp(arg[i], "|") == 0)
-            {
-                arg[i] = NULL;
-                int j;
-                //把管道符后面的部分存入argnext中
-                for(j = i+1; arg[j] != NULL; j++)
-                {
-                    argnext[j-i-1] = arg[j];
-                }
-                argnext[j-i-1] = arg[j];
-                break;
-            }
-        }
-    }
-    if((pid = fork()) < 0)
-    {
-        printf("fork error\n");
-        return ;
-    }
-    //父子进程进行不同的操作
-    switch(how)
-    {
-    case 0:
-        //输入的命令中不含>，<，|，pid为0说明是子进程，在子进程中执行输入的命令
-        if(pid == 0)
-        {
-            if(!(find_cmd(arg[0])))
-            {
-                printf("%s : command not found\n", arg[0]);
-                exit(0);
-            }
-            execvp(arg[0], arg);//调用execvp执行命令
-            exit(0);
-        }
-        break;
-
-    case 1:
-        //输入的命令中含有输出重定向符>，pid为0说明是子进程，在子进程中执行输入的命令
-        if(pid == 0)
-        {
-            if( !(find_cmd(arg[0])) )
-            {
-                printf("%s : command not found\n", arg[0]);
-                exit(0);
-            }
-            fd = open(file, O_RDWR | O_CREAT | O_TRUNC, 0644);
-            //把标准输入获得的内容写到fd指向的file文件里
-            dup2(fd, 1);
-            execvp(arg[0], arg);//调用execvp执行命令
-            exit(0);
-        }
-        break;
-
-    case 2:
-        //输入的命令中含有输入重定向<，pid为0说明是子进程，在子进程中执行输入的命令
-        if(pid == 0)
-        {
-            if( !(find_cmd (arg[0])) )
-            {
-                printf("%s : command not found\n", arg[0]);
-                exit(0);
-            }
-            fd = open(file, O_RDONLY);
-            //把文件中的内容作为标准输入给程序
-            dup2(fd, 0);
-            execvp(arg[0], arg);//调用execvp执行命令
-            exit(0);
-        }
-        break;
-
-    case 3:
-        //输入的命令中含有管道符|，pid为0说明是子进程，在子进程中执行输入的命令
-        if(pid == 0)
-        {
-            int pid2;    //孙进程的pid
-            int status2; //孙进程的结束状态
-            int fd2;     //孙进程临时文件的文件描述符，用于进程间的通信
-
-            //子进程再fork, 再创建一个子进程
-            if( (pid2 = fork()) < 0 )
-            {
-                printf("fork error\n");
-                return ;
-            }
-            else if(pid2 == 0)
-            {
-                if( !(find_cmd(arg[0])) )
-                {
-                    printf("%s : command not found\n", arg[0]);
-                    exit(0);
-                }
-                fd2 = open("/temp", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-                dup2(fd2, 1);
-                execvp(arg[0], arg);
-                exit(0);
-            }
-            if(waitpid(pid2, &status2, 0) == -1)
-            {
-                printf("wait for child process error\n");
-            }
-            if( !(find_cmd(argnext[0])) )
-            {
-                printf("%s : command not found\n", argnext[0]);
-                exit(0);
-            }
-            fd2 = open("/temp", O_RDONLY);
-            dup2(fd2, 0);
-            execvp (argnext[0], argnext);
-            //如果删除成功，remove返回0，否则返回EOF（-1）。
-            if( remove("/temp") == -1 )
-            {
-                printf("remove error\n");
-            }
-            exit(0);
-        }
-        break;
-    case 4:
-        //输入的命令中含有输出追加重定向符>>，pid为0说明是子进程，在子进程中执行输入的命令
-        if(pid == 0)
-        {
-            if( !(find_cmd(arg[0])) )
-            {
-                printf("%s : command not found\n", arg[0]);
-                exit(0);
-            }
-            close(1);
-            fd = open(file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-            execvp(arg[0], arg);
-            close(fd);
-            exit(0);
-        }
-        break;
-
-    default:
-        break;
-    }
-
-    //若命令中有&，表示后台执行，父进程直接返回，不等待子进程结束
-    if(background == 1)
-    {
-        printf("process id %d \n", pid);
-        return ;
-    }
-
-    //父进程等待子进程结束
-    if(waitpid(pid, &status, 0) == -1)
-    {
-        printf("wait for child process error\n");
-    }
 }
