@@ -146,7 +146,7 @@ void get_input()
     //用户输入不可以超过256个字符
     if(len >= 1024)
     {
-        perror("command is too long\n");
+        perror("my_shell:命令太长了\n");
         exit(-1);
     }
     //在结尾手动填上\0
@@ -165,7 +165,7 @@ void cut_input()
         cmd_num += 1;
         ptr = strtok_r(NULL," ",&old);
         if(cmd_num > 99)
-           printf("命令太多了\n");
+           printf("my_shell:命令太多了\n");
     }
 }
 //解析命令中的管道，重定向等信息的函数
@@ -222,7 +222,7 @@ int do_cmd()
 	pid = fork();
 	if(pid<0)
     {
-		perror("fork error!\n");
+		perror("my_shell:fork error!\n");
         exit(0);
 	}
     //子进程执行命令
@@ -245,10 +245,9 @@ int do_cmd()
 				close(1);
 				int fd3 = open(file[0][2],O_WRONLY|O_CREAT|O_APPEND,0644);
 			}
-            printf("here%s\n",argv[0][0]);
             if( !(find_cmd(argv[0][0])) )
             {
-                printf("未找到该命令：%s\n", argv[0][0]);
+                printf("my_shell:未找到该命令：%s\n", argv[0][0]);
                 exit(0);
             }
 			execvp(argv[0][0],argv[0]);
@@ -261,7 +260,7 @@ int do_cmd()
 				int pid2 = fork();
 				if(pid2<0)
                 {
-					perror("fork error!\n");
+					perror("my_shell:fork error!\n");
 					exit(0);
 				}
 				else if(pid2==0) //孙进程运行
@@ -291,12 +290,12 @@ int do_cmd()
                     int fd = open(pipe_file,O_WRONLY|O_CREAT|O_TRUNC,0666);
                     if( !(find_cmd(argv[t][0])) )
                     {
-                        printf("未找到该命令：%s\n", argv[0][0]);
+                        printf("my_shell:未找到该命令：%s\n", argv[0][0]);
                         exit(0);
                     }
 					if(execvp(argv[t][0],argv[t]) == -1) 
                     {
-                        perror("execvp error!\n");
+                        perror("my_shell:execvp error!\n");
                         exit(0);
                     }
 				}
@@ -318,7 +317,7 @@ int do_cmd()
             }
             if( !(find_cmd(argv[t][0])) )
             {
-                printf("未找到该命令：%s\n", argv[0][0]);
+                printf("my_shell:未找到该命令：%s\n", argv[0][0]);
                 exit(0);
             }
 			execvp(argv[t][0],argv[t]);
@@ -342,7 +341,7 @@ int find_cmd(char *command)
     while(path[i] != NULL)
     {
         if( (dp = opendir(path[i])) == NULL )
-            printf("my_shell:can't open /bin \n");
+            printf("my_shell:can't open %s \n",path[i]);
         while( (dirp = readdir(dp)) != NULL )
             if(strcmp(dirp->d_name, command) == 0)
             {
