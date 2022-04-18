@@ -42,7 +42,7 @@ int find_cmd(char *command);
 
 int main(int argc,char** argv)
 {
-    
+    signal(SIGINT,SIG_IGN);
     background=0; //默认不在后台运行
     //循环读取和执行用户输入的命令
     while(1)
@@ -59,6 +59,9 @@ int main(int argc,char** argv)
         }
         printf_hand();  //打印导航栏和当前工作目录
         get_input(); //获取用户的输入
+
+        if(buf[0] == 0)
+            continue;
         //如果输入的时exit就终止循环退出shell
         if( strcmp(buf,"exit") == 0 || strcmp(buf,"logout") == 0)
         {
@@ -78,7 +81,7 @@ int main(int argc,char** argv)
             }
             else
             {
-                printf("param error!\n");
+                printf("my_shell: cd: %s: 没有那个文件或目录\n",cmd_list[1]);
                 continue;
             }
         }
@@ -242,6 +245,7 @@ int do_cmd()
 				close(1);
 				int fd3 = open(file[0][2],O_WRONLY|O_CREAT|O_APPEND,0644);
 			}
+            printf("here%s\n",argv[0][0]);
             if( !(find_cmd(argv[0][0])) )
             {
                 printf("未找到该命令：%s\n", argv[0][0]);
