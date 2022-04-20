@@ -1,15 +1,11 @@
 #include<stdio.h>
-int main(void)
+void main()
 {
-   int n;
-   scanf("%d",&n);
-   for(int i=0;i<n; i++)
-   {
-      for(int j=0; i > 0 && j<i;j++)
-         printf(" ");
-      for(int j=n; j>i; j--)
-         printf("*");
-      printf("\n");
-   }
-   return 0;
+ int k=1,j=2,*p,*q,*t; 
+ p=&k; 
+ q=&j; 
+ t=p; 
+ p=q; 
+ q=t;
+ printf("%d,%d",*p,*q);
 }
