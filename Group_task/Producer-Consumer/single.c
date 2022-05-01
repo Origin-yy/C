@@ -10,7 +10,7 @@ static pthread_cond_t cond_con =PTHREAD_COND_INITIALIZER;
 
 typedef struct data
 {
-    char* data[MAXSIZE];
+    char data[MAXSIZE];
     int head;    //循环队列头
     int rear;    //循环队列尾
     int num;     //现有产品个数
@@ -45,17 +45,46 @@ void *producter(void*arg)
         if(s != 0)
             errExitEN("pthread_cond_wait",__LINE__);
     }
-    whlie(warehouse.num<MAXSIZE)
+    while(warehouse.num < MAXSIZE)
     {
-        warehouse.data[warehouse.rear] = get_rand_product();
-        warehouse.rear = (warehouse.rear+1)%MAXSIZE;
+        char product = '\0';
+        product = get_rand_product();
+        warehouse.data[warehouse.rear] = product;
+        warehouse.rear = (warehouse.rear+1) % MAXSIZE;
         warehouse.num++;
+        printf("产品%c被生产了.\n",product);
+        sleep(1);
     }
+    s = pthread_mutex_unlock(&mtx);
+    if (s != 0)
+        errExitEN("pthread_mutex_unlock",__LINE__);
 }
 
 void *consumer(void*arg)
 {
-    
+    int s;
+    s = pthread_mutex_lock(&mtx);
+    if(s != 0)
+        errExitEN("pthread_mutex_lock",__LINE__);
+
+    while(warehouse.num == 0)
+    {
+        s =pthread_cond_wait(&cond_pro,&mtx);
+        if(s != 0)
+            errExitEN("pthread_cond_wait",__LINE__);
+    }
+    while(warehouse.num > 0)
+    {
+        char product = '\0';
+        product = warehouse.data[warehouse.head];
+        warehouse.head = (warehouse.head+1) % MAXSIZE;
+        warehouse.num--;
+        printf("产品%c被消费了.\n",product);
+        sleep(1);
+    }
+    s = pthread_mutex_unlock(&mtx);
+    if (s != 0)
+        errExitEN("pthread_mutex_unlock",__LINE__);
 }
 
 void SPSCQueueDestory(data *pool)
@@ -67,15 +96,13 @@ int main(void)
 {
     pthread_t pro_tid,con_tid;
     int s;  //判断调用是否成功的标志；
-
+    printf("产品生产和消费开始\n");
     s = pthread_create(&pro_tid, NULL, producter, NULL);
     if (s != 0)
         errExitEN("pthread_create",__LINE__);    
     s = pthread_create(&con_tid, NULL, consumer, NULL);
     if (s != 0)
         errExitEN("pthread_create",__LINE__); 
-
-    printf("产品生产和消费开始\n");
 
     s = pthread_join(pro_tid,NULL);
     if (s != 0)
