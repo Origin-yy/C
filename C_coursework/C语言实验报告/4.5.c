@@ -12,7 +12,6 @@ int main(void)
         {
             map[i][j] = 0;
         }
-        printf("\n");
     }
     //从外向内绕圈对每个位置进行赋值
     int x=0,y=0,k=1;
