@@ -34,57 +34,65 @@ char get_rand_product() //随机生成名为A~Z的产品
 
 void *producter(void*arg)
 {
-    int s;
-    s = pthread_mutex_lock(&mtx);
-    if(s != 0)
-        errExitEN("pthread_mutex_lock",__LINE__);
-
-    while(warehouse.num == MAXSIZE)
+    while(1)
     {
-        s =pthread_cond_wait(&cond_con,&mtx);
+        int s;
+        s = pthread_mutex_lock(&mtx);
         if(s != 0)
-            errExitEN("pthread_cond_wait",__LINE__);
+            errExitEN("pthread_mutex_lock",__LINE__);
+
+        while(warehouse.num == MAXSIZE)
+        {
+            s =pthread_cond_wait(&cond_con,&mtx);
+            if(s != 0)
+                errExitEN("pthread_cond_wait",__LINE__);
+        }
+        while(warehouse.num < MAXSIZE)
+        {
+            char product = '\0';
+            product = get_rand_product();
+            warehouse.data[warehouse.rear] = product;
+            warehouse.rear = (warehouse.rear+1) % MAXSIZE;
+            warehouse.num++;
+            printf("产品%c被生产了.\n",product);
+            pthread_cond_signal(&cond_pro);
+            sleep(1);
+        }
+        s = pthread_mutex_unlock(&mtx);
+        if (s != 0)
+            errExitEN("pthread_mutex_unlock",__LINE__);
     }
-    while(warehouse.num < MAXSIZE)
-    {
-        char product = '\0';
-        product = get_rand_product();
-        warehouse.data[warehouse.rear] = product;
-        warehouse.rear = (warehouse.rear+1) % MAXSIZE;
-        warehouse.num++;
-        printf("产品%c被生产了.\n",product);
-        sleep(1);
-    }
-    s = pthread_mutex_unlock(&mtx);
-    if (s != 0)
-        errExitEN("pthread_mutex_unlock",__LINE__);
 }
 
 void *consumer(void*arg)
 {
-    int s;
-    s = pthread_mutex_lock(&mtx);
-    if(s != 0)
-        errExitEN("pthread_mutex_lock",__LINE__);
-
-    while(warehouse.num == 0)
+    while(1)
     {
-        s =pthread_cond_wait(&cond_pro,&mtx);
+        int s;
+        s = pthread_mutex_lock(&mtx);
         if(s != 0)
-            errExitEN("pthread_cond_wait",__LINE__);
+            errExitEN("pthread_mutex_lock",__LINE__);
+
+        while(warehouse.num == 0)
+        {
+            s =pthread_cond_wait(&cond_pro,&mtx);
+            if(s != 0)
+                errExitEN("pthread_cond_wait",__LINE__);
+        }
+        while(warehouse.num > 0)
+        {
+            char product = '\0';
+            product = warehouse.data[warehouse.head];
+            warehouse.head = (warehouse.head+1) % MAXSIZE;
+            warehouse.num--;
+            printf("产品%c被消费了.\n",product);
+            pthread_cond_signal(&cond_con);
+            sleep(1);
+        }
+        s = pthread_mutex_unlock(&mtx);
+        if (s != 0)
+            errExitEN("pthread_mutex_unlock",__LINE__);
     }
-    while(warehouse.num > 0)
-    {
-        char product = '\0';
-        product = warehouse.data[warehouse.head];
-        warehouse.head = (warehouse.head+1) % MAXSIZE;
-        warehouse.num--;
-        printf("产品%c被消费了.\n",product);
-        sleep(1);
-    }
-    s = pthread_mutex_unlock(&mtx);
-    if (s != 0)
-        errExitEN("pthread_mutex_unlock",__LINE__);
 }
 
 void SPSCQueueDestory(data *pool)
