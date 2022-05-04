@@ -49,7 +49,7 @@ int main(void)
     }
     //可以按照字符串输出
     if(c[200-big] == '0')
-        printf("%s\n",&c[201-big]);
+        printf("%s\n",&c[200-big+1]);
     else
-        printf("%s\n",&c[201-big-1]);
+        printf("%s\n",&c[200-big]);
 }
