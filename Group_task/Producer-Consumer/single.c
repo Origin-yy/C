@@ -47,7 +47,7 @@ void *producter(void*arg)
             if(s != 0)
                 errExitEN("pthread_cond_wait",__LINE__);
         }
-        while(warehouse.num < MAXSIZE)
+        if(warehouse.num < MAXSIZE)
         {
             char product = '\0';
             product = get_rand_product();
@@ -56,7 +56,6 @@ void *producter(void*arg)
             warehouse.num++;
             printf("产品%c被生产了.\n",product);
             pthread_cond_signal(&cond_pro);
-            sleep(1);
         }
         s = pthread_mutex_unlock(&mtx);
         if (s != 0)
@@ -79,7 +78,7 @@ void *consumer(void*arg)
             if(s != 0)
                 errExitEN("pthread_cond_wait",__LINE__);
         }
-        while(warehouse.num > 0)
+        if(warehouse.num > 0)
         {
             char product = '\0';
             product = warehouse.data[warehouse.head];
@@ -87,7 +86,6 @@ void *consumer(void*arg)
             warehouse.num--;
             printf("产品%c被消费了.\n",product);
             pthread_cond_signal(&cond_con);
-            sleep(1);
         }
         s = pthread_mutex_unlock(&mtx);
         if (s != 0)
