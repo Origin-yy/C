@@ -8,7 +8,9 @@ static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t cond_pro =PTHREAD_COND_INITIALIZER;
 static pthread_cond_t cond_con =PTHREAD_COND_INITIALIZER;
 
-typedef struct SPSCQueue 
+int capacity;
+
+typedef struct SPSCQueue
 {
     char *data;
     int *head;    //循环队列头
@@ -21,13 +23,13 @@ void errExitEN(const char *err_string,int line);
 //随机生成名为A-Z的产品s
 char get_rand_product();
 //循环队列初始化
-SPSCQueue *SPSCQueueInit(int capacity);      
+SPSCQueue *SPSCQueueInit(int capacity);
 //生产产品s入队尾 
-void SPSCQueuePush(SPSCQueue *queue, void *s); 
+void SPSCQueuePush(SPSCQueue *queue, void *s);
 //消费产品出队头
-void *SPSCQueuePop(SPSCQueue *queue);   
+void *SPSCQueuePop(SPSCQueue *queue);
 //销毁申请内存
-void SPSCQueueDestory(SPSCQueue *); 
+void SPSCQueueDestory(SPSCQueue *);
 //生产者线程           
 void *producter_pthread(void*arg);
 //消费者线程
@@ -37,7 +39,6 @@ int main(void)
 {
     pthread_t pro_tid,con_tid;
     int s;  //判断调用是否成功的标志；
-    int capacity = 0;
     printf("请输入仓库内存放产品的最大容量:\n");
     scanf("%d",&capacity);
 
@@ -61,69 +62,81 @@ int main(void)
 }
 void *producter_pthread(void*arg)
 {
+    int t;
     SPSCQueue *warehouse = (SPSCQueue *)arg;
-    char product = 0;
-    product = get_rand_product();
     while(1)
-        SPSCQueuePush(warehouse,&product);  //进行生产操作
+    {
+        t = pthread_mutex_lock(&mtx);
+        if(t != 0)
+            errExitEN("pthread_mutex_lock",__LINE__);
+
+        while(*warehouse->num == capacity)
+        {
+            t =pthread_cond_wait(&cond_con,&mtx);
+            if(t != 0)
+                errExitEN("pthread_cond_wait",__LINE__);
+        }
+
+        if(*warehouse->num != capacity)
+        {
+            char product = '0';
+            product = get_rand_product();
+            SPSCQueuePush(warehouse,&product);
+        }
+        t = pthread_mutex_unlock(&mtx);
+        if (t != 0)
+            errExitEN("pthread_mutex_unlock",__LINE__);
+    }
 }
 void *consumer_pthread(void*arg)
 {
+    int t;
     SPSCQueue *warehouse = (SPSCQueue *)arg;
     while(1)
-        SPSCQueuePop(warehouse);  //进行消费操作
+    {
+        t = pthread_mutex_lock(&mtx);
+        if(t != 0)
+            errExitEN("pthread_mutex_lock",__LINE__);
+
+        while(*warehouse->num == 0)
+        {
+            t =pthread_cond_wait(&cond_pro,&mtx);
+            if(t != 0)
+                errExitEN("pthread_cond_wait",__LINE__);
+        }
+
+        if(*warehouse->num > 0)
+        {
+            SPSCQueuePop(warehouse);
+        }
+        t = pthread_mutex_unlock(&mtx);
+        if (t != 0)
+            errExitEN("pthread_mutex_unlock",__LINE__);
+    }
+
 }
 
 void SPSCQueuePush(SPSCQueue *queue, void *s) 
 {
-    int t;
     char *product = (char*)s;
-    t = pthread_mutex_lock(&mtx);
-    if(t != 0)
-        errExitEN("pthread_mutex_lock",__LINE__);
-
-    while((*queue->rear+1) % sizeof(queue->data) == *queue->head)
-    {
-        t =pthread_cond_wait(&cond_con,&mtx);
-        if(t != 0)
-            errExitEN("pthread_cond_wait",__LINE__);
-    }
-    if((*queue->rear+1) % sizeof(queue->data) != *queue->head)
-    {
-        queue->data[*queue->rear] = *product;
-        *queue->rear= *queue->rear % sizeof(queue->data);
-        printf("产品%c被生产了.\n",*product);
-        pthread_cond_signal(&cond_pro);
-    }
-    t = pthread_mutex_unlock(&mtx);
-    if (t != 0)
-        errExitEN("pthread_mutex_unlock",__LINE__);
+    queue->data[*queue->rear] = *product;
+    printf("产品%c被生产了.\n",*product);
+    *queue->rear= (*queue->rear+1) % capacity;
+    (*queue->num)++;
+    
+    pthread_cond_signal(&cond_pro);
 }
-void *SPSCQueuePop(SPSCQueue *queue)        
+void *SPSCQueuePop(SPSCQueue *queue)
 {
-    int t;
-    t = pthread_mutex_lock(&mtx);
-    if(t != 0)
-        errExitEN("pthread_mutex_lock",__LINE__);
+    printf("产品%c被消费了.\n",queue->data[*queue->head]);
+    *queue->head = (*queue->head+1) % capacity;
+    (*queue->num)--;
 
-    while(*queue->head == *queue->rear)
-    {
-        t =pthread_cond_wait(&cond_con,&mtx);
-        if(t != 0)
-            errExitEN("pthread_cond_wait",__LINE__);
-    }
-    if(*queue->head != *queue->rear)
-    {
-        *queue->head= (*queue->head+1) % sizeof(queue->data);
-        printf("产品%c被消费了.\n",*queue->head);
-        pthread_cond_signal(&cond_pro);
-    }
-    t = pthread_mutex_unlock(&mtx);
-    if (t != 0)
-        errExitEN("pthread_mutex_unlock",__LINE__);
+    pthread_cond_signal(&cond_con);
+    return NULL;
 }
 
-SPSCQueue *SPSCQueueInit(int capacity)      
+SPSCQueue *SPSCQueueInit(int capacity)
 {
     SPSCQueue *warehouse = (SPSCQueue*)malloc(sizeof(SPSCQueue));
     warehouse->data = (char*)calloc(capacity,sizeof(char));
@@ -134,10 +147,11 @@ SPSCQueue *SPSCQueueInit(int capacity)
 }
 void SPSCQueueDestory(SPSCQueue *warehouse)
 {
-    free(warehouse);
     free(warehouse->data);
     free(warehouse->head); 
     free(warehouse->rear);
+    free(warehouse->num);
+    free(warehouse);
 }
 void errExitEN(const char *err_string,int line)
 {
