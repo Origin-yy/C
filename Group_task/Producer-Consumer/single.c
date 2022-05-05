@@ -93,11 +93,6 @@ void *consumer(void*arg)
     }
 }
 
-void SPSCQueueDestory(data *pool)
-{
-    
-}
-
 int main(void)
 {
     pthread_t pro_tid,con_tid;
