@@ -9,6 +9,10 @@ static pthread_cond_t cond_pro =PTHREAD_COND_INITIALIZER;
 static pthread_cond_t cond_con =PTHREAD_COND_INITIALIZER;
 
 int capacity;
+int num_pro;
+int num_con;
+pthread_t pro_tid[100]; //存放生产者线程id
+pthread_t con_tid[100]; //存放消费者线程id
 
 typedef struct MPMCQueue
 {
@@ -37,15 +41,11 @@ void *consumer_pthread(void*arg);
 
 int main(void)
 {
-    int num_pro,num_con;
     int s;  //判断调用是否成功的标志；
     printf("请输入仓库内存放产品的最大容量:\n");
     scanf("%d",&capacity);
     printf("请输入生产者和消费者的数量：\n");
     scanf("%d %d",&num_pro,&num_con);
-
-    pthread_t pro_tid[num_pro];
-    pthread_t con_tid[num_con];
 
     MPMCQueue *warehouse =  MPMCQueueInit(capacity);  //得到一个容量为capaci的仓库（队列）
 
@@ -78,11 +78,15 @@ int main(void)
     MPMCQueueDestory(warehouse);
     return 0; 
 }
+
 void *producter_pthread(void*arg)
 {
-    int t;
+    int t = 0,name = 0;
     pthread_t tid = 0;
     tid = pthread_self();
+    for(int i=0;i<num_pro; i++)
+        if(pro_tid[i] == tid)
+            name = i+1;
     MPMCQueue *warehouse = (MPMCQueue *)arg;
     while(1)
     {
@@ -101,7 +105,7 @@ void *producter_pthread(void*arg)
         {
             char product = '0';
             product = get_rand_product();
-            MPMCQueuePush(warehouse,&product,tid);
+            MPMCQueuePush(warehouse,&product,name);
         }
         t = pthread_mutex_unlock(&mtx);
         if (t != 0)
@@ -110,9 +114,12 @@ void *producter_pthread(void*arg)
 }
 void *consumer_pthread(void*arg)
 {
-    int t;
+    int t = 0,name = 0;
     pthread_t tid = 0;
     tid = pthread_self();
+    for(int i=0;i<num_con; i++)
+        if(con_tid[i] == tid)
+            name = i+1;
     MPMCQueue *warehouse = (MPMCQueue *)arg;
     while(1)
     {
@@ -129,7 +136,7 @@ void *consumer_pthread(void*arg)
 
         if(*warehouse->num > 0)
         {
-            MPMCQueuePop(warehouse,tid);
+            MPMCQueuePop(warehouse,name);
         }
         t = pthread_mutex_unlock(&mtx);
         if (t != 0)
