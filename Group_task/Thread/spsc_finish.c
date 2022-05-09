@@ -19,7 +19,7 @@ typedef struct SPSCQueue
 }SPSCQueue;
 
 //错误函数
-void errExitEN(const char *err_string,int line);
+void errExitEN(const char *err_string,int line,int errnumber);
 //随机生成名为A-Z的产品s
 char get_rand_product();
 //循环队列初始化
@@ -46,17 +46,17 @@ int main(void)
     printf("产品生产和消费开始\n");
     s = pthread_create(&pro_tid, NULL, producter_pthread, warehouse);
     if (s != 0)
-        errExitEN("pthread_create",__LINE__);    
+        errExitEN("pthread_create",__LINE__,s);    
     s = pthread_create(&con_tid, NULL, consumer_pthread, warehouse);
     if (s != 0)
-        errExitEN("pthread_create",__LINE__); 
+        errExitEN("pthread_create",__LINE__,s); 
 
     s = pthread_join(pro_tid,NULL);
     if (s != 0)
-        errExitEN("pthread_join",__LINE__);
+        errExitEN("pthread_join",__LINE__,s);
         s = pthread_join(con_tid,NULL);
     if (s != 0)
-        errExitEN("pthread_join",__LINE__);
+        errExitEN("pthread_join",__LINE__,s);
     SPSCQueueDestory(warehouse);
     return 0; 
 }
@@ -68,13 +68,13 @@ void *producter_pthread(void*arg)
     {
         t = pthread_mutex_lock(&mtx);
         if(t != 0)
-            errExitEN("pthread_mutex_lock",__LINE__);
+            errExitEN("pthread_mutex_lock",__LINE__,t);
 
         while(*warehouse->num == capacity)
         {
             t =pthread_cond_wait(&cond_con,&mtx);
             if(t != 0)
-                errExitEN("pthread_cond_wait",__LINE__);
+                errExitEN("pthread_cond_wait",__LINE__,t);
         }
 
         if(*warehouse->num != capacity)
@@ -85,7 +85,7 @@ void *producter_pthread(void*arg)
         }
         t = pthread_mutex_unlock(&mtx);
         if (t != 0)
-            errExitEN("pthread_mutex_unlock",__LINE__);
+            errExitEN("pthread_mutex_unlock",__LINE__,t);
     }
 }
 void *consumer_pthread(void*arg)
@@ -96,13 +96,13 @@ void *consumer_pthread(void*arg)
     {
         t = pthread_mutex_lock(&mtx);
         if(t != 0)
-            errExitEN("pthread_mutex_lock",__LINE__);
+            errExitEN("pthread_mutex_lock",__LINE__,t);
 
         while(*warehouse->num == 0)
         {
             t =pthread_cond_wait(&cond_pro,&mtx);
             if(t != 0)
-                errExitEN("pthread_cond_wait",__LINE__);
+                errExitEN("pthread_cond_wait",__LINE__,t);
         }
 
         if(*warehouse->num > 0)
@@ -111,7 +111,7 @@ void *consumer_pthread(void*arg)
         }
         t = pthread_mutex_unlock(&mtx);
         if (t != 0)
-            errExitEN("pthread_mutex_unlock",__LINE__);
+            errExitEN("pthread_mutex_unlock",__LINE__,t);
     }
 
 }
@@ -153,13 +153,12 @@ void SPSCQueueDestory(SPSCQueue *warehouse)
     free(warehouse->num);
     free(warehouse);
 }
-void errExitEN(const char *err_string,int line)
+void errExitEN(const char *err_string,int line,int errnumber)
 {
-    fprintf(stderr,"lint:%d ",line);
-    perror(err_string);
+    fprintf(stderr,"line:%d %s %s\n",line, err_string, strerror(errnumber));
     exit(1);
 }
-char get_rand_product() 
+char get_rand_product()
 {
     char letter;
 	letter = (char)((rand() % 26) + 'A');

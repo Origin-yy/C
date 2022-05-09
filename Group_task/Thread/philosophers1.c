@@ -12,7 +12,7 @@
 
 sem_t chopsticks[5];
 
-void* philosopher(void*s);
+void* philosopher(void *s);
 void pick_two(int i);
 void free_two(int i);
 
@@ -39,10 +39,10 @@ void* philosopher(void*s)
     int i = *p;
     while(1)
     {
-        //sleep(rand()%2); //思考时间
-        pick_two(i);       //拿左右筷子
-        //sleep( rand()%2 );//吃饭时间
-        free_two(i);       //放左右筷子
+        //思考
+        pick_two(i);       //饿了，拿左右筷子
+        //吃饭
+        free_two(i);       //吃完，放左右筷子
     }
 }
 //编号为i的哲学家拿左右筷子
@@ -51,14 +51,16 @@ void pick_two(int i)
     if(i%2 == 1) //如果是奇数号哲学家，先左后右
     {
         sem_wait(&chopsticks[i]);
+        printf("哲学家%d拿起左筷子%d.\n",i,i);
         sem_wait(&chopsticks[(i+1)%5]);
-        printf("哲学家%d拿起了%d和%d筷子开始吃饭.\n",i,i,i+1);
+        printf("哲学家%d拿起右筷子%d,开始吃饭.\n",i,(i+1)%5);
     }
     else   //如果是偶数号哲学家，先右后左
     {
         sem_wait(&chopsticks[(i+1)%5]);
+        printf("哲学家%d拿起右筷子%d.\n",i,(i+1)%5);
         sem_wait(&chopsticks[i]);
-        printf("哲学家%d拿起了%d和%d筷子开始吃饭.\n",i,i+1,i);
+        printf("哲学家%d拿起左筷子%d,开始吃饭.\n",i,i);
     }
 }
 //编号为i的哲学家释放左右筷子
@@ -67,13 +69,15 @@ void free_two(int i)
     if(i%2 == 1) //如果是奇数号哲学家，先左后右
     {
         sem_post(&chopsticks[i]);
+        printf("哲学家%d放下左筷子%d.\n",i,i);
         sem_post(&chopsticks[(i+1)%5]);
-        printf("哲学家%d放下了%d和%d筷子开始思考.\n",i,i,i+1);
+        printf("哲学家%d放下右筷子%d,开始思考.\n",i,(i+1)%5);
     }
     else   //如果是偶数号哲学家，先右后左
     {
         sem_post(&chopsticks[(i+1)%5]);
+        printf("哲学家%d放下右筷子%d.\n",i,(i+1)%5);
         sem_post(&chopsticks[i]);
-        printf("哲学家%d放下了%d和%d筷子开始思考.\n",i,i+1,i);
+        printf("哲学家%d放下左筷子%d,开始思考.\n",i,i);
     }
 }
