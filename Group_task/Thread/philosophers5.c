@@ -1,6 +1,7 @@
 /*
 互斥量
-哲学家先拿编号小的筷子
+奇数号哲学家，先左后右.
+偶数号哲学家，先右后左
 */
 #include<stdio.h>
 #include<pthread.h>
@@ -12,7 +13,7 @@ pthread_mutex_t chopsticks[5];
 
 void my_error(const char *err_string,int line,int errnumber);
 void* philosopher(void *s);
-int pick_two(int i);
+void pick_two(int i);
 void free_two(int i);
 
 int main(void)
@@ -56,32 +57,38 @@ void* philosopher(void *s)
     while(1)
     {
         //思考...
-        if(pick_two(i))//饿了，尝试拿左右筷子，如果成功
-            free_two(i);       //吃完，放下筷子
-        //思考...
+        pick_two(i);       //饿了，拿左右筷子
+        //吃饭...
+        free_two(i);       //吃完，放左右筷子
     }
 }
 //编号为i的哲学家拿左右筷子
-int  pick_two(int i) 
+void  pick_two(int i) 
 {
     int r = 0;
-
-    r = pthread_mutex_lock(&chopsticks[i]);
-    if(r != 0)
-        my_error("pthread_mutex_lock",__LINE__,r);
-
-    printf("哲学家%d拿起左筷子%d.\n",i,i);
-    r = pthread_mutex_trylock(&chopsticks[(i+1)%5]);
-    if(r != 0)
+    if(i%2 == 1)
     {
-        pthread_mutex_unlock(&chopsticks[i]);
-        printf("哲学家%d无法拿起右筷子%d,所以放下左筷子.\n",i,(i+1)%5);
-        return 0;
+        r = pthread_mutex_lock(&chopsticks[i]);
+        if(r != 0)
+            my_error("pthread_mutex_lock",__LINE__,r);
+        printf("哲学家%d拿起左筷子%d.\n",i,i);
+
+        r = pthread_mutex_lock(&chopsticks[(i+1)%5]);
+        if(r != 0)
+            my_error("pthread_mutex_lock",__LINE__,r);
+        printf("哲学家%d拿起右筷子%d,开始吃饭\n",i,(i+1)%5);
     }
     else
     {
+        r = pthread_mutex_lock(&chopsticks[(i+1)%5]);
+        if(r != 0)
+            my_error("pthread_mutex_lock",__LINE__,r);
         printf("哲学家%d拿起右筷子%d,开始吃饭\n",i,(i+1)%5);
-        return 1;
+
+        r = pthread_mutex_lock(&chopsticks[i]);
+        if(r != 0)
+            my_error("pthread_mutex_lock",__LINE__,r);
+        printf("哲学家%d拿起左筷子%d.\n",i,i);
     }
 }
 //编号为i的哲学家释放左右筷子
@@ -93,6 +100,7 @@ void free_two(int i)
     if(r != 0)
         my_error("pthread_mutex_unlock",__LINE__,r);
     printf("哲学家%d放下左筷子%d.\n",i,i);
+
     r = pthread_mutex_unlock(&chopsticks[(i+1)%5]);
     if(r != 0)
         my_error("pthread_mutex_unlock",__LINE__,r);
