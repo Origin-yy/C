@@ -5,8 +5,8 @@
 #include<string.h>
 
 static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;  
-static pthread_cond_t cond_pro =PTHREAD_COND_INITIALIZER;
-static pthread_cond_t cond_con =PTHREAD_COND_INITIALIZER;
+static pthread_cond_t cond_pro = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t cond_con = PTHREAD_COND_INITIALIZER;
 
 int capacity;
 int num_pro;
