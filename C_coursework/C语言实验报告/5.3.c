@@ -8,7 +8,7 @@ int is_prime(int n)
 	int flag = 1;
 	for(i=2;i<=(int)sqrt(n);i++)
 	{
-		if(n%i==0)
+		if(n%i == 0)
 		{
 			flag = 0;
 			break;
