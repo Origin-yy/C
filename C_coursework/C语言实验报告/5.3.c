@@ -4,17 +4,12 @@
 
 int is_prime(int n)
 {
-	int i;
-	int flag = 1;
-	for(i=2;i<=(int)sqrt(n);i++)
+	for(int i=2; i<=(int)sqrt(1.0*n); i++)
 	{
 		if(n%i == 0)
-		{
-			flag = 0;
-			break;
-		} 
+			return 0;
 	}
-	return flag;
+	return 1;
 }
  
 int main()
