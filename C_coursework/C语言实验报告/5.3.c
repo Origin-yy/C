@@ -1,3 +1,6 @@
+/*
+输出n以内的所有素数
+*/
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>

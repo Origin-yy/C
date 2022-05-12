@@ -1,0 +1,95 @@
+<html>
+
+<head>
+    <title>酒店预订</title>
+    <style type="text/css">
+        Body {
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+            background-color: #fff;
+        }
+
+        #content {
+            margin: 0 auto;
+            width: 600px;
+            border: 1px solid red;
+        }
+
+        .tip {
+            background-color: #fefaf1;
+            border: solid 1px #fed698;
+            padding: 8px 8px 8px 32px;
+        }
+
+        label {
+            float: left;
+            width: 60px;
+            text-align: right;
+        }
+
+        input,
+        select {
+            margin-right: 4px;
+            margin-left: 10px;
+            float: left;
+            width: 170px;
+        }
+
+        span {
+            float: left;
+            margin-right: 4px;
+        }
+
+        .order {
+            height: 26px;
+            margin: 7px 0;
+        }
+
+        .submit {
+            background-color: #f90;
+            display: inline-block;
+            border-radius: 3px;
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 6px 22px
+        }
+
+        input:focus,
+        input:hover,
+        select:focus,
+        select:hover {
+            color: #000;
+            background: #E7F1F3;
+            border: 1px solid #888;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="cssml.css" />
+</head>
+
+<body>
+    <div id="content">
+        <div class="tip">
+            <p>现在&nbsp;
+                <A href=""></A>&nbsp;即刻预定可享酒店会员专属优惠，并可直 接使用常用预定信息</p>
+        </div>
+        <form id="room" action="" method="post">
+            <DIV class="order"><LABEL>入离日期</LABEL><INPUT name="inDate" type="date"><SPAN>至</SPAN><INPUT name="outDate"type="date"></DIV>
+            <DIV class="order"><LABEL>房间数量</LABEL><INPUT type="number" min="1"value="1"><SPAN>房费</SPAN>￥<STRONG>XXX</STRONG></DIV>
+            <DIV class="order"><LABEL>最晚抵店</LABEL></DIV><SELECT name="select" autocomplete="off">
+                <OPTION selected="selected" value="18:00">18:00</OPTION>
+                <OPTION value="19:00">19:00</OPTION>
+                <OPTION value="19:00">20:00</OPTION>
+                <OPTION value="19:00">21:00</OPTION>
+                <OPTION value="19:00">22:00</OPTION>
+                <OPTION value="19:00">23:00</OPTION>
+                <OPTION value="19:00">24:00</OPTION>
+                <OPTION value="次日 6:00">次日 6:00</OPTION>
+            </SELECT>
+            <DIV class="submit">提交订单</DIV>
+        </form>
+    </div>
+</body>
+
+</html>
