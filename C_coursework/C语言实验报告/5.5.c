@@ -5,36 +5,38 @@
 */
 #include<stdio.h>
 
-int hcf(int, int);
-int lcd(int, int, int);
+int func1(int a, int b);
+int func2(int a, int b, int c);
 
 int main()
-{
-    int a, b, h, l;
+{   //a,b为输入的两个数，c为最大公约数，d为最小公倍数
+    int a, b, c, d;
     scanf("%d,%d", &a, &b);
-    h = hcf(a,b);
-    printf("H.C.F=%d\n", h);
-    l = lcd(a, b, h);
-    printf("L.C.D=%d\n", l);
+
+    c = func1(a, b);
+    printf("这两个数的最大公约数为：%d\n", c);
+    d = func2(a, b, c);
+    printf("这两个数的最小公倍数为：%d\n", d);
+
     return 0;
 }
-int hcf(int u, int v)
+int func1(int a, int b)
 {
     int t, r;
-    if (v > u)
+    if (b > a)
     {
-        t = u;
-        u = v;
-        v = t;
+        t = a;
+        a = b;
+        b = t;
     }
-    while ((r = u % v) != 0)
+    while ((r = a % b) != 0)
     {
-        u = v;
-        v = r;
+        a = b;
+        b = r;
     }
-    return (v);
+    return b;
 }
-int lcd(int u, int v, int h)
+int func2(int a, int b, int c)
 {
-    return (u * v / h);
+    return (a * b / c);
 }
