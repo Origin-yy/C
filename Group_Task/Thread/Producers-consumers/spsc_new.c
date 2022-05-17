@@ -1,3 +1,8 @@
+/*
+    使用任务给的接口
+    静态互斥量init初始化，需要销毁
+    仓库队列动态申请，要传参
+*/
 #include<stdio.h>
 #include<pthread.h>
 #include<unistd.h>
@@ -31,7 +36,7 @@ void *SPSCQueuePop(SPSCQueue *queue);
 //销毁申请内存
 void SPSCQueueDestory(SPSCQueue *);
 //生产者线程           
-void *producter_pthread(void*arg);
+void *producer_pthread(void*arg);
 //消费者线程
 void *consumer_pthread(void*arg);
 
@@ -42,9 +47,9 @@ int main(void)
     printf("请输入仓库内存放产品的最大容量:\n");
     scanf("%d",&capacity);
 
-    SPSCQueue *warehouse =  SPSCQueueInit(capacity);  //得到一个容量为capaci的仓库（队列）
+    SPSCQueue *warehouse =  SPSCQueueInit(capacity);  //得到一个容量为capacity的仓库（队列）
     printf("产品生产和消费开始\n");
-    s = pthread_create(&pro_tid, NULL, producter_pthread, warehouse);
+    s = pthread_create(&pro_tid, NULL, producer_pthread, warehouse);
     if (s != 0)
         errExitEN("pthread_create",__LINE__,s);    
     s = pthread_create(&con_tid, NULL, consumer_pthread, warehouse);
@@ -60,7 +65,7 @@ int main(void)
     SPSCQueueDestory(warehouse);
     return 0; 
 }
-void *producter_pthread(void*arg)
+void *producer_pthread(void*arg)
 {
     int t;
     SPSCQueue *warehouse = (SPSCQueue *)arg;

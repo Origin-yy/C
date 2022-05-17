@@ -25,7 +25,7 @@ int main(void)
     {
         r = pthread_mutex_init(&chopsticks[i],NULL);
         if(r != 0 )
-            my_error("pthrerad_mutex_init",__LINE__,r);
+            my_error("pthread_mutex_init",__LINE__,r);
     }
 
     for(int i=0; i<5; i++)

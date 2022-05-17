@@ -1,3 +1,8 @@
+/*  
+    全局静态互斥量，不用销毁，
+    全局生产队列，不用传参
+    未使用任务给的接口
+*/
 #include<stdio.h>
 #include<pthread.h>
 #include<unistd.h>
@@ -32,7 +37,7 @@ char get_rand_product() //随机生成名为A~Z的产品
 	return letter;
 }
 
-void *producter(void*arg)
+void *producer(void*arg)
 {
     while(1)
     {
@@ -98,7 +103,7 @@ int main(void)
     pthread_t pro_tid,con_tid;
     int s;  //判断调用是否成功的标志；
     printf("产品生产和消费开始\n");
-    s = pthread_create(&pro_tid, NULL, producter, NULL);
+    s = pthread_create(&pro_tid, NULL, producer, NULL);
     if (s != 0)
         errExitEN("pthread_create",__LINE__);    
     s = pthread_create(&con_tid, NULL, consumer, NULL);
