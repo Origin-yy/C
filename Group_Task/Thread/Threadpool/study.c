@@ -134,10 +134,13 @@ int threadPoolDestroy(ThreadPool* pool)
     // 阻塞回收管理者线程
     pthread_join(pool->managerID, NULL);
     // 唤醒阻塞的消费者线程
-    for (int i = 0; i < pool->liveNum; ++i)
+    for (int i = 0; i < pool->liveNum; i++)
     {
         pthread_cond_signal(&pool->notEmpty);
     }
+    for (int i = 0; i < pool->maxNum; i++)
+        if (pool->threadIDs[i] != 0)
+            pthread_join(pool->threadIDs[i],NULL);
     // 释放堆内存
     if (pool->taskQ)
     {
@@ -248,8 +251,6 @@ void* worker(void* arg)
         pool->busyNum++;
         pthread_mutex_unlock(&pool->mutexBusy);
         task.function(task.arg);
-        free(task.arg);
-        task.arg = NULL;
 
         printf("thread %ld end working...\n", pthread_self());
         pthread_mutex_lock(&pool->mutexBusy);
@@ -330,8 +331,8 @@ void threadExit(ThreadPool* pool)
 
 void taskFunc(void* arg)
 {
-    int num = *(int*)arg;
-    printf("thread %ld is working, number = %d\n",
+    long int num = (long)arg;
+    printf("thread %ld is working, number = %ld\n",
         pthread_self(), num);
     sleep(1);
 }
@@ -342,9 +343,8 @@ int main()
     ThreadPool* pool = threadPoolCreate(3, 10, 100);
     for (int i = 0; i < 100; ++i)
     {
-        int* num = (int*)malloc(sizeof(int));
-        *num = i + 100;
-        threadPoolAdd(pool, taskFunc, num);
+        long int num = i + 100;
+        threadPoolAdd(pool, taskFunc, (void*)num);
     }
 
     sleep(30);
