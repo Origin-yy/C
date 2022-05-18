@@ -70,14 +70,14 @@ ThreadPool* threadPoolCreate(int min, int max, int queueSize)
     {
         if (pool == NULL)
         {
-            printf("malloc threadpool fail...\n");
+            printf("线程池申请堆内存失败\n");
             break;
         }
 
         pool->threadIDs = (pthread_t*)malloc(sizeof(pthread_t) * max);
         if (pool->threadIDs == NULL)
         {
-            printf("malloc threadIDs fail...\n");
+            printf("工作者线程ID数组申请堆内存失败\n");
             break;
         }
         memset(pool->threadIDs, 0, sizeof(pthread_t) * max);
@@ -92,7 +92,7 @@ ThreadPool* threadPoolCreate(int min, int max, int queueSize)
             pthread_cond_init(&pool->notEmpty, NULL) != 0 ||
             pthread_cond_init(&pool->notFull, NULL) != 0)
         {
-            printf("mutex or condition init fail...\n");
+            printf("互斥锁或条件变量申请堆内存失败\n");
             break;
         }
 
@@ -246,13 +246,13 @@ void* worker(void* arg)
         pthread_cond_signal(&pool->notFull);
         pthread_mutex_unlock(&pool->mutexPool);
 
-        printf("thread %ld start working...\n", pthread_self());
+        printf("工作者线程：工作者线程 %ld 开始工作了\n", pthread_self());
         pthread_mutex_lock(&pool->mutexBusy);
         pool->busyNum++;
         pthread_mutex_unlock(&pool->mutexBusy);
         task.function(task.arg);
 
-        printf("thread %ld end working...\n", pthread_self());
+        printf("工作者线程：工作者线程 %ld 结束工作了\n", pthread_self());
         pthread_mutex_lock(&pool->mutexBusy);
         pool->busyNum--;
         pthread_mutex_unlock(&pool->mutexBusy);
@@ -322,7 +322,7 @@ void threadExit(ThreadPool* pool)
         if (pool->threadIDs[i] == tid)
         {
             pool->threadIDs[i] = 0;
-            printf("threadExit() called, %ld exiting...\n", tid);
+            printf("线程退出函数：工作者线程 %ld 退出了\n", tid);
             break;
         }
     }
@@ -332,7 +332,7 @@ void threadExit(ThreadPool* pool)
 void taskFunc(void* arg)
 {
     long int num = (long)arg;
-    printf("thread %ld is working, number = %ld\n",
+    printf("单任务函数：工作者线程 %ld 正在进行任务 %ld\n",
         pthread_self(), num);
     sleep(1);
 }
@@ -343,7 +343,7 @@ int main()
     ThreadPool* pool = threadPoolCreate(3, 10, 100);
     for (int i = 0; i < 100; ++i)
     {
-        long int num = i + 100;
+        long int num = i;
         threadPoolAdd(pool, taskFunc, (void*)num);
     }
 
