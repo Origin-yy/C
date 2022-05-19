@@ -131,7 +131,7 @@ ThreadPool* ThreadPoolCreat(int min, int max, int queue_size)
         pool->workers_tids = NULL;
     }
 
-    if (pool != NULL && pool->task_queue != NULL) 
+    if (pool != NULL && pool->task_queue != NULL)
     {
         free(pool->task_queue);
         pool->task_queue = NULL;
@@ -367,7 +367,7 @@ int main()
     ThreadPool* pool = ThreadPoolCreat(3, 10, 100);
     if (pool == NULL)
         fprintf(stderr, "ThreadPool 失败.\n");
-        
+
     for (int i = 0; i < 100; ++i)
     {
         long int num = i;
