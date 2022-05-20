@@ -15,7 +15,7 @@ void input(char a[][100])
         scanf("%s",a[i]);
     }
 }
-
+  
 void sort(char a[][100])
 {
 	qsort(a,6,100,cmp);
