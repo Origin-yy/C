@@ -13,43 +13,39 @@ int is_prime(int t)
 int main(void)
 {
     int a[2000] = {2, 0};
-    int b[2000] = {0};
-    int n = 1, sum = 0;
+    int n = 1;
     for (int i = 3; i < 1994; i++)
         if (is_prime(i))
             a[n++] = i;
-    for (int i = 0; i < n - 1; i++)
-        b[i] = a[i + 1] - a[i];
-    for (int i = 0; i < n; i++)
-        sum += b[i];
-    //以下代码查看第二行所有数以及他们的和
-    //for (int i = 0; i < n-1; i++)
-    //    printf("%d\t",b[i]);
-    //printf("\n%d\n",sum);
-    if (sum < 1898)
-        printf("没有这样的若干连续正整数,他们的和是1898\n");
-    else
-    {
-        int cha = sum - 1898;
-        int he1 = 0, he2 = 0, mark = 0;
-        for (int i = 0; i < n - 1; i++)
+
+    int c = 0, d = 0;
+    int mark = 0;
+    for (int i = n - 1; i >= 0; i--)
+        if (a[i] < 1898)
         {
-            he1 += b[i];
-            he2 += b[n - 2 - i];
-            //printf("%d %d\n",he2,b[n-2-i]);
-            //printf("%d %d\n",he1,b[i]);
-            if (he1 == cha)
-                mark++;
-            if (he2 == cha)
-                mark++;
-            if (he1 > cha && he2 > cha)
-                break;
+            c = i + 1;
+            break;
         }
-        printf("%d %d",cha,mark);
-        if (mark != 0)
-            printf("有%d种这样的若干连续正整数,他们的和是1898\n", mark);
-        else
-            printf("没有这样的若干连续正整数,他们的和是1898\n");
-    }
+
+    for (int i = 0; i < n; i++)
+        if (a[i] > a[n - 1] - 1898)
+        {
+            d = i - 1;
+            break;
+        }
+        
+    for (int i = c; i < n - 1; i++)
+        for (int j = 0; j <= d; j++)
+            if (a[i] - a[j] == 1898)
+            {
+                mark++;
+                printf("%d-%d\n",a[j],a[i]);
+            }
+
+    if (mark != 0)
+        printf("有%d种这样的数列,他们的和是1898\n", mark);
+    else
+        printf("没有这样的数列,他们的和是1898\n");
+
     return 0;
 }
