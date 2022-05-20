@@ -4,10 +4,8 @@
 int is_prime(int t)
 {
     for (int i = 2; i <= sqrt(1.0 * t); i++)
-    {
         if (t % i == 0)
             return 0;
-    }
     return 1;
 }
 int main(void)
