@@ -11,15 +11,18 @@ int is_prime(int t)
 
 int main()
 {
-    int m, n = 0;
+    int m;
     scanf("%d", &m);
-    int a[m];
-    for (int i = 2; i < m; i++)
-        if (m % i == 0)
-            a[n++] = i;
+    for(int i=2; i<=m;i++)
+    {
+        int n=i;
+        while(m%n == 0)
+        {
+            if(is_prime(n))
+                printf("%d ",n);
+            m /= n;
+        }
+    }
             
-    for (int i = 0; i < n; i++)
-        if (is_prime(a[i]) || a[i] == 2)
-            printf("%d\t", a[i]);
     return 0;
 }
