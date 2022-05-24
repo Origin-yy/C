@@ -10,10 +10,6 @@
         "*.tcc": "c",
         "type_traits": "c",
         "pthread.h": "c",
-        "time.h": "c",
-        "string": "cpp"
-    },
-    "cSpell.words": [
-        "MKSTR"
-    ]
+        "time.h": "c"
+    }
 }
