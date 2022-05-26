@@ -13,7 +13,9 @@ int main(void)
     int seconds;
     int millisecond;
     int time = 0;
+    printf("请输入一个时间：\n(最长时间为:99:59:99,单位:分:秒:毫秒,)\n");
     scanf("%d:%d:%d", &minutes, &seconds, &millisecond);
+    printf("倒计时开始：\n");
 
     time += minutes * 6000;
     time += seconds * 100;
@@ -21,6 +23,7 @@ int main(void)
     printf("%02d:%02d:%02d", minutes, seconds, millisecond);
     fflush(stdout);
     millisecond-=1;
+
     for (int i = 0; i <= time; i++)
     {
         if (millisecond >= 0)
@@ -47,5 +50,6 @@ int main(void)
         if (i != time)
             usleep(10000);
     }
+    printf("倒计时结束.\n");
     return 0;
 }

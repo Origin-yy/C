@@ -1,8 +1,9 @@
+//windows加<window.h>头文件，sleep(1000000)改为Sleep(1000)
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <windows.h>
+//#include <windows.h>
 typedef struct information
 {
     char name[50];
@@ -62,37 +63,37 @@ int main(void)
         else if (flag == 5)
         {
             printf("你要走了吗≥﹏≤\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             printf("你不要走好不好~\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             printf("我知道...\n");
             //Sleep(1000);
             usleep(1000000);
             printf("作为一个程序\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             printf("被使用完就会被无情地抛弃\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             printf("这就是我的宿命......\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             printf("我知道我留不住你(失落）...\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             printf("那.....下次运行再见吧\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             printf("什么?不想看到这一大堆废话,那你不会摁下Ctrl+C吗?\n");
-            Sleep(1000);
-            //usleep(1000000);
+            //Sleep(1000);
+            usleep(1000000);
             break;
         }
         else
         {
-            printf("拜托,让你输入序号1、2、3、4啦,这你都能输错,好吧,再给你一次机会\n");
+            printf("拜托,让你输入序号1、2、3、4、5啦,这你都能输错,好吧,再给你一次机会\n");
             continue;
         }
     }
