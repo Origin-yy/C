@@ -197,7 +197,7 @@ int cmp(const void*a,const void* b)
 {
     information c = *(information*)a;
     information d = *(information*)b;
-    int t = (double)(d.Chinese + d.Math + d.English)/3 - (double)(c.Chinese + c.Math + c.English)/3;
+    int t = (d.Chinese + d.Math + d.English) - (c.Chinese + c.Math + c.English);
     if(t != 0)
         return t;
     else
