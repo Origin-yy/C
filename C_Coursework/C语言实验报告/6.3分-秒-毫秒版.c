@@ -50,6 +50,6 @@ int main(void)
         if (i != time)
             usleep(10000);
     }
-    printf("倒计时结束.\n");
+    printf("\n倒计时结束.\n");
     return 0;
 }

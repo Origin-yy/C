@@ -52,6 +52,6 @@ int main(void)
             usleep(1000000);
             //Sleep(1000);
     }
-    printf("倒计时结束.\n");
+    printf("\n倒计时结束.\n");
     return 0;
 }

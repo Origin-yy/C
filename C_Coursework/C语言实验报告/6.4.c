@@ -125,7 +125,8 @@ void information_input(information *students, int *num)
         printf("学号:");
         while (scanf("%d", &students[i + *num].id) == 0 || students[i + *num].id > 100000000 || students[i + *num].id < 1)
         {
-            printf("十分抱歉,本程序的学号范围是1-100000000哦~,请您重新输入学号:");
+            printf("十分抱歉,本程序的学号范围是1-100000000哦~,请您重新输入.");
+            printf("学号:");
             continue;
         }
         printf("姓名:");
@@ -134,21 +135,21 @@ void information_input(information *students, int *num)
         printf("语文:");
         while (scanf("%d", &students[i + *num].Chinese) == 0 || students[i + *num].Chinese > 100 || students[i + *num].Chinese < 0)
         {
-            printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩:");
+            printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩.\n");
             printf("语文:");
             continue;
         }
         printf("数学:");
         while (scanf("%d", &students[i + *num].Math) == 0 || students[i + *num].Math > 100 || students[i + *num].Math < 0)
         {
-            printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩:");
+            printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩.\n");
             printf("数学:");
             continue;
         }
         printf("英语:");
         while (scanf("%d", &students[i + *num].English) == 0 || students[i + *num].English > 100 || students[i + *num].English < 0)
         {
-            printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩:");
+            printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩.\n");
             printf("英语:");
             continue;
         }
@@ -189,7 +190,7 @@ void average(information *students, int *num)
         sum[0] += students[i].Chinese;
         sum[1] += students[i].Math;
         sum[2] += students[i].English;
-    }
+    } 
     printf("已录入学生的语文平均成绩为:%.3lf\n",(double)sum[0]/3);
     printf("已录入学生的数学平均成绩为:%.3lf\n",(double)sum[1]/3);
     printf("已录入学生的英语平均成绩为:%.3lf\n\n",(double)sum[2]/3);
