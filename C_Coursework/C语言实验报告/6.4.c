@@ -135,18 +135,21 @@ void information_input(information *students, int *num)
         while (scanf("%d", &students[i + *num].Chinese) == 0 || students[i + *num].Chinese > 100 || students[i + *num].Chinese < 0)
         {
             printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩:");
+            printf("语文:");
             continue;
         }
         printf("数学:");
         while (scanf("%d", &students[i + *num].Math) == 0 || students[i + *num].Math > 100 || students[i + *num].Math < 0)
         {
             printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩:");
+            printf("数学:");
             continue;
         }
         printf("英语:");
         while (scanf("%d", &students[i + *num].English) == 0 || students[i + *num].English > 100 || students[i + *num].English < 0)
         {
             printf("十分抱歉,本程序的课程分数范围是0-100哦~,请您重新输入成绩:");
+            printf("英语:");
             continue;
         }
         printf("\n");
@@ -180,16 +183,16 @@ void information_output(information *students, int *num)
 //计算平均值函数
 void average(information *students, int *num)
 {
-    int sum[3];
+    int sum[3] = {0,0,0};
     for(int i=0; i<*num; i++)
     {
         sum[0] += students[i].Chinese;
         sum[1] += students[i].Math;
         sum[2] += students[i].English;
     }
-    printf("已录入学生的语文平均成绩为:%3lf\n",(double)sum[0]/3);
-    printf("已录入学生的数学平均成绩为:%3lf\n",(double)sum[1]/3);
-    printf("已录入学生的英语平均成绩为:%3lf\n\n",(double)sum[2]/3);
+    printf("已录入学生的语文平均成绩为:%.3lf\n",(double)sum[0]/3);
+    printf("已录入学生的数学平均成绩为:%.3lf\n",(double)sum[1]/3);
+    printf("已录入学生的英语平均成绩为:%.3lf\n\n",(double)sum[2]/3);
     printf("(以上平均成绩均保留三位有效数字)\n\n");
 }
 
