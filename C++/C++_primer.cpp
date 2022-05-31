@@ -1,9 +1,14 @@
 #include <iostream>
 #include <string>
+#include <vector>
+
 using namespace std;
 
 #ifdef MIN(a, b)(a < b ? a : b)
 #define MKSTR(x) #x       //"x"
+#endif
+
+#ifndef MIN(a, b)(a < b ? a : b)
 #define concat(a, B) a##b // xy
 #endif
 
@@ -40,6 +45,10 @@ int main()
     //s.size()的返回值是一个无符号整数，不要与int相比
     int n = -1;//有符号和无符号在一起，都转为无符号
     s.size() < n;//几乎肯定为true，负值n会转为一个比较大的无符号值
+
+    //vector末班
+    vector<int> ivec;
+    vector<vector<string>> file;
 
     return 0;
 }

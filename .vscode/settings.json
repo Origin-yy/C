@@ -11,5 +11,8 @@
         "type_traits": "c",
         "pthread.h": "c",
         "time.h": "c"
-    }
+    },
+    "cSpell.words": [
+        "MKSTR"
+    ]
 }
