@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include<malloc.h>
+#include <malloc.h>
 
 typedef int DataType;
 typedef struct LinkedNode
@@ -16,7 +16,7 @@ typedef struct LinkedList
     LinkedNode head; /* 双向循环链表的头节点 */
 } LinkedList;
 
-void init_list(LinkedList *list) //初始化链表
+void init_list(LinkedList *list) //初始化链表(带有一个头结点，前后指针指自己)
 {
     list->length = 0;
     LinkedNode *temp = (LinkedNode*)malloc(sizeof(LinkedNode));
@@ -25,10 +25,9 @@ void init_list(LinkedList *list) //初始化链表
     list->head.prev = &list->head;
     free(temp);
 }
-LinkedNode *alloc_node(DataType data) //给节点分配内存空间
+LinkedNode *alloc_node(DataType data) //给节点分配内存空间并存储数据，前后指针指空
 {
-    LinkedNode *L;
-    L = (LinkedNode *)malloc(sizeof(LinkedNode));
+    LinkedNode *L = (LinkedNode *)malloc(sizeof(LinkedNode));
     L->data = data;
     L->prev = NULL;
     L->next = NULL;
@@ -40,17 +39,17 @@ void push_front(LinkedList *list, DataType data) //头插法
     //当链表只有头结点时
     if (list->head.next == &list->head)
     {
-        list->head.prev = cur;
-        list->head.next = cur;
-        cur->prev = &list->head;
-        cur->next = &list->head;
+        list->head.prev = cur;    //头结点前指针指cur
+        list->head.next = cur;    //头结点后指针指cur
+        cur->prev = &list->head;  //cur前指针指头结点
+        cur->next = &list->head;  //cur后指针指头结点
     }
     else
-    {
-        cur->next = list->head.next; //将新节点的next域指向原链表中头结点后面的节点
-        list->head.next->prev = cur; //然后将原头结点中后面节点prev域指向新节点；
-        cur->prev = &list->head;     //将新节点prev域指向头结点
-        list->head.next = cur;       //将头结点的next域指向新节点
+    {//顺序不能错
+        cur->next = list->head.next; //cur的下一个节点是原来头结点的下一个节点
+        list->head.next->prev = cur; //头结点原来的下一个节点的前一个节点是cur
+        cur->prev = &list->head;     //cur的前一个节点是头节点
+        list->head.next = cur;       //头结点的下一个节点是cur
     }
     list->length++;
 }
@@ -60,11 +59,11 @@ void push_back(LinkedList *list, DataType data) //尾插法
     //如果链表内只有头结点
     if (list->head.next == &list->head)
     {
-        cur = alloc_node(data);
-        list->head.next = cur;
-        cur->prev = &list->head;
-        cur->next = &list->head;
-        list->head.prev = cur;
+        cur = alloc_node(data);   //申请空间，放数据
+        list->head.next = cur;    //头结点下一个节点是cur
+        cur->prev = &list->head;  //cur前一个节点是头节点
+        cur->next = &list->head;  //cur下一个节点是头结点
+        list->head.prev = cur;    //头节点前一个节点是cur
     } //如果链表内有其他节点
     else
     {
@@ -128,7 +127,7 @@ void destroy(LinkedList *list)
 int main()
 {
     int data;
-    LinkedList L, *pHead = &L;
+   LinkedList L, *pHead = &L;
     init_list(pHead);
     int flag = 1; //根据输出结果可以观察得到构建链表时头插一次，尾插一次，以此类推
     scanf("%d", &data);
