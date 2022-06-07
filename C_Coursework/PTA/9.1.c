@@ -22,8 +22,8 @@ int main()
 
     output(C);
 
-    destroy(A);
-    destroy(B);
+    free(A);
+    free(B);
     destroy(C);
     return 0;
 }
