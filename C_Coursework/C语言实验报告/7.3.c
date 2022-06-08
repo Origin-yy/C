@@ -62,12 +62,12 @@ void turn(List L)
 }
 void destroy(List L)
 {
-    Node *T = L;
-    Node *p;
-    while (T)
+    Node *p = L;
+    Node *T;
+    while (p)
     {
-        p = T->next;
-        free(T);
-        T = p;
+        T = p->next;
+        free(p);
+        p = T;
     }
 }
