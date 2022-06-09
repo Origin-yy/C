@@ -1,33 +1,118 @@
+#include<stdio.h>
+
 #include <stdio.h>
-#include<stdlib.h>
-
-struct Emp
+#include <malloc.h>
+typedef struct LinkNode
 {
-	char ID[10];//职工工号
-	char Name[10];//职工姓名
-	int age;//职工年龄
-};
-
+    int data;
+    struct LinkNode *next;
+} LinkNode, *LinkList;
+int getLen(LinkList H);
+LinkList creat_List();
+void output(LinkList H);
+LinkList combine_list(LinkList A, LinkList B);
+void destroy(LinkList list);
+  
 int main()
+{   int m,n;
+    LinkList A, B, C;
+    A = creat_List();
+    B = creat_List();
+    m=getLen(A);
+    n=getLen(B);
+    if(n>=m){
+        C = combine_list(A, B);
+    }else{
+        C = combine_list(B, A);
+    }
+    
+
+    output(C);
+
+    
+    
+    destroy(C);
+    return 0;
+}
+int getLen(LinkList H)
 {
-	/***************found***************/
-	struct Emp e[5] = { {"20110102","Kong",36},
-					{"20081025","song",41},
-					{"19880722","chai",53},
-					{"19961210","zhang",48},
-					{"19900311","Gong",51} };
-	int cnt  = 0;
-	int i = 0;
+    LinkList pr = H->next;
+	int count = 0;
+	
+	while(pr != NULL)
+	{
+		pr = pr->next;
+		count++; 
+	}
 
-	for (i = 0;i < 5;i++)
-		/***************found***************/
-		if (e[i].age<45)
-		{
-			printf("工号：%s\t姓名：%s\t年龄：%d\n", e[i].ID, e[i].Name, e[i].age);
-			cnt++;
-		}
-	printf("年龄在45岁以下的职工数为：%d\n", cnt);
+	return count;
+}
+void output(LinkList H)
+{
+    if (H->next)
+    {
+        LinkList p;
+        p = H->next;
+        while (p)
+        {
+            printf("%d", p->data);
+            if (p->next != NULL)
+                printf(" ");
+            p = p->next;
+        }
+        printf("\n");
+    }
+    else
+        printf("NULL");
+}
+LinkList creat_List()
+{
+    //尾插法
+    LinkList H, q;
+    int x;
+    H = (LinkNode *)malloc(sizeof(LinkNode));
+    H->next = NULL;
+    q = H;
+    do
+    {   
+        scanf("%d", &x);
+        LinkList p;
+        p = (LinkNode *)malloc(sizeof(LinkNode));
+        p->next = NULL;
+        p->data = x;
 
-	system("pause");
-	return 0;
+        q->next = p;
+        q = p;
+    }while(getchar()!='\n');
+    return H;
+}
+LinkList combine_list(LinkList A, LinkList B)
+{
+    LinkList C,p,q,a,b;
+
+    C=A;
+    p=A;
+    q=B;
+    
+    while(q->next!=NULL){
+        a=p->next;
+        b=q->next;
+        p->next=q;
+        p=a;
+        q->next=p;
+        q=b;
+    }
+    return C;
+}
+
+void destroy(LinkList list)
+{
+    LinkNode *cur ,*ret;
+    ret = list;
+    while (ret)
+    {
+        cur = ret->next;
+        free(ret);
+        ret = cur;
+    }
 }
