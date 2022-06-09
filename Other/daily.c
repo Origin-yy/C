@@ -19,7 +19,7 @@ int main()
     A = creat_List();
     B = creat_List();
     m=getLen(A);
-    n=getLen(B);
+    n=getLe76n(B);
     if(n>=m){
         C = combine_list(A, B);
     }else{
