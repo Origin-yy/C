@@ -200,9 +200,9 @@ void average(List L)
         sum[1] += p->Math;
         sum[2] += p->English;
     }
-    printf("已录入学生的语文平均成绩为:%.3lf\n", (double)sum[0] / 3);
-    printf("已录入学生的数学平均成绩为:%.3lf\n", (double)sum[1] / 3);
-    printf("已录入学生的英语平均成绩为:%.3lf\n\n", (double)sum[2] / 3);
+    printf("已录入学生的语文平均成绩为:%.3lf\n", (double)sum[0] / L->id);
+    printf("已录入学生的数学平均成绩为:%.3lf\n", (double)sum[1] / L->id);
+    printf("已录入学生的英语平均成绩为:%.3lf\n\n", (double)sum[2] / L->id);
     printf("(以上平均成绩均保留三位有效数字)\n\n");
 }
 void destroy(List L)

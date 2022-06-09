@@ -7,32 +7,34 @@ typedef struct Node
     struct Node *next;
 } Node, *List;
 
-List List_create();
-void List_output(List L);
-List List_sort(List A, List B);
-void List_destroy(List list);
+int getLen(List H);
+List creat_List();
+void output(List H);
+List combine_list(List A, List B);
+void destroy(List list);
 
 int main()
 {
     List A, B, C;
-    A = List_create();
-    B = List_create();
+    A = creat_List();
+    B = creat_List();
 
-    C = List_sort(A, B);
+    if (A->data <= B->data)
+        C = combine_list(A, B);
+    else
+        C = combine_list(B, A);
 
-    List_output(C);
-
-    free(A);
-    free(B);
-    List_destroy(C);
+    output(C);
+    destroy(C);
     return 0;
 }
-void List_output(List L)
+
+void output(List H)
 {
-    if (L->next)
+    if (H->next)
     {
         List p;
-        p = L->next;
+        p = H->next;
         while (p)
         {
             printf("%d", p->data);
@@ -45,14 +47,15 @@ void List_output(List L)
     else
         printf("NULL");
 }
-List List_create()
+List creat_List()
 {
     //尾插法
-    List L, q;
-    int x;
+    List L;
+    Node *q;
     L = (Node *)malloc(sizeof(Node));
-    L->data = 0;
     L->next = NULL;
+
+    int x;
     q = L;
     do
     {
@@ -68,44 +71,38 @@ List List_create()
     } while (getchar() != '\n');
     return L;
 }
-List List_sort(List A, List B)
+
+List combine_list(List A, List B)
 {
-    //归并排序
-    List C = (List)malloc(sizeof(Node));
-    C->data = 0;
-    C->next = NULL;
-    Node *q = C;
-    Node *a = A;
-    Node *b = B;
-    Node *temp;
-    while(a->next)
+    List C;
+    List pa, pb, qa, qb;
+    pa = A->next; // pa 指向 A 的第一个结点
+    pb = B->next; // pb 指向 B 的第一个节点
+    C = A; // 因为 C 中第一个元素是 A 中的元素，所以只需要 C 指向 A 就行了
+    while (pa && pb)
     {
-        a = a->next;
-        q->next = a;
-        q = a;
-        temp = a->next;
-        b = b->next;
-        q->next = b;
-        q = b;
+        qa = pa;
+        qb = pb;
+        pa = pa->next;
+        pb = pb->next;
+        qb->next = qa->next;
+        qa->next = qb;
     }
-    while(b->next)
-    {
-        b = b->next;
-        q->next = b;
-        q = b;
-    }
-    Node *p = 
+    if (pa == NULL)    // 如果 A 链表的长度小于 B 链表的长度
+        qb->next = pb; // 将 B 的后续节点连接到新链表的尾端
+    free(B);           //删除 B 的头结点
+
     return C;
 }
 
-void List_destroy(List list)
+void destroy(List L)
 {
-    Node *cur, *ret;
-    ret = list;
-    while (ret)
+    Node *p = L;
+    Node *T;
+    while(p)
     {
-        cur = ret->next;
-        free(ret);
-        ret = cur;
+        T = p->next;
+        free(p);
+        p = T;
     }
 }

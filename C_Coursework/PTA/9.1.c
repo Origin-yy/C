@@ -22,8 +22,6 @@ int main()
 
     output(C);
 
-    free(A);
-    free(B);
     destroy(C);
     return 0;
 }
@@ -97,6 +95,8 @@ LinkList combine_list(LinkList A, LinkList B)
     {
         p->next = B;
     }
+    free(A);
+    free(B);
     return C;
 }
 
