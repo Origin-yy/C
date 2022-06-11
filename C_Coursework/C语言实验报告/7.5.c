@@ -7,7 +7,6 @@ typedef struct Node
     struct Node *next;
 } Node, *List;
 
-int getLen(List H);
 List creat_List();
 void output(List H);
 List combine_list(List A, List B);
@@ -29,23 +28,22 @@ int main()
     return 0;
 }
 
-void output(List H)
+void output(List L)
 {
-    if (H->next)
+    Node *p = L;
+    if (L->next)
     {
-        List p;
-        p = H->next;
-        while (p)
+        while (p->next)
         {
+            p = p->next;
             printf("%d", p->data);
             if (p->next != NULL)
                 printf(" ");
-            p = p->next;
         }
         printf("\n");
     }
     else
-        printf("NULL");
+        printf("这是一个空链表\n");
 }
 List creat_List()
 {

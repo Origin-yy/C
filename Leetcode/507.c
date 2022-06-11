@@ -1,10 +1,10 @@
-bool checkPerfectNumber(int num){
+int checkPerfectNumber(int num){
     if (num == 1) {
-        return false;
+        return 0;
     }
 
     int sum = 1;
-    for (int d = 2; d * d <= num; ++d) {
+    for (int d = 2; d * d <= num; ++d) { 
         if (num % d == 0) {
             sum += d;
             if (d * d < num) {
