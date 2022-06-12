@@ -1,0 +1,486 @@
+* {
+    padding: 0;
+    margin: 0;
+    border: none;
+    list-style: none;
+    text-decoration: none;
+    font-family: 宋体;
+}
+
+.clear {
+    clear: both;
+}
+
+
+/* 头部导航栏 */
+
+.cqtop {
+    width: 1240px;
+    margin: 0 auto;
+    overflow: hidden;
+    height: 92px;
+}
+
+.lgbox {
+    float: left;
+    margin-top: 21px;
+    margin-right: 135px;
+}
+
+.liulei {
+    float: left;
+}
+
+.llcon {
+    font-size: 18px;
+    color: #000;
+    line-height: 92px;
+    width: 102px;
+    text-align: center;
+    float: left;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.llcon:hover {
+    color: #e60012;
+}
+
+.cwcha {
+    width: 282px;
+    float: right;
+    margin-top: 27px;
+    height: 38px;
+}
+
+.boca {
+    width: 229px;
+    float: left;
+    font-size: 14px;
+}
+
+.cwhcc {
+    font-size: 14px;
+    width: 100%;
+    margin-left: 5px;
+    text-align: left;
+    line-height: 38px;
+    border: 1px solid #e4e4e4;
+    text-decoration: none;
+    padding-left: 5px;
+}
+
+.souxun {
+    float: left;
+    background: #333;
+    width: 48px;
+    height: 40px;
+    text-align: center;
+    font-size: 14px;
+    color: #fff;
+    line-height: 40px;
+}
+
+
+/* 轮播图 */
+
+.fullSlide {
+    width: 100%;
+    position: relative;
+    height: 613px;
+}
+
+.fullSlide .bd {
+    margin: 0 auto;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.fullSlide .bd ul {
+    width: 100% !important;
+}
+
+.fullSlide .bd li {
+    width: 100% !important;
+    height: 613px;
+    overflow: hidden;
+    text-align: center;
+    background-size: 100%;
+    background: no-repeat top center;
+}
+
+.fullSlide .bd li a {
+    display: block;
+    height: 613px;
+}
+
+.fullSlide .hd {
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    line-height: 30px;
+}
+
+.fullSlide .hd ul {
+    text-align: center;
+}
+
+.fullSlide .hd ul li {
+    cursor: pointer;
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    width: 42px;
+    height: 11px;
+    margin: 1px;
+    overflow: hidden;
+    background: #000;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
+    line-height: 999px;
+}
+
+.fullSlide .hd ul .on {
+    background: #fff;
+}
+
+.fullSlide .prev,
+.fullSlide .next {
+    font-size: 70px;
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    margin-top: -30px;
+    left: 10%;
+    z-index: 1;
+    width: 40px;
+    height: 74px;
+    background-color: #a8a8a8;
+    cursor: pointer;
+    filter: alpha(opacity=50);
+    opacity: 0.5;
+    display: none;
+}
+
+.fullSlide .next {
+    left: auto;
+    right: 10%;
+    background-position: -6px -137px;
+}
+
+
+/* 朝代列表 */
+
+
+
+.chaopic {
+    width: 1240px;
+    margin: 0 auto;
+    margin-top: 156px;
+}
+
+.dibox {
+    width: 505px;
+    height: 346px;
+    float: left;
+}
+
+.diboxzi {
+    position: relative;
+}
+
+.diboxzi img {
+    width: 100%;
+    height: 346px;
+}
+
+.heidi {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.56);
+}
+
+.xyhd {
+    font-size: 16px;
+    color: #fff;
+    text-align: left;
+    width: 60%;
+    margin-left: 3%;
+    margin-top: 4%;
+    margin-bottom: 3%;
+    line-height: 1.8em;
+    font-weight: bold;
+}
+
+.daili {
+    width: 678px;
+    float: right;
+}
+
+.touti {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+    line-height: 2em;
+    color: #000;
+    transition: 0.3s;
+}
+
+.touti:hover {
+    color: #e60012;
+}
+
+.ttcon {
+    font-size: 14px;
+    color: #000;
+    text-align: left;
+    text-indent: 2em;
+    line-height: 1.8em;
+    margin-bottom: 8px;
+    transition: 0.3s;
+}
+
+.ttcon:hover {
+    color: #e60012;
+}
+
+.wend {
+    font-size: 14px;
+    color: #000;
+    text-align: left;
+    line-height: 2.4em;
+    float: left;
+    font-weight: 100;
+    transition: 0.3s;
+}
+
+.wend:hover {
+    color: #e60012;
+}
+
+.tishi {
+    font-size: 14px;
+    color: #a8a8a8;
+    float: right;
+    line-height: 2.4em;
+}
+
+.dan {
+    display: inline-block;
+    float: left;
+    font-size: 24px;
+    margin-top: -6px;
+    margin-right: 12px;
+}
+
+.gengchao {
+    font-size: 14px;
+    color: #000;
+    text-align: center;
+    line-height: 43px;
+    border: 1px solid #000;
+    width: 104px;
+    transition: 0.3s;
+    margin-top: 2.8%;
+}
+
+.gengchao:hover {
+    background: #000;
+    color: #fff;
+}
+
+
+/* 地域列表 */
+
+.diyu {
+    width: 100%;
+}
+
+.baichang {
+    width: 1284px;
+    margin: 0 auto;
+    background: #fff;
+    margin-top: 100px;
+    margin-bottom: 100px;
+    overflow: hidden;
+}
+
+.mingdi {
+    width: 1240px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
+
+.hansan {
+    width: 400px;
+    float: left;
+    margin-right: 20px;
+}
+
+.hstit {
+    margin-top: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+    text-align: left;
+    line-height: 2em;
+    margin-bottom: 12px;
+    transition: 0.3s;
+}
+
+.daiha {
+    width: 90%;
+    font-size: 14px;
+    color: #000;
+    text-align: left;
+    line-height: 1.8em;
+    margin-top: 4%;
+    height: 83px;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+.hstit:hover {
+    color: #e60012;
+}
+
+.daiha:hover {
+    color: #e60012;
+}
+
+.gengchao2 {
+    font-size: 14px;
+    color: #000;
+    text-align: center;
+    line-height: 43px;
+    border: 1px solid #000;
+    width: 104px;
+    margin: 0 auto;
+    transition: 0.3s;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.gengchao2:hover {
+    background: #000;
+    color: #fff;
+}
+
+.mingdi li:nth-child(3n) {
+    margin-right: 0;
+}
+
+
+/* 底部导航栏 */
+
+.dixi {
+    width: 100%;
+    background: #3f3f3f;
+    overflow: hidden;
+}
+
+.sanpis {
+    width: 1240px;
+    margin: 0 auto;
+}
+
+.erqiba {
+    width: 278px;
+    float: left;
+    margin-bottom: 50px;
+}
+
+.youlian {
+    font-size: 14px;
+    color: #fff;
+    text-align: left;
+    margin-top: 60px;
+    margin-bottom: 18px;
+}
+
+.hanyi {
+    width: 50%;
+    float: left;
+    font-size: 12px;
+    color: #c2c2c2;
+    text-align: left;
+    line-height: 2.4em;
+}
+
+.erwusi {
+    width: 254px;
+    float: left;
+    margin-left: 215px;
+    margin-top: 88px;
+}
+
+.shouye {
+    width: 50%;
+    float: left;
+    text-align: center;
+    font-size: 12px;
+    color: #c2c2c2;
+    line-height: 2.4em;
+}
+
+.zuoba {
+    width: 190px;
+    float: left;
+    margin-bottom: 50px;
+    margin-left: 190px;
+}
+
+.daiduo {
+    width: 160px;
+    font-size: 12px;
+    color: #c2c2c2;
+    text-align: left;
+    line-height: 2.4em;
+}
+
+.ddzi {
+    color: #c2c2c2;
+}
+
+.mabao {
+    margin-top: 74px;
+    width: 104px;
+    float: right;
+}
+
+.baline {
+    width: 100%;
+    height: 1px;
+    background: #585858;
+    margin-bottom: 18px;
+}
+
+.zaihe {
+    width: 1240px;
+    margin: 0 auto;
+}
+
+.ywling {
+    width: 150px;
+    float: left;
+    margin-top: 2px;
+    margin-bottom: 22px;
+}
+
+.ywling img {
+    width: 100%;
+}
+
+.laxi {
+    font-size: 12px;
+    color: #888;
+    text-align: right;
+    float: right;
+    line-height: 2em;
+}

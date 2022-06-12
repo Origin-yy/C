@@ -3,6 +3,7 @@
 
 typedef struct Node
 {
+    struct Node *prev;
     int data;
     struct Node *next;
 } Node, *List;
@@ -18,7 +19,7 @@ int main()
     A = creat_List();
     B = creat_List();
 
-
+    C = combine_list(A, B);
     output(C);
     destroy(C);
     return 0;
@@ -27,9 +28,10 @@ int main()
 void output(List L)
 {
     Node *p;
-    if (L->next)
+    p = L;
+    if (L->next != L)
     {
-        while (p->next)
+        while (p->next != L)
         {
             p = p->next;
             printf("%d", p->data);
@@ -47,7 +49,8 @@ List creat_List()
     List L;
     Node *q;
     L = (Node *)malloc(sizeof(Node));
-    L->next = NULL;
+    L->prev = L;
+    L->next = L;
 
     int x;
     q = L;
@@ -56,10 +59,14 @@ List creat_List()
         scanf("%d", &x);
         Node *T;
         T = (Node *)malloc(sizeof(Node));
+        T->prev = NULL;
         T->next = NULL;
         T->data = x;
 
         q->next = T;
+        T->prev = q;
+        T->next = L;
+        L->prev = T;
         q = T;
         L->data++;
     } while (getchar() != '\n');
@@ -68,8 +75,42 @@ List creat_List()
 
 List combine_list(List A, List B)
 {
-    List C;
+    List C = (List)malloc(sizeof(Node));
+    C->data = 0;
+    C->prev = C;
+    C->next = C;
 
+    Node *pa, *pb, *qa, *qb, *pc = C;
+    pa = A->prev;
+    pb = B->next;
+    while (pa != A || pb != B)
+    {
+        if (pa != A && pa->data <= pb->data)
+        {
+            qa = pa;
+            pa = pa->prev;
+            pc->next = qa;
+            C->prev = qa;
+            qa->prev = pc;
+            qa->next = C;
+            pc = pc->next;
+            C->data++;
+        }
+        else
+        {
+            qb = pb;
+            pb = pb->next;
+            pc->next = qb;
+            C->prev = qb;
+            qb->prev = pc;
+            qb->next = C;
+            pc = pc->next;
+            C->data++;
+        }
+    }
+
+    free(A);
+    free(B);
     return C;
 }
 
@@ -77,10 +118,11 @@ void destroy(List L)
 {
     Node *p = L;
     Node *T;
-    while(p)
+    while (p != L)
     {
         T = p->next;
         free(p);
+        p = NULL;
         p = T;
     }
 }

@@ -88,7 +88,7 @@ List combine_list(List A, List B)
     }
     if (pa == NULL)    // 如果 A 链表的长度小于 B 链表的长度
         qb->next = pb; // 将 B 的后续节点连接到新链表的尾端
-    free(B);           //删除 B 的头结点
+    free(B);           // 删除 B 的头结点
 
     return C;
 }
