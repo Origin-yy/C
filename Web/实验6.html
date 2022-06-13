@@ -1,0 +1,65 @@
+<html>
+1.
+<head>
+    <title>判断奇偶</title>
+    <script type="text/javascript">
+        alert("判断奇偶")
+        var str = prompt("请输入整数")
+        if (str % 2 == 0) {
+            alert("这是个偶数！");
+        } else {
+            alert("这是个奇数！");
+        }
+    </script>
+</head>
+
+</html>
+2.
+<html>
+
+<head>
+    <title>求长方形总边长及面积</title>
+    <script type="text/javascript">
+        alert("长方形总边长及面积")
+        var height = +prompt('请输入长方形的长：');
+        var width = +prompt('请输入长方形的宽：');
+        alert('长方形的面积：' + (height * width) + '\n长方形的周长：' + (height + width) * 2);
+    </script>
+</head>
+
+</html>
+3.
+<html>
+
+<head>
+    <title>计算100内累计和</title>
+    <script type="text/javascript">
+        alert("计算1+2+3+……+100的累计和")
+        alert("1+2+3+……+100=5050");
+    </script>
+</head>
+
+</html>
+4.
+<html>
+   
+
+<head>
+          <title>获取当前系统时间</title>
+          <script type="text/javascript">
+        alert("获取当前系统时间")
+        var d = new Date();
+        var time = d.getHours();
+        if (time < 10) {
+            document.write("<b>Good morning</b>");
+        } else if (time < 18) {
+            document.write("<b>Good afternoon</b>");
+        } else {
+            document.write("<b>Good evening</b>");
+        }
+        document.write("<br>");
+        document.write("现在时间是:" + d.toLocaleString());
+    </script>
+        </head>
+
+</html>

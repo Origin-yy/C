@@ -18,6 +18,7 @@ int main()
     A->data = 0;
     A->next = NULL;
     Node *p = A;
+    printf("请输入一批正整数：\n");
     do
     {
         scanf("%d", &t);

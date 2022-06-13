@@ -15,14 +15,16 @@ void destroy(List list);
 int main()
 {
     List A, B, C;
+    printf("请输入一个由整数组成的链表：\n");
     A = creat_List();
+    printf("请再输入一个由整数组成的链表：\n");
     B = creat_List();
 
     if (A->data <= B->data)
         C = combine_list(A, B);
     else
         C = combine_list(B, A);
-
+    printf("合并后的链表为：\n");
     output(C);
     destroy(C);
     return 0;

@@ -16,10 +16,13 @@ void destroy(List list);
 int main()
 {
     List A, B, C;
+    printf("请输入一个非递增有序数列：\n");
     A = creat_List();
+    printf("请输入一个非递减有序数列：\n");
     B = creat_List();
 
     C = combine_list(A, B);
+    printf("归并后的非递减有序数列为：\n");
     output(C);
     destroy(C);
     return 0;

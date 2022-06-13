@@ -17,6 +17,7 @@ int main()
     A->data = 0;
     A->next = NULL;
     Node *p = A;
+    printf("请输入一个由整数组成的链表：\n");
     do
     {
         scanf("%d", &t);
@@ -29,6 +30,7 @@ int main()
     } while (getchar() != '\n');
     turn(A);
     Node *T = A;
+    printf("逆置后的链表为：\n");
     for (int i = 0; i < A->data; i++)
     {
         T = T->next;
