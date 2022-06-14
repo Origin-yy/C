@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>我的空间 | 我的相册</title>
+    <link rel="stylesheet" href="../css/nav.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/trip.css" />
+    <!-- <link rel="stylesheet" href="../10/gun.css" /> -->
+    <style type="text/css">
+        ul li {
+            margin-top: 20px;
+        }
+
+        h4 {
+            text-align: left;
+        }
+
+        hr {
+            width: 100%;
+            color: #987cb9;
+            SIZE: 1px
+        }
+
+        header {
+            text-align: center;
+            background-color: #00b4ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #wrap {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #list {
+            position: absolute;
+            -webkit-animation: 10s move infinite linear;
+            /*自动滚动*/
+            width: 200%;
+        }
+
+        #list li {
+            list-style: none;
+            float: left;
+        }
+
+        @-webkit-keyframes move {
+            0% {
+                left: 0;
+            }
+
+            100% {
+                left: -500px;
+            }
+        }
+
+        @keyframes move {
+            0% {
+                left: 0;
+            }
+
+            100% {
+                left: -500px;
+            }
+        }
+
+        #wrap:hover #list {
+            -webkit-animation-play-state: paused;
+            /*动画暂停播放*/
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 手动播放 -->
+    <!--  <audio id="audio" controls="controls"> -->
+    <source src="../music/纯音乐-忧伤还是快乐.mp3" type="audio/mp3">
+    </source>
+    </audio> -->
+    <!--头部-->
+    <div class="nav">
+        <!--   头部导航 navigator     -->
+        <img src="../img/头像.jpg" alt="logo 图">
+        <span class="title">个人空间</span>
+        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+        <a href="index.html">
+            <p>个人信息</p>
+        </a>
+        <a href="blog.html">
+            <p>我的博客</p>
+        </a>
+        <a href="collect.html">
+            <p>我的收藏</p>
+        </a>
+        <a href="interest.html">
+            <p>兴趣爱好</p>
+        </a>
+        <a href="food.html">
+            <p>生活记录</p>
+        </a>
+        <a href="trip.html">
+            <p>我的相册</p>
+        </a>
+        <a href="music.html">
+            <p>我的音乐</p>
+        </a>
+        <a href="search.html">
+            <p>我的导航</p>
+        </a>
+        <a href="../welcome.html">
+            <p>返回首页</p>
+        </a>
+    </div>
+
+    <!--主体-->
+    <div id="main">
+        <!--旅行日志-->
+        <div class="record">
+            <div class="title1">
+                <h2>旅行&nbsp;.&nbsp;日志</h2>
+                <p>Travel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Log</p>
+            </div>
+            <div class="content1">
+                <div class="box">
+                    <img src="../img/log1.png" width="260px" height="180px" />
+                    <div class="section">
+                        <h2>西藏<span>2019.07.05</span></h2>
+                        <p>一路朝拜，从不回首。有的耗尽家财，有的途中抱恙，但依然向前。
+                            雪山、湖泊、藏民;神山、神湖、信徒。
+                        </p>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="section">
+                        <h2>宽窄巷子<span>2019.07.24</span></h2>
+                        <p>宽巷子与窄巷子是成都这个古老又年轻的城市往昔的缩影，一个记忆深处的符号。
+                        </p>
+                    </div>
+                    <img src="../img/log2.png" width="260px" height="180px" />
+                </div>
+                <div class="box">
+                    <img src="../img/log3.png" width="260px" height="180px" />
+                    <div class="section">
+                        <h2>三亚<span>2022.02.05</span></h2>
+                        <p>
+                            渔船点点，如浪花上的花蕊，在斜阳的陪伴下，家人的期待中，满载而归。
+                            旅游不在乎终点，而是在意途中的人和事还有那些美好的记忆和景色。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--旅行相册-->
+        <div class="photos">
+            <div class="title2">
+                <div class="line"></div>
+                <h2>星空&nbsp;.&nbsp;相册</h2>
+                <p>Start&nbsp;Photos</p>
+            </div>
+            <div class="content2">
+                <ul class="bigView">
+                    <li id="img1"><img src="../img/trip1.png" width="700" height="400" /></li>
+                    <li id="img2"><img src="../img/trip2.png" width="700" height="400" /></li>
+                    <li id="img3"><img src="../img/trip3.png" width="700" height="400" /></li>
+                    <li id="img4"><img src="../img/trip4.png" width="700" height="400" /></li>
+                    <li id="img5"><img src="../img/trip5.png" width="700" height="400" /></li>
+                    <li id="img6"><img src="../img/trip6.png" width="700" height="400" /></li>
+                    <li id="img7"><img src="../img/trip7.png" width="700" height="400" /></li>
+                    <li id="img8"><img src="../img/trip8.png" width="700" height="400" /></li>
+                    <li id="img9"><img src="../img/trip9.png" width="700" height="400" /></li>
+                    <li id="img10"><img src="../img/trip10.png" width="700" height="400" /></li>
+                </ul>
+                <!--隐藏滚动条-->
+                <div class="smallBox">
+
+                    <ul class="smallView">
+                        <li><a href="#img1"><img src="../img/trip1.png" /></a></li>
+                        <li><a href="#img2"><img src="../img/trip2.png" /></a></li>
+                        <li><a href="#img3"><img src="../img/trip3.png" /></a></li>
+                        <li><a href="#img4"><img src="../img/trip4.png" /></a></li>
+                        <li><a href="#img5"><img src="../img/trip5.png" /></a></li>
+                        <li><a href="#img6"><img src="../img/trip6.png" /></a></li>
+                        <li><a href="#img7"><img src="../img/trip7.png" /></a></li>
+                        <li><a href="#img8"><img src="../img/trip8.png" /></a></li>
+                        <li><a href="#img9"><img src="../img/trip9.png" /></a></li>
+                        <li><a href="#img9"><img src="../img/trip10.png" /></a></li>
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!--尾部-->
+    <div>
+        <div id="wrap">
+            <ul id="list">
+                <!-- <li><a href="#img1"><img src="../img/lu.png"width="1000" height="1000"/></a></li> -->
+                <li><a href="#img3"><img src="../img/lu1.png" /></a></li>
+                <li><a href="#img4"><img src="../img/lu3.png" /></a></li>
+                <li><a href="#img5"><img src="../img/lu4.png" /></a></li>
+                <li><a href="#img6"><img src="../img/lu5.png" /></a></li>
+                <li><a href="#img7"><img src="../img/lu6.png" /></a></li>
+                <li><a href="#img8"><img src="../img/lu1.png" /></a></li>
+                <li><a href="#img9"><img src="../img/lu2.png" /></a></li>
+                <li><a href="#img9"><img src="../img/lu3.png" /></a></li>
+                </li>
+            </ul>
+
+        </div>
+
+        <p>
+            <a href="index.html">个人信息</a><span>|</span>
+            <a href="interest.html">兴趣爱好</a><span>|</span>
+            <a href="food.html">美食生活</a><span>|</span>
+            <a href="trip.html">背包旅行</a>
+        </p>
+        <p>
+            电话：12345678901&nbsp; E-mail：123456@qq.com
+        </p>
+    </div>
+    <audio autoplay="autoplay" controls="controls" loop="loop" preload="auto" src="../music/纯音乐-忧伤还是快乐.mp3">
+    </audio>
+</body>
+
+</html>
