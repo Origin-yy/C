@@ -1,0 +1,131 @@
+<html>
+
+<head>
+
+    <script type="text/javascript">
+        function login() {
+            var userName = document.getElementById("userName").value;
+            var pwd = document.getElementById("pwd").value;
+            var pud = document.getElementById("pud").value;
+            var odd = document.getElementById("odd").value;
+            var matchResult = true;
+            if (userName == "" || pwd == "" || pud == "" || odd == "") {
+                alert("登陆用户名的首字符不能使用数字!");
+                alert("登陆用户名的长度应当在6和20个字符(含)之间!");
+                alert("请输入合法的邮箱地址,如aa@yahoo.com!");
+                alert("登陆密码和重复输入密码不一致!");
+                alert("请输入登录使用的用户名!");
+                matchResult = false;
+            }
+            return matchResult;
+        }
+    </script>
+    <title>Form事件的例子</title>
+</head>
+
+<body>
+    <form name="loginForm" action="10-20.html" onsubmit="return login()" method="post">
+        <table bgcolor="white" width="800" cellspacing="0" cellpadding="0" border="0" align="left" valign="top">
+            <tr>
+                <td class="table- title" colspan="2"><b>用户注册</b></td>
+            </tr>
+            <tr>
+                <td width="50" height="5" align="right" bgcolor="gray">登录用户名</td>
+                <td>
+                    <input id="userName" name="userName" type="text" class="input">
+                </td>
+            </tr>
+            <tr>
+                <td width="50px" height="28" align="right" bgcolor="gray">登录密码</td>
+                <td><input id="pwd" name="pwd" type="password" class="input"></td>
+            </tr>
+            <tr>
+                <td width="50" height="28" align="right" bgcolor="gray">重复输入密码</td>
+                <td><input id="pud" name="pud" type="password" class="input"></td>
+            </tr>
+            <tr>
+                <td width="50" height="28" align="right" bgcolor="gray">有效邮箱地址</td>
+                <td><input id="odd" name="odd" type="password" class="input"></td>
+            </tr>
+            <tr>
+                <td width="100" height="28" align="right"></td>
+                <td><input type="submit" value="提交">
+                    <input type="button" value="取消" onClick="reset( )"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+2.
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Droid</title>
+    <style type="text/css">
+        select {
+            width: 100px;
+            height: 200px;
+        }
+    </style>
+    <script type="text/javascript">
+        var move = function (obj) {
+            var sel1 = document.getElementById('sel1');
+            var sel2 = document.getElementById('sel2');
+            if (obj.value == '>>') {
+                for (var i = 0; i < sel1.children.length; i++) {
+                    var x = sel1.children[i];
+                    if (x.selected) {
+                        sel2.appendChild(x);
+                        i = -1;
+                        continue;
+                    }
+                }
+            } else if (obj.value == '<<') {
+                for (var i = 0; i < sel2.children.length; i++) {
+                    var x = sel2.children[i];
+                    if (x.selected) {
+                        sel1.appendChild(x);
+                        i = -1;
+                        continue;
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <table>
+
+
+        <pre>待选名单</pre>
+        <tr>
+            <td rowspan="2"><select multiple="multiple" id="sel1">
+                    <option>王伟</option>
+                    <option>李佳</option>
+                    <option>赵俊杰</option>
+                    <option>董可</option>
+                </select>
+            </td>
+
+
+            <pre>                       参加名单</pre>
+            <td>
+                <table>
+                    <tr>
+                        <td><input type="button" value=">>" onclick="move(this);" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td><select multiple="multiple" id="sel2">
+                </select>
+            </td>
+
+        </tr>
+
+    </table>
+</body>
+
+</html>
