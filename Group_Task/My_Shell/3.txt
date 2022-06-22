@@ -1,0 +1,2 @@
+ls < 1.txt | grep c | wc >> 2.txt
+echo < 1.txt | ls -a -l  | grep c | wc >> 2.txt
