@@ -1,106 +1,199 @@
-#include <arpa/inet.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <strings.h>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
+#include<stdio.h>
+#include<sys/socket.h>
+#include<arpa/inet.h> 
+#include<unistd.h>
+#include<sys/types.h>
+#include<fcntl.h>
+#include<errno.h>
+#include<strings.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/epoll.h>
+//绑定+监听
+int setListen(int lfd,unsigned short port);
+int acceptConn(int lfd,struct sockaddr_in*addr);
 
-int sendMsg(int fd, const char *msg, int len);
-int writen(int fd, char *msg, int size);
+//客户端
+int connectToHost(int lfd, char*ip,unsigned short port);
 
-int main() {
-  int s;
-  //创建一个socket
-  int sockfd;
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (sockfd < 0) {
-    printf("socket failed.");
-    exit(0);
-  }
 
-  //初始化一个ipv4地址
-  struct sockaddr_in addr;
-  memset(&addr, 0, sizeof(struct sockaddr));
-  addr.sin_family = AF_INET;
-  addr.sin_port = htons(55000);
-  inet_pton(AF_INET, "192.168.30.148", &addr.sin_addr);
+int createsocket();
+int sendMsg(int fd,const char*msg,int len);
+int recvMsg(int fd,char**msg);
+ssize_t writen(int fd, const void* buf,size_t n);
+ssize_t readn(int fd, void*buf,size_t n);
 
-  //连接我的电脑的通配地址上的socket
-  s = connect(sockfd, (struct sockaddr *)&addr, sizeof(addr));
-  if (s == -1) {
-    printf("connect() failed.\n");
-    exit(0);
-  }
-
-  //获取一个字符串，大小在前，字符串在后,合并在一起发送
-  int len = 0; //每个字符串的大小
-  char buf[1001];
-
-  int fd1 = open("test.txt", O_RDONLY);
-
-  while (len = read(fd1, buf, rand() % 20) > 0) {
-    printf("获取的字符串为：\n%s.\n长度为:%d\n", buf, len);
-
-    char *ready = (char *)calloc(len + sizeof(len), sizeof(char));
-
-    int net_len = htonl(len);
-
-    memcpy(ready, &net_len, sizeof(net_len));
-    memcpy(ready + sizeof(net_len), buf, len);
-
-    printf("sizeof(ready):%d\n", len + (int)sizeof(int));
-
-    s = writen(sockfd, ready, len + (int)sizeof(int));
-    if (s == -1) {
-      printf("writen() failed.\n");
-      close(sockfd);
-      exit(0);
-    }
-
-    printf("发送的数据块大小为：%lu.\n", len + sizeof(len));
-
-    int temp = htonl(*(int *)ready);
-    printf("发送的字符串大小为：%d .\n", temp);
-
-    free(ready);
+int main()
+{
+  char temp[1001];
+  int fd=socket(AF_INET,SOCK_STREAM,0);
+  struct sockaddr_in caddr;
+  caddr.sin_family=AF_INET;
+  caddr.sin_port=htons(9526);
+  inet_pton(AF_INET,"127.0.0.1",&caddr.sin_addr.s_addr);
+  connect(fd,(struct sockaddr*)&caddr,sizeof(caddr));
+  printf("客户端连接成功\n");
+  if(fd==-1)
+    return -1;
+  
+  int length=0;
+  int fd1=open("english.txt",O_RDONLY);
+  while((length=read(fd1,temp,rand()%1000))>0)
+  {
+    sendMsg(fd,temp,length);
+    memset(temp,0,sizeof(temp));
     usleep(300);
   }
-  // Put your code Here!
-}
-int writen(int fd, char *msg, int size) {
-  char *buf = msg;
-  int count = size;
-  while (count > 0) {
-    int len = send(fd, buf, count, 0);
-    if (len == -1) {
-      return -1;
-    } else if (len == 0) {
-      continue;
-    }
-    buf += len;
-    count -= len;
-  }
-  return size;
+  sleep(10);
+
 }
 
-int sendMsg(int fd, const char *msg, int len) {
-  if (fd < 0 || msg == NULL || len <= 0) {
+int createsocket()
+{
+  int lfd=socket(AF_INET,SOCK_STREAM,0);
+  if(lfd==-1)
+  {
+    perror("socket error");
     return -1;
   }
-  char *data = (char *)malloc(sizeof(char) * (len + 4));
-  int biglen = htonl(len);
-  memcpy(data, &biglen, 4);
-  memcpy(data + 4, msg, len);
+  else 
+  {
+    printf("套接字创建成功\n");
+    return lfd;
+  }
+}
+int setListen(int lfd,unsigned short port)
+{
+  struct sockaddr_in saddr;
+  saddr.sin_family=AF_INET;
+  saddr.sin_port=htons(port);
+  saddr.sin_addr.s_addr=INADDR_ANY;
+  int ret=0;
+  ret=bind(lfd,(struct sockaddr*)&saddr,sizeof(saddr));
+  if(ret==-1)
+  {
+    perror("bind error");
+    return -1;
+  }
+  else 
+  {
+    printf("套接字地址绑定成功\n");
+  }
+  listen(lfd,128);
+  return 1;
+}
+int acceptConn(int lfd,struct sockaddr_in*addr)
+{
+  int cfd=-1;
+  if(addr==NULL)
+  {
+    cfd=accept(lfd,NULL,NULL);
+    return cfd;
+  }
+  socklen_t len=sizeof(addr);
+  cfd=accept(lfd,(struct sockaddr*)&addr,&len);
+  return cfd;
+}
+int connectToHost(int  lfd,char*ip,unsigned short port)
+{
+  struct sockaddr_in caddr;
+  caddr.sin_family=AF_INET;
+  caddr.sin_port=htons(port);
+  inet_pton(AF_INET,ip,&caddr.sin_addr.s_addr);
+  int fd= connect(lfd,(struct sockaddr*)&caddr,sizeof(caddr));
+  printf("成功与客户端建立链接\n");
+  return fd;
+}
+
+ssize_t writen(int fd, const void* buf,size_t n)
+{
+  ssize_t numwriten;
+  size_t totwriten;
+  const char *p;
+
+  p = buf;
+  for(totwriten = 0; totwriten < n;)
+  {
+    numwriten = write(fd, p, n - totwriten);
+
+    if(numwriten <= 0)
+    {
+      if(numwriten == -1 && errno == EINTR)
+        continue;
+      else
+        return -1;
+    }
+    totwriten += numwriten;
+    p += numwriten;
+
+  }
+  return totwriten;
+}
+
+int sendMsg(int fd,const char*msg,int len)
+{
+  if(fd<0||msg==NULL||len<=0)
+  {
+    return -1;
+  }
+  char*data=(char*)malloc(sizeof(char)*(len+4));
+  int biglen=htonl(len);
+  memcpy(data,&biglen,4);
+  memcpy(data+4,msg,len);
   int ret;
-  ret = writen(fd, data, len + 4);
-  if (ret == -1) {
+  ret=writen(fd,data,len+4);
+  if(ret==-1)
+  {
     perror("send error");
     close(fd);
   }
   return ret;
 }
+
+ssize_t readn(int fd, void*buf,size_t n)
+{
+  ssize_t numread;
+  size_t totread;
+  char *p;
+
+  p = buf;
+  for(totread = 0; totread < n;)
+  {
+    numread= read(fd, p, n - totread);
+
+    if(numread == 0)
+      return totread;
+    if(numread == -1)
+    {
+      if(errno == EINTR)
+        continue;
+      else
+        return -1;
+    }
+    totread += numread;
+    p += numread;
+  }
+  return totread;
+}
+int recvMsg(int fd,char**msg)
+{
+  int len=0;
+  readn(fd,(char*)&len,4);
+  len=ntohl(len);
+  printf("接收到的 数据块大小 %d\n",len);
+  char * data=(char*)malloc(len+1);
+  int Len=readn(fd,data,len);
+  if(Len==0)
+  { 
+      printf("对方断开链接\n");
+      close(fd);    
+  }
+  else if(len!=Len)
+  {
+    printf("数据接收失败\n");
+  }
+  data[len]='\0';
+  *msg=data;
+  return Len;
+}
+
