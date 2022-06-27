@@ -110,6 +110,74 @@ int read_timeout_alarm(int fd, void *buf, size_t n, u_int32_t time) {
 
   return writenum;
 }
+int readn(int fd, void *buf, int n) {
+  int left = 0;
+  int had = 0;
+  int *ptr = NULL;
+
+  ptr = (int *)buf;
+  left = n;
+  int i = 0;
+
+  while (left > 0) {
+    had = read(fd, (char *)ptr, left);
+    if (had == -1) {
+      if (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN) {
+        had = 0;
+        usleep(10);
+        if (i == 100)
+          return -1;
+        else
+          i++;
+      } else {
+        return -1;
+      }
+    } else if (had == 0) {
+      return 0;
+    } else {
+      left -= had;
+      ptr += had;
+    }
+  }
+  return n - left;
+}
+
+int writen(int connfd, const void *buf, int nums) {
+  int left = 0;
+  int had = 0;
+  char *ptr = NULL;
+
+  if ((connfd <= 0) || (buf == NULL) || (nums < 0)) {
+    return -1;
+  }
+
+  ptr = (char *)buf;
+  left = nums;
+  int i = 0;
+
+  while (left > 0) {
+    had = write(connfd, ptr, left);
+    if (had == -1) {
+      if (errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN) {
+        had = 0;
+          usleep(5);
+		  if(i == 500)
+		  	return -1;    //返回-1且errno为：EINTR EWOULDBLOCK EAGAIN的话是超时
+		  else
+		    i++;
+      } else {
+        return -1;
+      }
+    } else if (had == 0) {
+      return 0;
+    } else {
+      left -= had;
+      ptr += had;
+    }
+  }
+
+  return nums;
+}
 
 int main() {
   char buf[10];
