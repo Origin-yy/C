@@ -526,22 +526,14 @@ void write_information(List L)
     printf("请输入文件的绝对路径(输入0使用默认路径):\n");
     scanf("%s",path);
     if(strncmp(path,"0",1) == 0)
-    {
-        fd = open("/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.txt",O_WRONLY);
-        if(fd < 0)
-            printf("没有找到文件/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.txt.\n");
-        else
-            truncate("/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.txt", 0);;
-    }
-    else
-    {
-        fd = open(path,O_RDWR);
-        if(fd < 0)
-            printf("没有找到文件%s.\n",path);
-        else
-            truncate("/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.txt", 0);;
+        strcpy(path,"/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.txt");
 
-    }
+    fd = open(path,O_RDWR);
+    if(fd < 0)
+        printf("没有找到文件%s.\n",path);
+    else
+        truncate(path, 0);;
+
     Node *p = L;
     int i = 1;
     dprintf(fd,"%d\n", L->id);
@@ -560,6 +552,7 @@ void write_information(List L)
         i++;
     }
     close(fd);
+    printf("学生信息以保存到%s",path);
 }
 //销毁链表
 void destroy(List L)
