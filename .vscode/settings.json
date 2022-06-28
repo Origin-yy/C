@@ -16,5 +16,11 @@
         "listenfd",
         "MKSTR",
         "sousuo"
-    ]
+    ],
+    "editor.language.brackets": [
+    
+    ],
+    "editor.detectIndentation": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "prettier.tabWidth": 4
 }
