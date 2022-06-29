@@ -1,0 +1,20 @@
+.glow-purple:focus {
+    border: 1px solid rebeccapurple;
+    outline: 0;
+    box-shadow: 0 0 3px 0px rebeccapurple;
+    -webkit-box-shadow: 0 0 3px 0px rebeccapurple;
+}
+/*https://segmentfault.com/q/1010000010467476?sort=created*/
+/*Coarse*/
+/*粗的*/
+.coarse-border {
+    /*width: 500px;*/
+    /*height: 300px;*/
+    /*margin: 10px 20px 30px 40px;*/
+    border-style: dashed;
+    border-width: 50px 60px 70px;
+    /*padding: 80px 90px;*/
+    /*box-sizing: border-box;*/
+    width: fit-content;
+    /*合适内部图片的大小*/
+}

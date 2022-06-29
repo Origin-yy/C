@@ -1,0 +1,453 @@
+.col {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+.col-have-shrink{
+    display: flex;
+    flex-direction: column;
+}
+
+    /*.col img {*/
+/*    !*height:100%;*!*/
+/*    flex-shrink: 0;*/
+/*    flex-grow: 0;*/
+/*    max-width: 600px;*/
+/*    !*https://www.jianshu.com/p/d71f6e9d3236*!*/
+/*}*/
+.display img {
+    flex-shrink: 0;
+    flex-grow: 0;
+    max-width: 600px;
+}
+
+.cols {
+    display: flex;
+    flex-direction: row;
+    /*background-color: #d1d1d1;*/
+    justify-content: space-between;
+    /*之间有空隙 ，会把频幕铺满*/
+    /*https://segmentfault.com/q/1010000017233242?sort=created*/
+}
+
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.row-space {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+/*flex*/
+}
+
+.margin-top-30{
+    margin-top:30px;
+}
+
+
+.margin-top-100{
+    margin-top:100px;
+}
+
+
+.cover-img {
+    background-size: cover;
+    height: 100%;
+
+    width: 100%;
+}
+
+.box-right {
+    float: right;
+    margin: 0;
+    color: white;
+    text-indent: 10px;
+}
+
+.box-right h3 {
+
+    margin: 0;
+}
+
+
+html, body {
+    height: 100%
+}
+
+/*这里很关键*/
+
+.outer-wrap {
+    /*只有同时为html和body设置height: 100%时，这里的height才生效，
+    并且随浏览器窗口变化始终保持和浏览器视窗等高*/
+    height: 100%;
+    position: relative;
+    /*background-color: rgba(0, 0, 0, .5);*/
+}
+
+.first-row {
+    margin-top: 100px;
+}
+
+.float-right {
+    float: right;
+}
+
+.login-panel {
+    width: 500px;
+    height: 400px;
+    /*background-color: orange;*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -150px;
+    margin-left: -200px;
+}
+
+/*https://blog.csdn.net/VIPshao/article/details/54311571*/
+
+
+.col-layout {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    justify-items: center;
+    place-items: center;
+
+}
+
+.vertical-text {
+    width: 40px;
+    margin: 0 auto;
+    line-height: 44px;
+    /*一行的高度*/
+    font-size: 40px;
+    /*writing-mode: vertical-lr;*/
+
+    /*display: block;*/
+    /*https://blog.csdn.net/sangjinchao/article/details/60139706*/
+}
+
+.vertical-text-writing-mode {
+    /*display: inline-block;*/
+    writing-mode: vertical-lr;
+    /*writing-mode: horizontal-tb;*/
+    /*width: 100%;*/
+    text-align: center;
+    height: 500px;
+    /*https://www.cnblogs.com/bushui/p/12497140.html*/
+    /*https://jingyan.baidu.com/article/656db9182deedee381249c0c.html*/
+}
+
+.vertical-text-top-method {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    /*https://www.webhek.com/post/translatey-vertical-align.html*/
+}
+
+.middle-layout {
+    /*display: block;*/
+    /*margin-top: 0.5em;*/
+    /*https://www.cnblogs.com/chen-cong/p/8076442.html*/
+    top: .5em;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    /*https://zhuanlan.zhihu.com/p/84289727*/
+    /*flex实现两端对齐*/
+    /*display: flex;*/
+    /*align-items: center;*/
+    align-items: center;
+    justify-content: center; /*x轴对齐方式*/
+    /*https://www.cnblogs.com/jinsuo/p/6933326.html*/
+    /*flex 方法上下左右居中 子元素无宽高*/
+}
+
+/*https://www.cnblogs.com/chen-cong/p/8076442.html*/
+.middle-layout-parent {
+    display: table;
+    width: 500px;
+    height: 500px;
+    text-align: center;
+}
+
+.middle-layout-son {
+    display: table-cell;
+    height: 100%;
+    /*height: 200px;*/
+    /*background-color: yellow;*/
+    /*https://www.cnblogs.com/sdgf/p/4737248.html*/
+    vertical-align: middle;
+}
+
+#gotop {
+    width: 40px;
+    height: 40px;
+    /*background-color: yellow;*/
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    border-radius: 50%;
+}
+
+/*https://www.cnblogs.com/ghq120/p/10939835.html*/
+.center-block {
+    margin: 0 auto;
+    width: 8rem;
+    padding: 1rem;
+    color: #fff;
+    background: #000;
+}
+
+.float-left {
+    float: left;
+}
+
+.copyright {
+    display: flex;
+}
+
+/*版权信息显示的文字内容居中*/
+.copyright {
+    height: 90px;
+    display: none;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+}
+
+/*宽度大于640px宽度显示版权信息*/
+@media screen and (min-width: 640px) {
+    .copyright {
+        display: flex;
+    }
+}
+
+.copyright div, .copyright address {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copyright a {
+    text-decoration: none;
+    color: hsl(0, 0%, 0%);
+    font-size: 1.1rem;
+    margin: 0 0.5rem;
+}
+
+.copyright a:hover {
+    text-decoration: none;
+    color: mediumpurple;
+}
+
+.grid {
+    display: grid;
+    /*每个col 多少宽度*/
+    grid-template-columns: 400px 400px 400px;
+    grid-template-rows: 200px 200px 200px;
+    grid-auto-flow: row dense;
+    /*密集的*/
+    grid-row-gap: 20px;
+    /*row 之前空格*/
+    grid-column-gap: 20px;
+    text-align: center;
+
+    /*https://blog.csdn.net/weixin_43885123/article/details/84864404*/
+    /*height:80%;width:80%;*/
+    /*position:fixed;*/
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 40px;
+    /*width: 1200px;*/
+    /*width: 800px;*/
+
+}
+
+.grid-four{
+    display: grid;
+    grid-template-columns: 30vw 30vw;
+    grid-template-rows: 30vw  30vw ;
+    /*grid-row-gap: 3vw;*/
+    grid-column-gap: 3vw;
+    text-align: center;
+}
+
+.grid-four-12vw{
+    display: grid;
+    grid-template-columns:12vw 12vw;
+    grid-template-rows: 12vw 12vw;
+    /*grid-row-gap: 3vw;*/
+    grid-column-gap: 3vw;
+    text-align: center;
+}
+
+.grid-four-item{
+    width: 30vw;
+}
+.grid-four-item img{
+    width: 30vw;
+}
+
+.margin-left-10vw{
+    margin-left: 10vw;
+}
+
+
+.grid .item {
+    font-size: 4em;
+    text-align: center;
+    border: 3px solid dodgerblue;
+    /*line-height: 2em;*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*.使用绝对定位和负边距*/
+    /*https://www.cnblogs.com/jing-tian/p/10969887.html*/
+    /*width: 30vw;*/
+    /*height: 20vw;*/
+    /*width: 200px;*/
+    /*height: 100px;*/
+    background-size: 100%, 100%;
+}
+
+.center-father {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.center-son {
+    display: flex;
+
+}
+
+.item img {
+    width: 200px;
+    height: 100px;
+}
+
+.item-1 {
+    /*background-color: #ef342a;*/
+    grid-column-start: 1;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 3;
+    /*background: image(url(../images/dog.jpg));*/
+    background-image: url(../images/ow.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%, 100%;
+}
+
+
+.multi-column {
+    column-count: 5;
+    column-gap: 25px;
+    column-rule: 5px solid rebeccapurple;
+}
+
+.multi-column-3{
+    column-count: 3;
+}
+
+.multi-column p {
+    margin-top: 10px;
+}
+
+.multi-column-top0 p{
+    margin-top: 0;
+}
+
+.multi-column-top0{
+    margin-top: 0;
+}
+/*.item-1 img{*/
+/*    width: 200%;*/
+/*    height:  200%;*/
+/*}*/
+
+.item-2 {
+    /*background-color: #f68f26;*/
+    /*grid-column-start: 1;*/
+    /*grid-column-end: 3;*/
+    /*background-image: url(../images/duck.jpg);*/
+    background:url(../images/duck.jpg) 10% 30%;
+}
+
+.item-3 {
+    /*background-color: #4ba946;*/
+    /*background-image: url(../images/giraffe.jpg) 10% -10%;*/
+    background:url(../images/giraffe.jpg) 10% 50%;
+}
+
+.item-4 {
+    background-color: #0376c2;
+    grid-row-start: 2;
+    grid-row-end: 4;
+    background-image: url(../images/panda.jpg);
+
+}
+
+.item-5 {
+    /*background-color: #c077af;*/
+    /*background-image: url(../images/pig.jpg);*/
+    background:url(../images/pig.jpg) 10% 40%;
+
+}
+
+
+.block {
+    display: block;
+}
+
+.width-90vw{
+    width: 90vw;
+}
+.width-content{
+    width: content-box;
+    height: content-box;
+}
+.height-90vw{
+    height: 90vw;
+}
+
+.height-50vw{
+    height: 50vw;
+}
+
+.height-30vw{
+    height: 30vw;
+}
+
+.width-100vw{
+    width: 100vw;
+}
+
+
+.img-container{
+    width: 120px;
+    height: 300px;
+    display: block;
+}
+
+.width-30vw{
+    width: 30vw;
+}
+.width-20vw{
+    width: 20vw;
+}
+
+
+.middle-layout-pa{
+    align-items: center;justify-content: center;
+}

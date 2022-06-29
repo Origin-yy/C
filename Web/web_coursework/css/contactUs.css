@@ -1,0 +1,218 @@
+.blue-legend {
+    font-size: 20px;
+    padding: 5px 20px;
+    background-color: deepskyblue;
+    color: white;
+}
+
+/*.grey-label {*/
+/*    !* display:block;*/
+/*    float: left; *!*/
+/*    font-size: 14px;*/
+/*    line-height: 24px;*/
+/*    padding: 5px;*/
+/*    color: #808080;*/
+/*}*/
+
+.grey-label{
+    font-size: 14px;
+    line-height: 24px;
+    padding: 5px;
+    color: #808080;
+
+    /*background-color: springgreen;*/
+}
+/* 联络 */
+.contacts {
+    width: 500px;
+    height: auto;
+    border: 1px solid purple;
+    border-radius: 5px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.details {
+    /* rem能等比例适配所有屏幕 */
+    /* https://www.cnblogs.com/wxcbg/p/5908967.html */
+    text-indent: 2rem;
+}
+
+.contact-form {
+    /*green*/
+    border: 1px solid rebeccapurple;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.form-subtitle {
+    font-size: 20px;
+}
+
+/*https://www.cnblogs.com/dongwenbo/p/3325692.html*/
+/*label {*/
+/*    display: inline-block;*/
+/*    width: 70px;*/
+/*    text-align: right;*/
+/*}*/
+
+.form-row {
+    /*padding: 15px;*/
+    padding: 3px;
+}
+
+/* https://www.cnblogs.com/chengxs/p/11231906.html */
+.form-row-button {
+    width: 350px;
+    /*margin: 0 auto;*/
+    margin: 30px 30px 10px 30px;
+    text-align: center;
+    /*外面有margin 里面的东西好像就不能有margin 了*/
+    /* display: flex; */
+    /* display: table; */
+    /* 此元素会作为块级表格来显示（类似 <table>），表格前后带有换行符。 */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* https://www.cnblogs.com/smile-xin/p/11519062.html */
+}
+.description{
+    float: left;
+    width: 90px;
+    font-size: 1.2em;
+    /*background-color: purple;*/
+    /*color: white;*/
+    color: grey;
+}
+/*strong {*/
+/*    float: left;*/
+/*    width: 90px;*/
+/*}*/
+
+.form-row-button input {
+    width: 60px;
+    margin: 0 auto;
+}
+
+/* https://www.jianshu.com/p/8d86b754a651 */
+
+.btn-blue-back-white-font {
+    height: 62px;
+    float: left;
+    font: 500 11px/13px "Raleway", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding-left: 61px;
+    padding-right: 0;
+    width: 180px;
+    text-align: left;
+    margin: 0 10px 20px;
+    position: relative;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* https://www.jianshu.com/p/9b4b60b8d475 */
+
+/*fieldset {*/
+/*    width: 450px;*/
+/*    margin: 0 auto;*/
+/*}*/
+
+.fieldset {
+    width: 450px;
+    margin: 0 auto;
+}
+
+/*input:focus {*/
+/*    border-color: #66afe9;*/
+/*    outline: 0;*/
+/*    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);*/
+/*    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6)*/
+/*}*/
+
+.edge-glow:focus{
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6)
+}
+
+
+#btn-span {
+    /*margin: 30px 30px 30px 30px;*/
+}
+
+/*https://blog.csdn.net/hgg923/article/details/79422998*/
+/*textarea {*/
+/*    border: 0;*/
+/*    border-radius: 5px;*/
+/*    !*background-color: rgba(241, 241, 241, .98);*!*/
+/*    width: 355px;*/
+/*    height: 100px;*/
+/*    padding: 10px;*/
+/*    resize: none;*/
+/*}*/
+.textarea{
+    /*border: 0;*/
+    border-radius: 5px;
+    background-color: rgba(241, 241, 241, .98);
+    width: 355px;
+    height: 100px;
+    padding: 10px;
+    resize: none;
+
+}
+
+.bottom-button{
+    font-size: 1em;
+}
+
+
+.contact-input {
+    outline-style: none;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    /*padding: 13px 14px;*/
+    padding: 7px 7px;
+    width: 200px;
+    /*font-size: 14px;*/
+    font-weight: 700;
+    /*西方国家字母体系分为两类：serif 以及sans serif。serif 是有衬线字体，
+    意思是在字的笔画开始、结束的地方有额外的装饰，而且笔画的粗细会有所不同*/
+    /*font-family: "Microsoft soft", serif;*/
+    font-family:微软雅黑, serif;
+    /*font-size: 0.8em;*/
+    /* display: block;
+    float:right; */
+}
+
+.comment-box{
+    /*width:500px;*/
+    width:50vw;
+    height:30vw;
+    margin-top: 2vw;
+}
+
+.comment-to-comment{
+    width:40vw;
+    /*height:20vw;*/
+    height:content-box;
+}
+
+.active-extend{
+    height: 10vw;
+}
+
+.active-extend:active{
+    height: 30vw;
+}
+
+
+.focus-extend{
+    height: 5vw;
+}
+
+.focus-extend:focus{
+    height: 30vw;
+}
+
+

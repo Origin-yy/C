@@ -1,0 +1,458 @@
+.transition-250ms {
+    transition: all 250ms ease;
+}
+
+
+.heart-jump {
+    border: 3px solid cadetblue;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    /*圆形*/
+    margin: 100px auto;
+    /*边缘*/
+    animation: heart-jump 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    /*交替的;*/
+}
+
+@keyframes heart-fall {
+    from {
+        transform: translateY(0px);
+    }
+    to {
+        transform: translateY(100px);
+    }
+
+}
+
+.heart-fall {
+    animation: heart-fall 1s;
+}
+
+.heart-jump-no-border {
+
+    /*border-radius: 50%;*/
+    /*圆形*/
+    /*margin: 100px auto;*/
+    /*边缘*/
+    animation: heart-jump-no-border 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    /*交替的;*/
+}
+
+.heart-jump:hover {
+    animation: heart-jump .5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+.heart-jump-no-border:hover {
+    animation: heart-jump-no-border .5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+
+/*关键帧*/
+@keyframes heart-jump {
+    from {
+        width: 70px;
+        height: 70px;
+        border: 3px solid cadetblue;
+        /*灰蓝色*/
+        /*学员蓝*/
+    }
+    to {
+        width: 100px;
+        height: 100px;
+        border: 7px solid cadetblue;
+
+    }
+
+}
+
+@keyframes heart-jump-no-border {
+    from {
+        width: 20vw;
+        height: 20vw;
+        /*border: 3px solid cadetblue;*/
+        /*灰蓝色*/
+        /*学员蓝*/
+    }
+    to {
+        width: 30vw;
+        height: 30vw;
+        /*border: 7px solid cadetblue;*/
+
+    }
+
+}
+
+@keyframes change-img {
+    from {
+        display: none;
+    }
+    to {
+        display: block;
+    }
+
+}
+
+@keyframes hide-img {
+    from {
+        display: block;
+    }
+    to {
+        display: none;
+    }
+}
+
+@keyframes move-up {
+    from {
+        transform: translateY(80vh);
+        /*transform: translateY(300px);*/
+    }
+    to {
+        transform: translateY(-80vh);
+        /*transform: translateY(-300px);*/
+    }
+}
+
+@keyframes move-up-40vh {
+    from {
+        transform: translateY(40vh);
+        /*transform: translateY(300px);*/
+    }
+    to {
+        transform: translateY(-40vh);
+        /*transform: translateY(-300px);*/
+    }
+}
+
+@keyframes move-jelly {
+    from {
+        /*transform: translateY(-100vh);*/
+        transform: translateY(-400px);
+        /*transform: translateY(300px);*/
+    }
+    to {
+        /*transform: translateY(0vh);*/
+        transform: translateY(0px);
+        /*transform: translateY(-300px);*/
+    }
+}
+
+.move-jelly {
+    animation: move-jelly 10s infinite backwards;
+    animation-direction: alternate;
+    display: none;
+}
+
+
+.move-up {
+    /*6s*/
+    animation: move-up 10s infinite backwards;
+    animation-direction: alternate;
+    display: none;
+}
+
+.move-up-40vh {
+    /*6s*/
+    animation: move-up-40vh 10s infinite backwards;
+    animation-direction: alternate;
+    display: none;
+}
+
+@media screen and (min-width: 1300px) {
+    .move-up {
+        display: block;
+        /*background-color:lightblue;*/
+    }
+}
+
+
+@media screen and (min-width: 1300px) {
+    .move-jelly {
+        display: block;
+        /*background-color:lightblue;*/
+    }
+}
+
+@keyframes move-right {
+    from {
+        /*transform: translateX(0vw);*/
+        transform: translateX(-30vw);
+        /*rotateY(180deg)*/
+        /*transform: translateY(300px);*/
+    }
+    to {
+        /*rotateY(0deg)*/
+        /*    transform: translateX(50vw);*/
+        transform: translateX(30vw);
+        /*transform: translateY(-300px);*/
+    }
+}
+
+@keyframes move-right-btn {
+    from {
+        transform: translateX(0vw);
+        /*rotateY(180deg)*/
+        /*transform: translateY(300px);*/
+    }
+    to {
+        /*rotateY(0deg)*/
+        transform: translateX(2vw);
+        /*transform: translateY(-300px);*/
+    }
+}
+
+.catch-jelly {
+    width: 5vw;
+    height: 5vw;
+    /*每况愈下地;*/
+    /**/
+    animation: move-right 10s infinite;
+    animation-direction: alternate;
+    /*transform: rotate(90deg);*/
+    transform: rotateY(180deg);
+    /*transform: rotate(180deg);*/
+}
+
+.catch-jelly img {
+    width: 5vw;
+    height: 5vw;
+}
+
+.catch-jelly:hover {
+    transform: rotate(360deg);
+}
+
+/*.open{*/
+/*    animation: hide-img 1s;*/
+/*}*/
+
+.hover-right-long {
+    transition: transform 1s;
+    /*transform: translateY(40px) ;*/
+}
+
+.hover-right-long:hover {
+
+    transform: translateX(70px) translateY(20px);
+}
+
+.hover-rotate {
+    transition: 1s;
+}
+
+
+.hover-rotate:hover {
+    transform: rotate(360deg);
+}
+
+.hover-big {
+    /*transition: transform 1.6s;*/
+    transition: transform 1s;
+}
+
+
+.hover-big-list li {
+    transition: transform 1.6s;
+}
+
+.hover-big:hover {
+    /*transform: skew(120deg);*/
+    transform: scale(1.2);
+}
+
+.hover-big-1-1:hover {
+    /*transform: skew(120deg);*/
+    transform: scale(1.1);
+}
+
+
+.hover-big-list li:hover {
+    transform: scale(1.2);
+}
+
+
+.hover-show {
+    transition: all 1s;
+}
+
+.hover-show:hover ul {
+    display: block;
+}
+
+.hover-slow {
+    transition: all 1s;
+}
+
+.hover-slow li {
+    transition: all 1s;
+}
+
+.hover-slow a {
+    transition: all 1s;
+}
+
+@keyframes shake {
+    from {
+        transform: rotate(15deg);
+        /*rotateY(180deg)*/
+        /*transform: translateY(300px);*/
+    }
+    to {
+        /*rotateY(0deg)*/
+        transform: rotate(-15deg);
+        /*transform: translateY(-300px);*/
+    }
+}
+
+@keyframes change-circle {
+    from {
+        /*transform: rotate(15deg);*/
+        /*rotateY(180deg)*/
+        /*transform: translateY(300px);*/
+    }
+    to {
+        /*rotateY(0deg)*/
+        /*transform: rotate(-15deg);*/
+        /*transform: translateY(-300px);*/
+        border-radius: 50%;
+    }
+}
+
+
+.hover-border:hover {
+    border: gold 3px;
+}
+
+.hover-shake:hover {
+    animation: shake .3s infinite;
+    animation-direction: alternate;
+}
+
+.hover-circle:hover {
+    animation: change-circle 1s forwards;
+    /*border-radius: 50%;*/
+    /*animation-delay: revert;*/
+    /*transform: revert;*/
+    /*animation-play-state:paused;*/
+    /*border-radius: 50%;*/
+}
+
+.hover-right-btn:hover {
+    animation: move-right-btn 1s forwards;
+}
+
+/*畅销图书变换样式*/
+.move-up-picture ul {
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 0 10px mediumpurple;
+}
+
+.hover-shadow-list li:hover {
+    box-shadow: 0 0 10px cornflowerblue;
+}
+
+.hover-shadow-list-green li:hover {
+    box-shadow: 0 0 10px greenyellow;
+}
+
+.hover-shadow-list-pink li:hover {
+    box-shadow: 0 0 10px pink;
+}
+
+.hover-text-shadow:hover {
+    text-shadow: 5px 5px 20px hotpink;
+}
+
+
+.move-up-picture li:before {
+    content: counter(listxh);
+    /*background: hsl(20, 30%, 50%);*/
+    background: deepskyblue;
+    padding: 2px 5px;
+    color: hsl(0, 0%, 100%);
+    margin-right: 5px;
+    vertical-align: top;
+    float: left;
+}
+
+/*当行距离长时，overflow: hidden隐藏，white-space: nowrap不换行，text-overflow: ellipsis多的部分显示省略号。*/
+.move-up-picture li {
+    counter-increment: listxh;
+    /*前面的标号*/
+    overflow: hidden;
+    /*隐藏 多余的*/
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-top: 8px;
+    transition: text-shadow 1s linear;
+    border-bottom: hsl(0, 0%, 80%) dashed 1px;
+    max-width: 420px;
+}
+
+.p-img img {
+    width: 120px;
+    height: 80px;
+}
+
+.move-up-picture .curr .p-img {
+    float: left;
+}
+
+.move-up-picture .curr .p-name strong {
+    display: block;
+    color: hsl(0, 100%, 50%);
+    font-size: 1rem;
+}
+
+.move-up-picture .curr .p-name del {
+    display: block;
+    font-size: 1rem;
+}
+
+.move-up-picture .curr {
+    display: none;
+    transition: all 1s;
+}
+
+.move-up-picture a {
+    /*color: hsl(0, 0%, 0%);*/
+    text-decoration: none;
+    font-size: 1rem;
+    color: white;
+}
+
+.move-up-picture li {
+    color: white;
+    transition: all 1s;
+}
+
+.move-up-picture li:hover {
+    text-shadow: 1px 4px 4px orange;
+    white-space: normal;
+    /*transition: 1s ease;*/
+    /*animation: change-img 1s;*/
+}
+
+.move-up-picture li:hover .selling {
+    display: none;
+    /*transition: 1s ease;*/
+}
+
+.move-up-picture li:hover .curr {
+    display: block;
+    /*transition: 1s ease;*/
+    /*类的改变 不能延长时间*/
+    /*我知道了 不能直接写 要写一个变化的类型的*/
+}

@@ -1,0 +1,92 @@
+/**{*/
+/*    margin: 0px;*/
+/*    padding: 0px;*/
+/*}*/
+/*.main{*/
+/*    transform: rotate(45deg);*/
+/*    margin: 300px;*/
+/*}*/
+
+/*心脏*/
+.disc1 {
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+    background-color: red;
+    margin: 300px 0px 0px 300px;
+    border-radius: 100%;
+    float: left;
+}
+
+.disc2 {
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+    background-color: red;
+    margin: 250px 0px 0px 0px;
+    border-radius: 100%;
+    float: left;
+    position: relative;
+    right: 50px;
+}
+
+.square {
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+    background-color: red;
+    margin: 300px 0px 0px 0px;
+    float: left;
+    position: relative;
+    right: 152px;
+}
+
+
+.rotation-border {
+    height: 400px;
+    margin: 100px;
+    padding: 20px;
+}
+
+.rotation-border-vw {
+    /*height: 400px;*/
+    height: 20vw;
+    margin: 7vh;
+    padding: 4vw;
+    width: 35vw;
+}
+
+.no-padding * {
+    padding: 0;
+}
+
+.img-border {
+    border: 3px cornflowerblue solid;
+    height: 350px;
+    width: 600px;
+}
+
+.img-border-vw {
+    border: .5vh cornflowerblue solid;
+    height: 40vh;
+    width: 35vw;
+}
+
+.border {
+    border: 3px cornflowerblue solid;
+    padding: 10px;
+}
+
+.border-imgs {
+    border: 3px cornflowerblue solid;
+}
+
+.display-container {
+    border: 3px cornflowerblue solid;
+    width: 1400px;
+    height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 30px;
+}

@@ -1,0 +1,179 @@
+* {
+    font-family: 微软雅黑, serif;
+}
+
+body {
+    margin: 0;
+}
+
+
+/*#doLogin{*/
+/*    float: right;*/
+/*    !*margin-right: 10px;*!*/
+/*    !*margin-top: 10px;*!*/
+/*}*/
+
+header {
+    /*width: 1260px;*/
+    height: 100px;
+    /*background-image: url("../images/header.png");*/
+    /*background-image: url("../images/pig.jpg");*/
+    /*background-image: url("../images/cat.jfif");*/
+    /*background-image: url("../images/麋鹿head.jpg");*/
+    background-color: deepskyblue;
+    margin: 0 auto;
+    position: relative;
+    /*display: flex;*/
+}
+
+.header {
+    height: 100px;
+
+    background-color: deepskyblue;
+    margin: 0 auto;
+    position: relative;
+}
+
+.header h1 {
+    color: white;
+    font-family: "黑体", serif;
+    font-size: 35px;
+    position: absolute;
+    padding-left: 75px;
+}
+
+
+header h1 {
+    /*top: 15px;*/
+    color: white;
+    font-family: "黑体", serif;
+    font-size: 35px;
+    position: absolute;
+    /*padding-top: 30px;*/
+    padding-left: 75px;
+}
+
+
+/*up*/
+/*sgy*/
+
+#content-wrapper {
+    /*width: 537px;*/
+    /*height: 3381px;*/
+    width: 1260px;
+    height: 3384px;
+
+    margin: 0 auto;
+
+}
+
+main {
+    float: left;
+    /*width: 100px;*/
+    /*width: 537px;*/
+    width: 820px;
+    height: 3384px;
+
+    /*width: 50%;*/
+    background-color: rebeccapurple;
+    margin: 0;
+
+}
+
+aside {
+    float: right;
+    width: 410px;
+    height: 3384px;
+    /*width: 50%;*/
+    background-color: yellow;
+    margin: 0;
+
+}
+
+footer {
+    width: 100%;
+    height: 160px;
+    background-color: black;
+}
+
+.main-content-zoo {
+    display: flex;
+    flex-direction: row;
+}
+
+a.box {
+    text-decoration: none;
+
+    /*line-height:100%;*/
+    vertical-align: middle;
+    /*https://zhidao.baidu.com/question/1899407627100620460.html*/
+    display: block;
+    line-height: 100px;
+    text-align: center;
+    /*https://jingyan.baidu.com/article/e75aca858d01ce542edac6fc.html*/
+}
+
+.list-box {
+    margin-right: 20px;
+    padding: 0;
+    text-indent: 10px;
+}
+.list-box-no-bottom-margin{
+    margin-block-end:0;
+}
+
+.list-box-opacity{
+    padding: 0;
+    text-indent: 10px;
+}
+.list-box li {
+    width: 270px;
+    height: 30px;
+    color: white;
+    background-color: deepskyblue;
+    margin: 2px;
+    text-decoration: none;
+    list-style: none;
+}
+
+.list-box-opacity li {
+    width: 270px;
+    height: 30px;
+    color: white;
+    /*background-color: deepskyblue;*/
+    opacity: 0;
+    margin: 2px;
+    text-decoration: none;
+    list-style: none;
+}
+
+
+.list-box-opacity a {
+    color: white;
+    text-decoration: none;
+    /*margin-left: 20px;*/
+    text-indent: 20px;
+}
+
+.list-box a {
+    color: white;
+    text-decoration: none;
+    /*margin-left: 20px;*/
+    text-indent: 20px;
+}
+.article-list li{
+    width: 400px;
+    background-color: mediumpurple;
+}
+
+.article-list-opacity li{
+    width: 400px;
+    /*background-color: mediumpurple;*/
+    opacity: 0.8;
+}
+
+/*.list-box not()*/
+
+.title-bar {
+    display: flex;
+}

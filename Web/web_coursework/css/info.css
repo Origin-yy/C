@@ -1,0 +1,113 @@
+
+.items-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    /*width: 800px;*/
+    width: 60vw;
+    margin-left: 30px;
+    /*margin-right: 10px;*/
+    background-color: white;
+    padding: 20px;
+}
+
+.main-content-articles {
+    /*display: flex;*/
+    /*flex-direction: column;*/
+    /*width: 800px;*/
+    width: 90vw;
+    /*margin-left: 30px;*/
+    /*!*margin-right: 10px;*!*/
+    /*background-color: white;*/
+    /*padding: 20px;*/
+}
+
+.main-content-width-1200px{
+    width: 1200px;
+}
+
+.main-content-width-1500px{
+    width: 1500px;
+}
+
+/*图像展示*/
+.atlas {
+    display: flex;
+    flex-direction: column;
+    /*background-color: whitesmoke;*/
+
+    border: solid 1px #DDD;
+    margin-bottom: 20px;
+    box-shadow: 1px 1px 1px #ccc;
+    width: 400px;
+}
+
+/*段落标题*/
+.para-level-3 {
+    border-left: 12px solid #4F9CEE;
+    /*左边的一个蓝色的东西*/
+    padding: 0 8px 0 18px;
+
+    display: block;
+    font-size: 20px;
+    line-height: 24px;
+    /*行高*/
+    /*font-size: 22px;*/
+    /*font-weight: 400;*/
+    /*粗细*/
+    font-family: Microsoft YaHei, serif;
+    /*margin: 35px 0 15px -30px;*/
+    /*网上的资源 一条横线*/
+    /*background: url(https://bkssl.bdimg.com/static/wiki-lemma/normal/resource/img/paraTitle-line_743dba1.png);*/
+    /*position: relative;*/
+}
+.para-level-3-no-bg{
+    background: none;
+}
+.atlas img {
+    width: 400px;
+    height: 300px;
+    /*text-align: center;*/
+    /*居中*/
+    margin: 0 auto;
+    display: block;
+}
+
+.atlas i {
+    padding: 8px 5px 8px 14px;
+}
+
+/*.cols {*/
+/*    display: flex;*/
+/*    flex-direction: row;*/
+/*    !*background-color: #d1d1d1;*!*/
+/*}*/
+
+.blank {
+    width: 100px;
+    background-color: whitesmoke;
+}
+
+.blank-left {
+
+}
+
+.blank.blank-right {
+    width: 410px;
+}
+.blank-right{
+    width: 30vw;
+}
+
+.bg-right{
+    background-image: url(../images/miku_right_col.jpg);
+    background-repeat: repeat;
+}
+
+.img-blank{
+    width: 400px;
+}

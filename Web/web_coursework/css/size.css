@@ -1,0 +1,9 @@
+.big{
+    width: 200%;
+    height: 200%;
+}
+
+.big .item{
+    width: 200%;
+    height: 200%;
+}

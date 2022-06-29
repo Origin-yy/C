@@ -1,0 +1,78 @@
+/*mqp down*/
+
+
+/*mqp*/
+/*up*/
+
+/*#cart::before{*/
+/*    content: url(".idea/cart.png");*/
+/*    font-size: 40px;*/
+/*    font-family: 微软雅黑;*/
+/*    color: #734026;*/
+/*    display: block;*/
+/*    margin: 10px 0px 0px 5px;*/
+/*    float: left;*/
+/*}*/
+
+/*mqp*/
+
+.cart  {
+    width: 120px;
+    height: 20px;
+    padding: 10px 0;
+    margin-top: 10px;
+    float: right;
+    background-color: #F3F3F3;
+}
+
+.cart a{
+    display: block;
+    width: 120px;
+    height: 40px;
+    font-family: 微软雅黑;
+    color: #734026;
+    font-size: 20px;
+    text-indent: 50px;
+    line-height: 40px;
+    background: url("../images/cart.png") no-repeat 20px center;
+    margin-top: -10px;
+}
+.cart a:hover{
+    background-color: rgba(0,0,0,0.3);
+}
+
+/*mqp*/
+
+
+/*sgy*/
+/*.cart {*/
+/*    width: 120px;*/
+/*    height: 20px;*/
+/*    padding: 10px 0;*/
+/*    margin-top: 10px;*/
+/*    float: right;*/
+/*    background-color: #F3F3F3;*/
+/*}*/
+
+/*.cart>a{*/
+/*    display: block;*/
+/*    width: 120px;*/
+/*    !*height: 40px;*!*/
+/*    height: 60px;*/
+/*    font-family: 微软雅黑;*/
+/*    !*color: black;*!*/
+/*    color: #734026;*/
+/*    font-size: 20px;*/
+/*    text-indent: 40px;*/
+/*    line-height: 40px;*/
+/*    background: url("../images/cart.png") no-repeat 20px center;*/
+/*    margin-top: -10px;*/
+/*}*/
+/*.cart a:hover{*/
+/*    background-color: rgba(0,0,0,0.3);*/
+/*}*/
+/*#cart-a{*/
+/*    color: #734026;*/
+/*}*/
+
+/*sgy*/

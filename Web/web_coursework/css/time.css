@@ -1,0 +1,34 @@
+#currentTime {
+    /*position: absolute;*/
+    /*top: 100px;*/
+    /*right: 260px;*/
+    transform: translateX(100px)translateY(20px);
+    color: hsl(0, 0%, 100%);
+    /*display: none;*/
+}
+
+#time {
+    /*position: absolute;*/
+    top: 20px;
+    right: 190px;
+    color: hsl(0, 0%, 100%);
+    display: none;
+}
+
+
+@media screen and (min-width: 1500px) {
+    #currentTime, #time {
+        display: block;
+    }
+}
+.cols {
+    display: flex;
+    flex-direction: row;
+    /*background-color: #d1d1d1;*/
+    justify-content: space-between;
+    /*之间有空隙 ，会把频幕铺满*/
+    /*https://segmentfault.com/q/1010000017233242?sort=created*/
+}
+
+
+

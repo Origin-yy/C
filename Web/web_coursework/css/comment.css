@@ -1,0 +1,42 @@
+
+.comment-btn{
+    margin-top: 1vw;
+    margin-left: 1vw;
+}
+
+.comment-to-comment-btn{
+    margin-top: 1vw;
+    margin-left: 1vw;
+    width: 3vw;
+    height: 3vw;
+}
+
+.people-comment{
+    /*width: 80vw;*/
+    /*height: 40vw;*/
+    margin-top: 1vw;
+    width: 50vw;
+    /*width: 50vw;*/
+    /*height: 30vw;*/
+    height: content-box;
+    /*东西有多少 就有多高*/
+}
+
+.comment-to-comment-field{
+    /*width: 35vw;*/
+    width: 40vw;
+    display: none;
+}
+.box-margin{
+    margin-top: 1vw;
+}
+
+.comment-list li{
+    /*width: 270px;*/
+    /*height: 30px;*/
+    /*color: white;*/
+    /*background-color: deepskyblue;*/
+    margin: 2px;
+    text-decoration: none;
+    list-style:none;
+}

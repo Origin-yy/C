@@ -1,0 +1,157 @@
+.taiji {
+    width: 300px;
+    height: 300px;
+
+    /*width: 500px;*/
+    /*height: 500px;*/
+    margin: 50px auto;
+    position: relative;
+    box-shadow: 0 0 50px rgba(0, 0, 0, .8);
+    background: #000;
+    border-radius: 50%;
+    /*下面为实现旋转时所需代码*/
+    /*animation: rotation 2.5s linear infinite;*/
+    /*-webkit-animation: rotation 2.5s linear infinite;*/
+    /*-moz-animation: rotation 2.5s linear infinite;  */
+    animation: rotation 10s linear infinite;
+/*cubic-bezier(0.68, -0.55, 0.27, 1.55)*/
+    -webkit-animation: rotation 10s linear infinite;
+    -moz-animation: rotation 10s linear infinite;
+}
+.taiji:hover{
+    /*甩头*/
+    animation: rotation 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+
+
+/*.jaiji:after*/
+.taiji:before {
+    /*左边的一大块白的*/
+    content: '';
+    display: block;
+    /*width: 150px;*/
+    width: 50%;
+    /*height: 300px;*/
+    height: 100%;
+    /*position:absolute;*/
+    /*top:0;*/
+}
+
+.taiji:before {
+    /*左边的一大块白的*/
+    /*border-radius: 150px 0 0 150px;*/
+    /*border-radius: 100% 0 0 100%;*/
+    /*border-radius: 50% 0 0 50%;*/
+    /*看来不行 只能指定px，*/
+    /*https://blog.csdn.net/csm0912/article/details/85050562*/
+    /*border-radius: 250px 0 0 250px;*/
+    border-radius: 150px 0 0 150px;
+    /*background-color: red;*/
+    background-color: white;
+    left: 0;
+    /*靠左边0*/
+    /*重心移到最小面 在旋转 就不会敲起来 */
+}
+
+/*.jaiji:after {*/
+/*    border-radius: 0 150px 150px 0;*/
+/*    !*background-color: black;*!*/
+/*    !*right: 0;*!*/
+/*}*/
+
+
+.taiji-500 {
+    width: 500px;
+    height: 500px;
+    /*border-radius: 50%;*/
+    /*margin: 50px auto;*/
+}
+
+/*后面定义的 在css里面也要写在后面*/
+.taiji-500:before {
+    border-radius: 250px 0 0 250px;
+}
+
+
+
+.yang, .yin {
+    position: absolute;
+    /*position: relative;*/
+    /*width: 150px;*/
+    width: 50%;
+    /*宽带是整个太极的一半*/
+    /*height: 150px;*/
+    height: 50%;
+    border-radius: 50%;
+    /*left: 75px;*/
+    /*left: 50%;*/
+    left: 25%;
+    z-index: 99;
+}
+
+.yang {
+    background: white;
+    top: 0;
+    /*位置*/
+}
+
+.yin {
+    background: black;
+    /*top: 150px;*/
+    top: 50%;
+}
+
+.yin:after, .yang:after {
+    /*width: 75px;*/
+    /*height: 75px;*/
+    width: 50%;
+    /*相对于 yin的 50%*/
+    height: 50%;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 999;
+    display: block;
+    content: '';
+    left: 25%;
+    top: 25%;
+}
+
+.yin:after {
+    background: white;
+}
+
+.yang:after {
+    background: black;
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+    /*墙壁里面的 贪吃蛇 其实是4个东西*/
+    /*计算好时间 transition*/
+}
+
+@-webkit-keyframes rotation {
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@-moz-keyframes rotation {
+    0% {
+        -moz-transform: rotate(0deg);
+    }
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+/*https://www.cnblogs.com/web12/p/10041178.html*/

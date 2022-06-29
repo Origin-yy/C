@@ -1,0 +1,91 @@
+.big-link {
+    display: flex;
+    width: 500px;
+    height: 500px;
+    align-items: center;
+    /*background-color: purple;*/
+    /*color: white;*/
+    /*text-decoration: none;*/
+    /*display: block;*/
+    text-align: center;
+    font-size: 100px;
+    /*cursor: pointer;*/
+    /*width: 20px;*/
+    /*margin: 0 auto;*/
+    /*line-height: 24px;*/
+    /*font-size: 20px;*/
+    /*height: 100vh;        !**屏幕高度百分百*!*/
+}
+
+.big-link a {
+    text-decoration: none;
+    color: white;
+}
+
+a.two-img-a {
+    display: block;
+    width: 300px;
+    height: 100px;
+    background-color: deepskyblue;
+    text-align: left;
+    text-indent: 310px;
+    white-space: nowrap;
+    overflow: hidden;
+    background-image: url(../images/dogalasijia.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    transition: all 0.5s;
+}
+
+a.two-img-a:hover {
+    background-image: url(../images/dog.jpg);
+    border-radius: 30px;
+}
+
+.s-top-username {
+    display: inline-block;
+    max-width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    margin-top: 3px;
+    margin-left: 6px;
+    font: 13px/23px 'PingFang SC',Arial,'Microsoft YaHei',sans-serif;
+}
+.username{
+    margin-top: 10px;
+}
+.s-top-img-wrapper{
+    /*margin-right: 10px;*/
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.s-top-img-wrapper img {
+     /*padding: 2px;*/
+     /*width: 24px;*/
+     /*height: 24px;*/
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+    border: purple solid 3px;
+ }
+
+.s-top-img-wrapper a {
+    text-decoration: none;
+    color: #333;
+    margin: 0 7px;
+}
+
+.s-top-img-wrapper  a:visited {
+    color: #771caa;
+}
+.s-top-username{
+    margin-right: 10px;
+    margin-top: 10px;
+    /*background-color: white;*/
+    color: white;
+    font-size: .8em;
+}

@@ -1,0 +1,106 @@
+button {
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    /*https://www.w3school.com.cn/cssref/pr_class_cursor.asp*/
+    background: none;
+    border: none;
+    outline: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none
+}
+
+
+.Button {
+    display: inline-block;
+    padding: 0 16px;
+    font-size: 14px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+    background: none;
+    border: 1px solid;
+    border-radius: 3px;
+}
+
+
+.Button--blue {
+    color: #0084ff;
+    border-color: #0084ff
+}
+
+
+
+.SearchBar-askButton {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    z-index: 103;
+    padding: 0 14px;
+    margin-left: 16px;
+    /*:ease(逐渐慢下来)*/
+    -webkit-transition: opacity .3s ease, -webkit-transform .3s ease;
+    transition: opacity .3s ease, -webkit-transform .3s ease;
+    transition: opacity .3s ease, transform .3s ease;
+    transition: opacity .3s ease, transform .3s ease, -webkit-transform .3s ease;
+    line-height: 30px
+}
+
+
+.Button--primary.Button--blue {
+    color: #fff;
+    background-color: #0084ff
+}
+
+
+.Button--primary.Button--blue:hover {
+    border-color: #0077e6;
+    background-color: #0077e6
+}
+
+.square-button{
+    width: 200px;
+    height: 100px;
+    background-color: mediumvioletred;
+    color: white;
+    font-size: 30px;
+    font-family: "Microsoft JhengHei", serif;
+    border:none;
+}
+
+
+
+.ant-btn-red {
+    /*padding-top: 30px;*/
+    /*size: 111px;*/
+    /*margin-top: 30px;*/
+
+    color: #fff;
+    background-color: #FF5A44;
+    border-color: #FF5A44;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+    -webkit-box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+
+    /*width: 60px;*/
+    /*margin: top right bottom left*/
+    margin: 30px 20px 10px 20px;
+    /*margin:0 auto;*/
+    /*margin: 15px auto;*/
+    /* vertical-align: middle;
+         text-align: center; */
+    /*block 才有width 和高度*/
+    /* display:block; */
+    /* text-indent: 30px; */
+    /* text-align:center;
+    width: 60px; */
+    /*height: 40px;*/
+    /*https://zhidao.baidu.com/question/195670336.html*/
+}
+
+.button{
+    cursor: pointer;
+}

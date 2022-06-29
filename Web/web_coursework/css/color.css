@@ -1,0 +1,72 @@
+.purple {
+    background-color: rebeccapurple;
+}
+
+.bg-whitesmoke {
+    background-color: whitesmoke;
+}
+
+.rainbow {
+    /*background: linear-gradient(cyan, #0041c2, #180029);*/
+    background: linear-gradient(red, orange, yellow, greenyellow, green, aqua, blue, mediumpurple);
+    /*background: linear-gradient(cyan, #0041c2, #180029);*/
+}
+
+/*body ::selection {*/
+/*    color: #FFFFFF;*/
+/*    !*background-color:#E84893;*!*/
+/*    background-color: deepskyblue;*/
+/*    text-shadow: none;*/
+/*    !*font-size: 30px;*!*/
+/*}*/
+
+.selection-blue ::selection {
+    color: #FFFFFF;
+    background-color: deepskyblue;
+    text-shadow: none;
+}
+
+@keyframes rainbow {
+    from {
+        /*backgroud-position: 0 0;*/
+        background-position: 0 0;
+    }
+    to {
+        background-position: 2000px 0;
+    }
+}
+.bg-rainbow ::selection {
+    /*color: #FFFFFF;*/
+    background: linear-gradient(red, orange, yellow, greenyellow, green, aqua, blue, mediumpurple);
+    color: transparent;
+    animation: rainbow 10s linear infinite;
+}
+
+body ::-moz-selection {
+    color: #FFFFFF;
+    background-color: #E84893;
+    text-shadow: none;
+}
+
+.deep-water {
+    /*height: 100vh;*/
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    /*东西放中间*/
+    /*background: black;*/
+    /*background-color: #1a1722;*/
+    /*background-color: #1a1722;*/
+    /*#1a1648*/
+    /*渐变色的深海*/
+    background: linear-gradient(#1a1722, #1a1648);
+
+}
+
+.white {
+    color: white;
+}
+
+.white a {
+    color: white;
+}
