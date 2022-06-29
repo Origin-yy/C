@@ -29,21 +29,15 @@
 
 .big-input{
     width:300px;
-    /*height: 40px;*/
     height: 24px;
     margin-bottom: 20px;
-    /*border-radius: 3%;*/
     border: 1px solid #ccc;
 
     outline-style: none;
 
     border-radius: 3px;
-    /*padding: 13px 14px;*/
     padding: 7px 7px;
-    /*width: 200px;*/
     font-size: 14px;
     font-weight: 700;
-    /*西方国家字母体系分为两类：serif 以及sans serif。serif 是有衬线字体，
-    意思是在字的笔画开始、结束的地方有额外的装饰，而且笔画的粗细会有所不同*/
     font-family: "Microsoft soft", serif;
 }

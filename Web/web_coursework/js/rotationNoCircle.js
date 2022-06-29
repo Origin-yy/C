@@ -1,8 +1,5 @@
-/**
- * Created by Administrator on 16-6-23.
- */
 var iCount = 2;
-// 不能两个地方都写 onload
+
 if (document.getElementById("a1") != null) {
     document.getElementById("a1").onclick = function () {
         iCount = 1;

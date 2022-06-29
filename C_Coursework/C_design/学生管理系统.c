@@ -83,7 +83,13 @@ int main(void) {
 
   while (1) {
     printf(L_BLUE"请输入您想进行的操作的序号: \n"NONE);
-    scanf("%d", &flag);
+    
+    while (scanf("%d", &flag) !=  1)
+    {
+      printf("请重新输入\n");
+      scanf("%*[^\n]%*c");
+    }
+    
     switch (flag) {
     case 0:
       printf(L_YELLOW"期待您的下次使用，再见!\n"NONE);

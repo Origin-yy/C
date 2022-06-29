@@ -1,17 +1,10 @@
-
 #nav {
-    /*width: 1260px;*/
     height: 60px;
     margin: 0 auto;
-
     list-style-type: none;
     width: 100%;
     display: flex;
-    /*background-color: beige;*/
     background-color: mediumpurple;
-    /*background-image: url("../images/navbg.jpg");*/
-    /*background-image: url("../images/falltree.jpg");*/
-    /*margin: 0;*/
 }
 
 .nav {
@@ -23,16 +16,6 @@
     z-index: 999;
 }
 
-/*@media screen and (max-width: 640px) {*/
-/*    #nav {*/
-/*        height: 120px*/
-/*    }*/
-/*}*/
-/*@media screen and (max-width: 1120px) {*/
-/*    #nav {*/
-/*        height: 180px*/
-/*    }*/
-/*}*/
 
 #nav * {
     margin: 0;
@@ -40,8 +23,6 @@
 }
 
 #nav > ul {
-    /*width: 800px;*/
-    /*height: 60px;*/
     padding: 0;
     float: left;
     list-style-type: none;
@@ -76,7 +57,6 @@
     text-decoration: none;
     padding: 0;
     margin: 0;
-    /*background-color: mediumpurple;*/
 }
 
 #nav a:hover {
@@ -90,7 +70,6 @@
     z-index: 999;
     width: 160px;
     height: 180px;
-    /*background: url(../images/navbg.jpg);*/
     background-color: mediumpurple;
     display: none;
     list-style-type: none;
@@ -111,60 +90,33 @@
     transition:1s;
     display: block;
     animation: show-list 1s;
-    /*transform: skew();*/
 }
-
-/*#nav li:hover #nav li ul {*/
-/*    !*display: block;*!*/
-/*    animation: show-list 1s;*/
-/*}*/
-
-/*sgy*/
-
-/*Chapter14*/
-/*面包屑导航*/
 .crumb-nav {
     font-size: 1rem;
-    /*height: 30px;*/
     line-height: 30px;
-    /*text-align: center;*/
-    /*margin: 5px 0px;*/
-    /*color: white;*/
-    /*background-color: lightgreen;*/
-    /*color: black;*/
 }
 .crumb-nav-container{
     height: 30px;
-    /*background-color: gold;*/
     text-indent: 20px;
     display: inline-flex;
-    /*color: mediumvioletred;*/
 }
 
 
 .crumb-nav a {
     text-decoration: none;
     font-size: 1em;
-    /*color: hsl(0,0%,0%);*/
-    /*color: white;*/
     color: black;
 }
 
 .crumb-nav a:hover {
-     /*color: hsl(20, 30%, 50%);*/
-     /*color: #4d90fe;*/
-     /*color: darkgoldenrod;*/
      color: dodgerblue;
  }
 
 .crumb-nav-water a:hover {
-    /*color: hsl(20, 30%, 50%);*/
-    /*color: #4d90fe;*/
     color: cornflowerblue;
 }
 
 
 .selected-nav{
-    /*background-color: rebeccapurple;*/
     background-color:  rgba(0, 0, 0, 0.3);
 }

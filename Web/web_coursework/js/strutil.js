@@ -1,7 +1,6 @@
 String.prototype.replaceAll = function (oldStr, newStr) {
     return this.replace(new RegExp(oldStr, "gm"), newStr);
 };
-// https://www.cnblogs.com/mq0036/p/6013225.html
 
 
 function frontDelStr(oldStr, dontWant) {
@@ -63,7 +62,6 @@ function backDelStr(oldStr, dontWant) {
             iRes -= dontWantLen;
 
         }
-        // https://www.w3school.com.cn/js/jsref_substring.asp
         if (iDont === 0 || iOld === 0)
             return oldStr.substring(0, iRes);
 

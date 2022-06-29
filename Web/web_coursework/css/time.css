@@ -1,7 +1,4 @@
 #currentTime {
-    /*position: absolute;*/
-    /*top: 100px;*/
-    /*right: 260px;*/
     transform: translateX(100px)translateY(20px);
     color: hsl(0, 0%, 100%);
     /*display: none;*/
@@ -26,8 +23,6 @@
     flex-direction: row;
     /*background-color: #d1d1d1;*/
     justify-content: space-between;
-    /*之间有空隙 ，会把频幕铺满*/
-    /*https://segmentfault.com/q/1010000017233242?sort=created*/
 }
 
 

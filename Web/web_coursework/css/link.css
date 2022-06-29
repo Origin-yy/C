@@ -3,18 +3,8 @@
     width: 500px;
     height: 500px;
     align-items: center;
-    /*background-color: purple;*/
-    /*color: white;*/
-    /*text-decoration: none;*/
-    /*display: block;*/
     text-align: center;
     font-size: 100px;
-    /*cursor: pointer;*/
-    /*width: 20px;*/
-    /*margin: 0 auto;*/
-    /*line-height: 24px;*/
-    /*font-size: 20px;*/
-    /*height: 100vh;        !**屏幕高度百分百*!*/
 }
 
 .big-link a {
@@ -58,15 +48,11 @@ a.two-img-a:hover {
     margin-top: 10px;
 }
 .s-top-img-wrapper{
-    /*margin-right: 10px;*/
     margin-top: 10px;
     margin-left: 10px;
 }
 
 .s-top-img-wrapper img {
-     /*padding: 2px;*/
-     /*width: 24px;*/
-     /*height: 24px;*/
      width: 40px;
      height: 40px;
      border-radius: 50%;
@@ -85,7 +71,6 @@ a.two-img-a:hover {
 .s-top-username{
     margin-right: 10px;
     margin-top: 10px;
-    /*background-color: white;*/
     color: white;
     font-size: .8em;
 }
