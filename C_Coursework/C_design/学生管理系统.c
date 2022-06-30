@@ -145,7 +145,11 @@ List List_init() {
 void Node_insert(List L) {
   printf("希望录入的学生信息数量为：\n");
   int n;
-  scanf("%d", &n);
+  while (!scanf("%d", &n) || n >100 || n< 0) {
+    printf(L_RED "学生数量范围是1-100,请重新输入.\n" NONE);
+    scanf("%*[^\n]%*c");
+    continue;
+  }
 
   for (int i = 0; i < n; i++) {
     Node *T = (Node *)malloc(sizeof(Node));
@@ -525,6 +529,7 @@ void read_information(List L) {
   fclose(stream);
   printf(L_GREEN "已从%s处读取学生信息.\n" NONE, path);
 }
+
 //保存学生信息
 void write_information(List L) {
   char path[256];
@@ -561,6 +566,7 @@ void write_information(List L) {
   close(fd);
   printf(L_GREEN "学生信息已保存到%s\n" NONE, path);
 }
+
 //销毁链表
 void destroy(List L) {
   Node *p = L;
