@@ -5,15 +5,6 @@
     color: white;
 }
 
-/*.grey-label {*/
-/*    !* display:block;*/
-/*    float: left; *!*/
-/*    font-size: 14px;*/
-/*    line-height: 24px;*/
-/*    padding: 5px;*/
-/*    color: #808080;*/
-/*}*/
-
 .grey-label{
     font-size: 14px;
     line-height: 24px;
@@ -49,19 +40,12 @@
     font-size: 20px;
 }
 
-/*https://www.cnblogs.com/dongwenbo/p/3325692.html*/
-/*label {*/
-/*    display: inline-block;*/
-/*    width: 70px;*/
-/*    text-align: right;*/
-/*}*/
-
 .form-row {
     /*padding: 15px;*/
     padding: 3px;
 }
 
-/* https://www.cnblogs.com/chengxs/p/11231906.html */
+
 .form-row-button {
     width: 350px;
     /*margin: 0 auto;*/
@@ -137,9 +121,6 @@
 }
 
 
-#btn-span {
-    /*margin: 30px 30px 30px 30px;*/
-}
 
 /*https://blog.csdn.net/hgg923/article/details/79422998*/
 /*textarea {*/

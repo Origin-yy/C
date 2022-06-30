@@ -86,8 +86,9 @@ int main(void) {
     
     while (scanf("%d", &flag) !=  1)
     {
-      printf("请重新输入\n");
-      scanf("%*[^\n]%*c");
+      printf(L_RED "输入有误，请重新输入。\n" NONE);
+      printf(L_BLUE "请输入您想进行的操作的序号: \n" NONE);
+      scanf("%*[^\n]%*c");   //*表示丢弃，%*[^\n]表示丢弃除了\n之外的字符，\n由后面的%*c读取并丢弃。
     }
     
     switch (flag) {
@@ -159,12 +160,15 @@ void Node_insert(List L) {
     while (!scanf("%d", &T->id) || T->id > 100000000 || T->id < 1) {
       printf(L_RED "学号范围是1-10000000,请重新输入.\n" NONE);
       printf("学号:");
+      scanf("%*[^\n]%*c");
       continue;
     }
 
     printf("姓名:");
-    while (!scanf("%s", T->name))
-      continue;
+    while (!scanf("%s", T->name)){
+        scanf("%*[^\n]%*c");
+        continue;
+      }
 
     printf("性别:");
 
@@ -175,6 +179,7 @@ void Node_insert(List L) {
       else if (T->sex != 'm' && T->sex != 'w') {
         printf(L_RED "性别为:m(男)/w(女),请重新输入.\n" NONE);
         printf("性别:");
+        scanf("%*[^\n]%*c");
         continue;
       }
       break;
@@ -184,6 +189,7 @@ void Node_insert(List L) {
     while (!scanf("%d", &T->Chinese) || T->Chinese > 100 || T->Chinese < 0) {
       printf(L_RED "课程分数范围是0-100,请重新输入成绩.\n" NONE);
       printf("语文:");
+      scanf("%*[^\n]%*c");
       continue;
     }
 
@@ -191,6 +197,7 @@ void Node_insert(List L) {
     while (!scanf("%d", &T->Math) || T->Math > 100 || T->Math < 0) {
       printf(L_RED "课程分数范围是0-100,请重新输入成绩.\n" NONE);
       printf("数学:");
+      scanf("%*[^\n]%*c");
       continue;
     }
 
@@ -198,6 +205,7 @@ void Node_insert(List L) {
     while (!scanf("%d", &T->English) || T->English > 100 || T->English < 0) {
       printf(L_RED "课程分数范围是0-100,请重新输入成绩.\n" NONE);
       printf("英语:");
+      scanf("%*[^\n]%*c");
       continue;
     }
     printf("\n");
@@ -307,12 +315,15 @@ void Node_change(List L) {
       while (!scanf("%d", &p->id) || p->id > 100000000 || p->id < 1) {
         printf(L_RED "学号范围是1-10000000,请重新输入.\n" NONE);
         printf("学号:");
+        scanf("%*[^\n]%*c");
         continue;
       }
 
       printf("姓名:");
-      while (!scanf("%s", p->name))
-        continue;
+      while (!scanf("%s", p->name)){
+          scanf("%*[^\n]%*c");
+          continue;
+        }
 
       printf("性别:");
 
@@ -323,6 +334,7 @@ void Node_change(List L) {
         else if (p->sex != 'm' && p->sex != 'w') {
           printf(L_RED "性别为:m(男)/w(女),请重新输入.\n" NONE);
           printf("性别:");
+          scanf("%*[^\n]%*c");
           continue;
         }
         break;
@@ -332,6 +344,7 @@ void Node_change(List L) {
       while (!scanf("%d", &p->Chinese) || p->Chinese > 100 || p->Chinese < 0) {
         printf("课程分数范围是0-100,请重新输入成绩.\n");
         printf("语文:");
+        scanf("%*[^\n]%*c");
         continue;
       }
 
@@ -339,6 +352,7 @@ void Node_change(List L) {
       while (!scanf("%d", &p->Math) || p->Math > 100 || p->Math < 0) {
         printf(L_RED "课程分数范围是0-100,请重新输入成绩.\n" NONE);
         printf("数学:");
+        scanf("%*[^\n]%*c");
         continue;
       }
 
@@ -346,6 +360,7 @@ void Node_change(List L) {
       while (!scanf("%d", &p->English) || p->English > 100 || p->English < 0) {
         printf(L_RED "课程分数范围是0-100,请重新输入成绩.\n" NONE);
         printf("英语:");
+        scanf("%*[^\n]%*c");
         continue;
       }
       printf("\n");
