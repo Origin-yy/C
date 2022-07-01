@@ -1,4 +1,3 @@
-
 lis = [];
 linkPreffix="images/";
 let li;
