@@ -7,25 +7,26 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define NONE        "\e[0m"
-#define BLACK       "\e[0;30m"
-#define L_BLACK     "\e[1;30m"
-#define RED         "\e[0;31m"
-#define L_RED       "\e[1;31m"
-#define GREEN       "\e[0;32m"
-#define L_GREEN     "\e[1;32m"
-#define YELLOW      "\e[0;33m"
-#define L_YELLOW    "\e[1;33m"
-#define BLUE        "\e[0;34m"
-#define L_BLUE      "\e[1;34m"
-#define PURPLE      "\e[0;35m"
-#define L_PURPLE    "\e[1;35m"
-#define D_GREEN     "\e[0;36m"
-#define L_D_GREEN   "\e[1;36m"
-#define WHITE       "\e[0;37m"
-#define L_WHITE     "\e[1;37m"
+#define NONE "\e[0m"
+#define BLACK "\e[0;30m"
+#define L_BLACK "\e[1;30m"
+#define RED "\e[0;31m"
+#define L_RED "\e[1;31m"
+#define GREEN "\e[0;32m"
+#define L_GREEN "\e[1;32m"
+#define YELLOW "\e[0;33m"
+#define L_YELLOW "\e[1;33m"
+#define BLUE "\e[0;34m"
+#define L_BLUE "\e[1;34m"
+#define PURPLE "\e[0;35m"
+#define L_PURPLE "\e[1;35m"
+#define D_GREEN "\e[0;36m"
+#define L_D_GREEN "\e[1;36m"
+#define WHITE "\e[0;37m"
+#define L_WHITE "\e[1;37m"
 
-#define FILE_PATH   "/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.c"
+#define FILE_PATH                                                              \
+  "/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.c"
 
 typedef struct Node {
   int id;
@@ -82,18 +83,18 @@ int main(void) {
   printf("\n");
 
   while (1) {
-    printf(L_BLUE"请输入您想进行的操作的序号: \n"NONE);
-    
-    while (scanf("%d", &flag) !=  1)
-    {
+    printf(L_BLUE "请输入您想进行的操作的序号: \n" NONE);
+
+    while (scanf("%d", &flag) != 1) {
       printf(L_RED "输入有误，请重新输入。\n" NONE);
       printf(L_BLUE "请输入您想进行的操作的序号: \n" NONE);
-      scanf("%*[^\n]%*c");   //*表示丢弃，%*[^\n]表示丢弃除了\n之外的字符，\n由后面的%*c读取并丢弃。
+      scanf(
+          "%*[^\n]%*c"); //*表示丢弃，%*[^\n]表示丢弃除了\n之外的字符，\n由后面的%*c读取并丢弃。
     }
-    
+
     switch (flag) {
     case 0:
-      printf(L_YELLOW"期待您的下次使用，再见!\n"NONE);
+      printf(L_YELLOW "期待您的下次使用，再见!\n" NONE);
       exit(0);
     case 1:
       Node_insert(L);
@@ -145,7 +146,7 @@ List List_init() {
 void Node_insert(List L) {
   printf("希望录入的学生信息数量为：\n");
   int n;
-  while (!scanf("%d", &n) || n >100 || n< 0) {
+  while (!scanf("%d", &n) || n > 100 || n < 0) {
     printf(L_RED "学生数量范围是1-100,请重新输入.\n" NONE);
     scanf("%*[^\n]%*c");
     continue;
@@ -169,10 +170,10 @@ void Node_insert(List L) {
     }
 
     printf("姓名:");
-    while (!scanf("%s", T->name)){
-        scanf("%*[^\n]%*c");
-        continue;
-      }
+    while (!scanf("%s", T->name)) {
+      scanf("%*[^\n]%*c");
+      continue;
+    }
 
     printf("性别:");
 
@@ -219,7 +220,7 @@ void Node_insert(List L) {
     p = T;
   }
   L->id += n;
-  printf(L_GREEN"%d名学生信息已录入完毕.\n"NONE,n);
+  printf(L_GREEN "%d名学生信息已录入完毕.\n" NONE, n);
 }
 
 //删除学生信息
@@ -324,10 +325,10 @@ void Node_change(List L) {
       }
 
       printf("姓名:");
-      while (!scanf("%s", p->name)){
-          scanf("%*[^\n]%*c");
-          continue;
-        }
+      while (!scanf("%s", p->name)) {
+        scanf("%*[^\n]%*c");
+        continue;
+      }
 
       printf("性别:");
 
@@ -376,7 +377,6 @@ void Node_change(List L) {
     printf(L_GREEN "%s的学生信息已修改完毕.\n" NONE, name);
 }
 
-
 //排序学生信息
 void List_sort(List L) {
   Node *a, *b, temp;
@@ -385,7 +385,7 @@ void List_sort(List L) {
     return;
   }
   if (L->next->next == NULL) {
-    printf(L_RED"当前只有一个学生信息,无需排序.\n\n"NONE);
+    printf(L_RED "当前只有一个学生信息,无需排序.\n\n" NONE);
     return;
   }
   a = L->next;
@@ -410,9 +410,8 @@ void List_sort(List L) {
 
 //展示学生信息
 void List_output(List L) {
-  if(L->id == 0)
-  {
-    printf(L_RED"当前没有学生信息，请确认后重试.\n"NONE);
+  if (L->id == 0) {
+    printf(L_RED "当前没有学生信息，请确认后重试.\n" NONE);
     return;
   }
   Node *p = L;
@@ -545,7 +544,6 @@ void write_information(List L) {
     printf(L_RED "没有找到文件%s.\n\n" NONE, path);
   else
     truncate(path, 0);
-  ;
 
   Node *p = L;
   int i = 1;
