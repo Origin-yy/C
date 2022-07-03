@@ -7,6 +7,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+typedef struct Node {
+  int id;
+  char name[50];
+  char sex;
+  int Chinese;
+  int Math;
+  int English;
+  struct Node *next;
+  struct Node *prev;
+} Node, *List;
+
 #define NONE "\e[0m"
 #define BLACK "\e[0;30m"
 #define L_BLACK "\e[1;30m"
@@ -27,19 +38,6 @@
 
 #define FILE_PATH                                                              \
   "/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.c"
-
-typedef struct Node {
-  int id;
-  char name[50];
-  char sex;
-  int Chinese;
-  int Math;
-  int English;
-  struct Node *next;
-  struct Node *prev;
-} Node, *List;
-
-int MAX_NUM = 100;
 
 //展示操作选项
 void display_options();

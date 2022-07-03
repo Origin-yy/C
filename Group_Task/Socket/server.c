@@ -45,6 +45,8 @@ int main()
  temp.data.fd=listenfd;
  temp.events=EPOLLIN;
  epoll_ctl(epfd,EPOLL_CTL_ADD,listenfd,&temp);//将监听套接字加入监听红黑树
+
+
 while(1)
 {
   ret=epoll_wait(epfd,ep,1024,-1);
