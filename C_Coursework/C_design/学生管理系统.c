@@ -18,26 +18,25 @@ typedef struct Node {
   struct Node *prev;
 } Node, *List;
 
-#define NONE "\e[0m"
-#define BLACK "\e[0;30m"
-#define L_BLACK "\e[1;30m"
-#define RED "\e[0;31m"
-#define L_RED "\e[1;31m"
-#define GREEN "\e[0;32m"
-#define L_GREEN "\e[1;32m"
-#define YELLOW "\e[0;33m"
-#define L_YELLOW "\e[1;33m"
-#define BLUE "\e[0;34m"
-#define L_BLUE "\e[1;34m"
-#define PURPLE "\e[0;35m"
-#define L_PURPLE "\e[1;35m"
-#define D_GREEN "\e[0;36m"
-#define L_D_GREEN "\e[1;36m"
-#define WHITE "\e[0;37m"
-#define L_WHITE "\e[1;37m"
+#define NONE          "\e[0m"
+#define BLACK         "\e[0;30m"
+#define L_BLACK       "\e[1;30m"
+#define RED           "\e[0;31m"
+#define L_RED         "\e[1;31m"
+#define GREEN         "\e[0;32m"
+#define L_GREEN       "\e[1;32m"
+#define YELLOW        "\e[0;33m"
+#define L_YELLOW      "\e[1;33m"
+#define BLUE          "\e[0;34m"
+#define L_BLUE        "\e[1;34m"
+#define PURPLE        "\e[0;35m"
+#define L_PURPLE      "\e[1;35m"
+#define D_GREEN       "\e[0;36m"
+#define L_D_GREEN     "\e[1;36m"
+#define WHITE         "\e[0;37m"
+#define L_WHITE       "\e[1;37m"
 
-#define FILE_PATH                                                              \
-  "/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.c"
+#define FILE_PATH     "/home/yuanye/my_code/my_code.c/C_Coursework/C_design/学生信息.c"
 
 //展示操作选项
 void display_options();
@@ -87,7 +86,7 @@ int main(void) {
       printf(L_RED "输入有误，请重新输入。\n" NONE);
       printf(L_BLUE "请输入您想进行的操作的序号: \n" NONE);
       scanf(
-          "%*[^\n]%*c"); //*表示丢弃，%*[^\n]表示丢弃除了\n之外的字符，\n由后面的%*c读取并丢弃。
+          "%*[^\n]%*c");//*表示丢弃，%*[^\n]表示丢弃除了\n之外的字符，\n由后面的%*c读取并丢弃。
     }
 
     switch (flag) {
