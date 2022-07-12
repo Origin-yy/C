@@ -38,7 +38,7 @@ int main() {
   // string 初始化
   string s;
   string *ptr = nullptr; //不能把int类型变量赋给指针，即使值为0。
-  string s1("value");
+  string s1("this is a string");
   string s2(10, 'c');
   string s3; //空字符串
   string s4 = s1;
@@ -50,7 +50,7 @@ int main() {
   {
     getline(cin,s);
     string s7 = s1 + "asdf"; //每个+号两侧的运算对象至少有一个是string
-    cout << s1 << endl;
+    cout << "string s1中的字符串是" << s1 << '\n' << "对s1做sizeof操作得到: " << sizeof(s1) << endl;
     cin >> s2;
     bool if_empty = s1.empty();
   }
@@ -112,5 +112,12 @@ int main() {
   //内置（数组）的下标可以是负值，vector和string是无符号
   //const char *buf = s.c_str（）;  string的成员函数c_str把string类转为字符串（返回const char*）
   vector<int> wvec(begin(ia),end(ia)); //用数组初始化vector，给他收尾指针
+  //范围for处理多维数组都用引用
+
+  void* p = &s;
+  string* q = static_cast<string*>(p);   //强制类型转换
+
+
+
   return 0;
 }
