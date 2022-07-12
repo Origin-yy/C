@@ -42,7 +42,7 @@ int main() {
     memset(temp, 0, sizeof(temp));
     usleep(300);
   }
-  sleep(10);
+  sleep(1);
 }
 
 int createsocket() {

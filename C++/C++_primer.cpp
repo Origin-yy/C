@@ -1,8 +1,10 @@
-#include <cstdlib>
 #include <iostream>
-#include <string>
 #include <vector>
-#include <cctype>
+//#include <string>
+//#include <cstdlib>
+//#include <cctype>  //nullptr
+//#include <cstddef> //size_t,ptrdiff_t
+//#include <iterator> //begin(),end()
 extern const int i = 123; // a文件里定义并初始化i，加extern使其能被其他文件使用
 
 using namespace std; //头文件不应包含using声明（名字冲突）
@@ -22,15 +24,16 @@ int main() {
   // 引用只是创建一个别名，没有创建对象，没有引用的引用。
   // const的值必须初始化，只在当前所在文件内有效，不同文件不共享
   // 在每个文件的每个const前加extern就可以共享一个，包括定义
-  constexpr int mf = 20; //声明为constexpr的变量一定是一个常量，必须用常量表达式（值不变，编译过程中就得到结果）初始化
+  const int m = 0; //m是一个常量表达式，编译时已知且不变，const int n = get_size()不是，运行时才知道值。
+  constexpr int mf = 10; //声明为constexpr的变量一定是一个常量，必须用常量表达式（值不变，编译过程中就得到结果）初始化
   using zhengxing = int; 
   typedef char *pstring;
   const pstring cstr = 0; //不要替换为原样，这里是声明一个指向char的指针常量（指针不可修改），而不是指向的char不可修改
   struct sale{
-    string bookname = nullptr;  //默认初始化，类内初始值，不能用（）
+    string bookname;  //默认初始化，类内初始值，不能用
     int id = 0;
   };
-  sale a,b,c;
+  sale a,c;
 
   // string 初始化
   string s;
@@ -83,6 +86,31 @@ int main() {
     string buf = "asdf";
     words.push_back(buf);
   }
+  //迭代器指向容器中的某个元素
+  vector<string>::iterator e =words.end(); //指向容器的尾后元素,end返回的不能解引用或递增减
+  for(auto it = words.begin();it != words.end() && !isspace((*it)[0]);++it)
+    (*it)[0] = toupper((*it)[0]);
 
+  //迭代器二分搜索
+  vector<int> text{1,2,3,4,5,6,7,8,9,10};
+  int sought = 8;
+  auto beg1 = text.begin(),end1 = text.end();
+  auto mid = text.begin() + (end1 - beg1)/2;   //中间点
+  while (mid != end1 && *mid != sought){
+    if(sought < *mid)
+      end1 = mid;
+    else 
+      beg1 = mid + 1;
+    mid = beg1 + (end1 - beg1)/2;
+  }
+  //数组
+  char ch[] = "C++";//自动补‘\0’
+  int ia[mf] = {0,1,2,3,4,5,6,7,8,9};  //数组维度必须是常量表达式
+  size_t nu = 0; //数组下标类型
+  int *beg = begin(ia); //标准库函数begin和end返回数组头尾（下一个位置）的指针
+  int *last = end(ia);  //指向尾元素下一个位置的指针，不存在元素，但可以得到地址，不能解引用，或者递增
+  //内置（数组）的下标可以是负值，vector和string是无符号
+  //const char *buf = s.c_str（）;  string的成员函数c_str把string类转为字符串（返回const char*）
+  vector<int> wvec(begin(ia),end(ia)); //用数组初始化vector，给他收尾指针
   return 0;
 }

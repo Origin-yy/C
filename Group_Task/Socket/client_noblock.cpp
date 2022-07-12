@@ -76,7 +76,7 @@ int main() {
     int len = 0; //每个字符串的大小
 
     auto str = msg->pop();
-    const char *buf = str.data();
+    const char *buf = str.c_str();
 
     len = str.size();
     int net_len = htonl(len);

@@ -52,27 +52,21 @@ while(1)
   ret=epoll_wait(epfd,ep,1024,-1);
   for(i=0;i<ret;i++)
   {
-    if(ep[i].data.fd==listenfd)
-    {
+    if(ep[i].data.fd==listenfd){
       cfd=acceptConn(listenfd,NULL);
       temp.data.fd=cfd;
       temp.events=EPOLLIN;
       epoll_ctl(epfd,EPOLL_CTL_ADD,cfd,&temp);
       printf("客户端%d连接成功\n",cfd);
-    }
-    else 
-    {
+    }else {
       int ccfd=ep[i].data.fd;
       int len=recvMsg(ccfd,&buf);
-     if(len==0)
-      {
+     if(len==0){
         temp.data.fd=ccfd;
         temp.events=EPOLLIN;
         epoll_ctl(epfd,EPOLL_CTL_DEL,ccfd,&temp);
         free(buf);
-      }
-      else 
-      {
+      }else {
         printf("%s\n\n\n\n",buf);
         free(buf);
       }
@@ -128,7 +122,7 @@ int acceptConn(int lfd,struct sockaddr_in*addr)
     cfd=accept(lfd,NULL,NULL);
     return cfd;
   }
-  socklen_t len=sizeof(addr);
+  socklen_t len = sizeof(*addr);
   cfd=accept(lfd,(struct sockaddr*)&addr,&len);
   return cfd;
 }
