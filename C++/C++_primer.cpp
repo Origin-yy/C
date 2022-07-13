@@ -1,10 +1,13 @@
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 //#include <string>
 //#include <cstdlib>
 //#include <cctype>  //nullptr
 //#include <cstddef> //size_t,ptrdiff_t
 //#include <iterator> //begin(),end()
+//#include <stdexcept> //异常类，如runtime_error,p176
+
 extern const int i = 123; // a文件里定义并初始化i，加extern使其能被其他文件使用
 
 using namespace std; //头文件不应包含using声明（名字冲突）
@@ -55,12 +58,12 @@ int main() {
     bool if_empty = s1.empty();
   }
   //反复读取，直到遇到文件结尾
-  while (cin >> s)
-    cout << s << endl;
+  //while (cin >> s)
+    //cout << s << endl;
   //读取一行输入,读取\n并丢弃，并且终止输入
   string line;
-  while (getline(cin, line))//读取一行，包括空白符
-    cout << line << endl;
+  //while (getline(cin, line))//读取一行，包括空白符
+  //  cout << line << endl;
   auto line_t = line.size();
   // auto类型，让编译器来推断类型，这里是string::size_type;
   // s.size()的返回值是一个无符号整数，不要与int相比
@@ -115,8 +118,24 @@ int main() {
   //范围for处理多维数组都用引用
 
   void* p = &s;
-  string* q = static_cast<string*>(p);   //强制类型转换
-
+  string* q = static_cast<string*>(p);   //强制类型转换,p145去底层const，const_cast
+  //try和throw处理异常
+  int t, u;
+  while(cin >> t >> u ){
+    try{
+      int r = u + t;
+      if(r != 0)
+        throw runtime_error("输入必须是两个0\n");  //出现异常会终止当前的代码，跳到能处理的地方
+      cout << r << endl;
+    }catch(runtime_error err){
+      cout << err.what() << "再试一次？输入'y'or'n'\n";
+      char o;  //err是一个runtime_error类，what()成员函数返回初始化这个具体对象时用的字符串
+      cin >> o;
+      if( !cin || o == 'n')
+        break;
+    }
+  }
+  
 
 
   return 0;
