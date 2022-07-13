@@ -1,5 +1,7 @@
+#include <initializer_list>
 #include <iostream>
 #include <stdexcept>
+#include <system_error>
 #include <vector>
 //#include <string>
 //#include <cstdlib>
@@ -21,6 +23,21 @@ using namespace std; //头文件不应包含using声明（名字冲突）
 #define concat(a, B) a##b // xy
 #endif
 
+void reset(int &i){
+  i = 0;
+}
+void print(int (&arr)[10]){   //数组引用形参
+  for(auto elem : arr)
+    cout << elem << endl;
+}
+
+void error_msg(error_code e, initializer_list<string> il){
+  cout << e.message() << ": ";
+  for (const auto &elem : il)
+    cout << elem << " ";
+  cout << endl;
+
+}
 int main() {
   extern const int i; //a文件里声明i而非定义i，extern又表示i并非本文件独有，他的定义将在别处出现
   int const &ref = i; //引用必须初始化,用于初始化引用的必须是一个对象,且只能绑定一个。
@@ -135,8 +152,10 @@ int main() {
         break;
     }
   }
-  
 
+  static int v = 0;//内置类型静态局部变量初始化为0
+  reset(t);//，只能传int类型对象，不能用字面值，const int等。尽量使用常量引用，可以传字面值和const int
+  //想要改变实参的值时，最好传引用参数(即形参是引用)，通过引用改变其值而不是指针,而且引用不拷贝,有些类型不支持拷贝，比较高效
 
   return 0;
 }
