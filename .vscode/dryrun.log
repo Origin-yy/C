@@ -1,0 +1,6 @@
+make --dry-run --keep-going --print-directory
+make: Entering directory '/home/yuanye/my_code/my_code.c'
+make: Leaving directory '/home/yuanye/my_code/my_code.c'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+
