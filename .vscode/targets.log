@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Thu Jul 14 11:53:43 2022
+# Make data base, printed on Sat Jul 16 12:00:45 2022
 
 # Variables
 
@@ -137,7 +137,7 @@ VSCODE_CODE_CACHE_PATH = /home/yuanye/.config/Code/CachedData/4af164ea3a06f701fe
 # environment
 LOGNAME = yuanye
 # environment
-APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
 # automatic
 +F = $(notdir $+)
 # environment
@@ -159,7 +159,7 @@ SHLVL = 0
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-46400413-6431-41d2-b80a-fd7d022058a6.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-bacad0b8-457a-432d-a110-8348dcc00e02.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -282,6 +282,7 @@ makefile:
 GNUmakefile:
 #  Implicit rule search has been done.
 #  File does not exist.
+ 
 #  File has been updated.
 #  Failed to be updated.
 
@@ -299,6 +300,6 @@ GNUmakefile:
 # strcache performance: lookups = 26 / hit rate = 11%
 # hash-table stats:
 # Load=23/8192=0%, Rehash=0, Collisions=1/26=4%
-# Finished Make data base on Thu Jul 14 11:53:43 2022
+# Finished Make data base on Sat Jul 16 12:00:45 2022
 
  
