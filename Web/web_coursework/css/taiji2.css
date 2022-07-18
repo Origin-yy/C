@@ -1,8 +1,0 @@
-.taiji:before,.taiji:after{
-    width:200px;
-    height: 400px;
-    display: block;
-    content: "";
-    position: absolute;
-
-}
