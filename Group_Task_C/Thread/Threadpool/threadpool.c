@@ -27,7 +27,7 @@ typedef struct ThreadPool
     int live_num;            // 存活的线程的个数
     int exit_num;            // 要销毁的线程个数
     pthread_t manager_tid;    // 管理者线程ID
-    pthread_t *workers_tids;   // 工作者线程ID
+    pthread_t *workers_tids;   // 工作者线程ID数组
     pthread_mutex_t mutex_pool;  // 整个的线程池的互斥锁
     pthread_mutex_t mutex_busy;  // busy_num的互斥锁
     pthread_cond_t cond_notfull;     // 阻塞等待任务队列不满的条件变量
@@ -36,7 +36,7 @@ typedef struct ThreadPool
     int shut_down;           // 是不是要销毁线程池, 销毁为1, 不销毁为0
 }ThreadPool;
 
-int NUMBER = 2;
+int NUMBER = 2;  //工作线程空闲时，一次退出NUMBER个工作者线程
 
 // 错误函数
 void my_err(const char *err_string, int line, int errnum);
