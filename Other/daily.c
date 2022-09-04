@@ -1,24 +1,30 @@
-#include <stdio.h>
-#include <malloc.h>
-#include "ICmin.h"
-
+#include<stdio.h>
+#include<string.h>
+#define num 100
 int main()
 {
-    int *a = (int *)malloc(sizeof(int));
-    int i = 0;
-    int temp;
-    FILE *fp = fopen("datafile01.data", "r");
-    while (fscanf(fp, "%d", &temp) == 1)
-    {
-        i++;
-        a[i] = temp;
-        int *a = realloc(a,sizeof(int)*(i));
-        fscanf(fp,"%*c");
-    }
-    int num =ICntmin(a, i);
-    FILE *fp1 = fopen("finaldata.dat","w");
-    for(int i = 0; i < 20; i++)
-    {
-      fprintf("")
-    }
+	char b[num] = { '\0' };
+	char a[num] = { '\0' };
+	gets(a);
+	int n = strlen(a);
+	int count = 0;
+	int i;
+	for ( i = 0; i <= n - 1; i++)
+	{
+		if (a[i] <= 'Z'&&a[i] >= 'A')
+			a[i] = a[i] + 32;
+	}
+	for ( i = 0; i <= n-1; i++)
+	{
+		if (a[i] == 'a' || a[i] == 'e'|| a[i] == 'y' || a[i] == 'i' || a[i] == 'o' || a[i] == 'u')
+			continue;
+		else
+		{
+			b[count] = '.';
+			b[count + 1] = a[i];
+			count += 2;
+		}
+	}
+	printf("%s", b);
+	return 0;
 }
