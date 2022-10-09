@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"path": "../../Code/Code_C"
+		},
+		{
+			"path": "../../Code/Code_Cpp"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"ctype.h": "c",
+			"math.h": "c",
+			"istream": "c",
+			"ostream": "c",
+			"cstring": "c",
+			"typeinfo": "c",
+			"cmath": "c",
+			"*.tcc": "c",
+			"type_traits": "c",
+			"pthread.h": "c",
+			"time.h": "c"
+		}
+	}
+}
