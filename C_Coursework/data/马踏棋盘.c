@@ -146,6 +146,7 @@ int main(void){
     }
     printf(YELLOW"马儿的起始位置为:%d,%d\n"NONE, begin_x, begin_y);
     printf(YELLOW"聪明的马儿正在思考...\n"NONE);
+    
     if (setHorse(begin_x, begin_y, 1)){
         for(int t = 0; t <= X*Y; t++){
             system("clear");
