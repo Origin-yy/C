@@ -95,8 +95,8 @@ LinkList combine_list(LinkList A, LinkList B)
     {
         p->next = B;
     }
-    free(A);
-    free(B);
+    //free(A);
+    //free(B);
     return C;
 }
 

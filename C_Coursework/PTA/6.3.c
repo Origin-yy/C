@@ -1,17 +1,14 @@
 #include<stdio.h>
-#include<string.h>
-#include<malloc.h>
+
 int main(void)
 {
-    //char *a = (char*)malloc(sizeof(char)*40);
-    //char *b = (char*)malloc(sizeof(char)*40);
-    char a[6];
-    char b[9];
-    scanf("%s",a);
-    scanf("%s",b);
+    char a = 0;
+    char b = 0;
+    scanf("%c", &a);
+    scanf(" %c", &b);
 
-    printf("%s\n",a);
-    printf("%s\n",b);
+    printf("%c\n", a);
+    printf("%c\n", b);
 
     return 0;
 }
