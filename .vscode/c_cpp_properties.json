@@ -3,9 +3,9 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/usr/include/deepin-wine/msvcrt",
-                "/usr/include/deepin-wine/windows"
+                "${workspaceFolder}/**"
+                // "/usr/include/deepin-wine/msvcrt",
+                // "/usr/include/deepin-wine/windows"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
