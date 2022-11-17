@@ -51,7 +51,6 @@ void color_printf(char *filename, struct stat buf); //染色打印文件名函�
 
 int cmp(const void *x, const void *y); //用于qsort比较函数
 
-
 int main(int argc, char *argv[])
 {
     anal_param(argc, argv); //解析参数和判断是否含有有效路径
