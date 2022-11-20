@@ -39,7 +39,7 @@ int BiTreeDeepth(BiTree root);       // 计算二叉树的高度
 void CountLeaf(BiTree root,int *Count);// 统计二叉树中叶子节点的个数
 int Traverse_R(BiTree T, int depth, int right, int tap); // 树状打印二叉树
 void gotoxy(int x, int y);                               // 移动光标
-int BreakBiTree(BiTree T, BiTree* L, BiTree* R);           // 将二叉树分为根，左子树，右子树三个部分
+int BreakBiTree(BiTree T, BiTree* L, BiTree* R);         // 将二叉树分为根，左子树，右子树三个部分
 
 int main(void) {
     int leaf_num = 0;
@@ -47,8 +47,7 @@ int main(void) {
     BiTree tmp = NULL;
     BiTree root = CreateTree(tmp);
 
-    Traverse_R(root, 0, 0, 0);
-    printf("\n");
+    //Traverse_R(root, 0, 0, 0);
 
     printf("先序遍历结果为：");
     PreOrder(root);
@@ -245,7 +244,8 @@ int Traverse_R(BiTree T, int depth, int right, int tap) {
 		// 打印左子树的位置
 		gotoxy(x * 2 - tap3, y + 1);
 		printf("┏");
-		for (int i = 0; i < tap3-1; i++) printf("━");
+		for (int i = 0; i < tap3-1; i++) 
+            printf("━");
 		printf("┛");
 		Traverse_R(L, depth, 0, tap);
 	}
@@ -253,7 +253,8 @@ int Traverse_R(BiTree T, int depth, int right, int tap) {
 		// 打印右子树的位置
 		gotoxy(x * 2, y + 1);
 		printf("┗");
-		for (int i = 0; i < tap3-1; i++) printf("━");
+		for (int i = 0; i < tap3-1; i++) 
+            printf("━");
 		printf("┓");
 		Traverse_R(R, depth, 1, tap);
 	}
@@ -261,9 +262,11 @@ int Traverse_R(BiTree T, int depth, int right, int tap) {
 		// 打印左右子树的位置
 		gotoxy(x * 2 - tap3, y + 1);
 		printf("┏");
-		for (int i = 0; i < tap3 - 1; i++) printf("━");
+		for (int i = 0; i < tap3 - 1; i++) 
+            printf("━");
 		printf("┻");
-		for (int i = 0; i < tap3 - 1; i++) printf("━");
+		for (int i = 0; i < tap3 - 1; i++) 
+            printf("━");
 		printf("┓");
 		Traverse_R(L, depth, 0, tap);
 		Traverse_R(R, depth, 1, tap);
@@ -272,7 +275,7 @@ int Traverse_R(BiTree T, int depth, int right, int tap) {
 }
 
 //改变光标位置
-void gotoxy(int x, int y){
+void gotoxy(int x, int y){    
     MOVELEFT(100);
 	MOVERIGHT(x);
     MOVEDOWN(y);
