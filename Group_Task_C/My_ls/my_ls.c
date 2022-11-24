@@ -390,7 +390,7 @@ void disply_dir(char *path)
     DIR *dir;           //存储目录信息的结构体
     struct dirent *ptr; //存储目录下文件信息的结构体
     int count = 0;      //该目录下文件总数
-    int i, j, len;
+    int i, len;
 
     if(flag & R)
     {
@@ -561,7 +561,6 @@ void disply(char **filenames, int count)
 //目录下多文件排序函数（-r,-t）
 void file_sort(char **filenames, int count)
 {
-    char* temp;
     qsort(filenames, count, sizeof(char *), cmp); //调用qsort排序
 }
 //染色打印文件名函数
