@@ -9,9 +9,9 @@
 #include<stdlib.h>
 #include<string.h>
 
-static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;  
-static pthread_cond_t cond_pro =PTHREAD_COND_INITIALIZER;
-static pthread_cond_t cond_con =PTHREAD_COND_INITIALIZER;
+static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER; 
+static pthread_cond_t cond_pro = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t cond_con = PTHREAD_COND_INITIALIZER;
 
 int capacity;
 
@@ -23,21 +23,21 @@ typedef struct SPSCQueue
     int *num;     //现有产品数量
 }SPSCQueue;
 
-//错误函数
+// 错误函数
 void errExitEN(const char *err_string,int line,int errnumber);
-//随机生成名为A-Z的产品s
+// 随机生成名为A-Z的产品s
 char get_rand_product();
-//循环队列初始化
+// 循环队列初始化
 SPSCQueue *SPSCQueueInit(int capacity);
-//生产产品s入队尾 
+// 生产产品s入队尾
 void SPSCQueuePush(SPSCQueue *queue, void *s);
-//消费产品出队头
+// 消费产品出队头
 void *SPSCQueuePop(SPSCQueue *queue);
-//销毁申请内存
+// 销毁申请内存
 void SPSCQueueDestory(SPSCQueue *);
-//生产者线程           
+// 生产者线程           
 void *producer_pthread(void*arg);
-//消费者线程
+// 消费者线程
 void *consumer_pthread(void*arg);
 
 int main(void)
@@ -59,7 +59,7 @@ int main(void)
     s = pthread_join(pro_tid,NULL);
     if (s != 0)
         errExitEN("pthread_join",__LINE__,s);
-        s = pthread_join(con_tid,NULL);
+    s = pthread_join(con_tid,NULL);
     if (s != 0)
         errExitEN("pthread_join",__LINE__,s);
     SPSCQueueDestory(warehouse);
@@ -105,7 +105,7 @@ void *consumer_pthread(void*arg)
 
         while(*warehouse->num == 0)
         {
-            t =pthread_cond_wait(&cond_pro,&mtx);
+            t = pthread_cond_wait(&cond_pro,&mtx);
             if(t != 0)
                 errExitEN("pthread_cond_wait",__LINE__,t);
         }
